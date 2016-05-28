@@ -64,7 +64,8 @@
 #' @details This function is a wrapper for the functions \code{\link[psych]{fa}}
 #'   and \code{\link[psych]{principal}} from package \code{psych}. It adds
 #'   options for handling of missing data, weighting, filtering, and printing.
-#'
+#' @importFrom flipStatistics CovarianceAndCorrelationMatrix
+#' @importFrom psych principal fa
 #' @export
 FactorAnalysis <- function(data,
                            weights = NULL,
@@ -94,7 +95,7 @@ FactorAnalysis <- function(data,
         n.obs <- nrow(prepared.data$subset.data)
     }
 
-    input.matrix <- flipU::CovarianceAndCorrelationMatrix(
+    input.matrix <- CovarianceAndCorrelationMatrix(
         data = prepared.data$subset.data,
         weights = prepared.data$subset.weights,
         pairwise = missing == "Use partial data (pairwise correlations)",
@@ -111,7 +112,7 @@ FactorAnalysis <- function(data,
 
     if (type == "PCA")
     {
-        results <- psych::principal(input.matrix,
+        results <- principal(input.matrix,
                                       nfactors = n.factors,
                                       rotate = rotation,
                                       covar = !use.correlation,
@@ -132,7 +133,7 @@ FactorAnalysis <- function(data,
             stop(paste0("Do not recognize factor analysis type: ", type))
         }
 
-        results <- psych::fa(input.matrix,
+        results <- fa(input.matrix,
                                nfactors = n.factors,
                                rotate = rotation,
                                covar = !use.correlation,
@@ -201,6 +202,7 @@ print.flipFactorAnalysis <- function(x, ...)
 # A better version of print.loadings from package stats.
 # The standard version prints the wrong thing when there is
 # a single factor and the
+#' @importFrom stats setNames
 #' @export
 print.loadings <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
 {
@@ -219,7 +221,7 @@ print.loadings <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
         }
     }
     cat("\nLoadings:\n")
-    fx <- stats::setNames(format(round(Lambda, digits)), names(Lambda))
+    fx <- setNames(format(round(Lambda, digits)), names(Lambda))
     nc <- nchar(fx[1L], type = "c")
     fx[abs(Lambda) < cutoff] <- paste(rep(" ", nc), collapse = "")
     print(fx, quote = FALSE, ...)
@@ -248,13 +250,15 @@ print.loadings <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
 #' @inheritParams FactorAnalysis
 #'
 #' @return An HTML widget object from plotly containing the Scree Plot.
+#' @importFrom flipStatistics CovarianceAndCorrelationMatrix
+#' @importFrom plotly plot_ly layout
 #' @export
 ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases with missing data", use.correlation = TRUE)
 {
     if (class(x) == "data.frame")
     {
         prepared.data <- prepareDataForFactorAnalysis(data = x, weights = weights, subset = subset, missing = missing)
-        input.matrix <- flipU::CovarianceAndCorrelationMatrix(
+        input.matrix <- CovarianceAndCorrelationMatrix(
             data = prepared.data$subset.data,
             weights = prepared.data$subset.weights,
             pairwise = missing == "Use partial data (pairwise correlations)",
@@ -281,10 +285,10 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     `Component Number` <- 1:length(input.values)
     Eigenvalue <- input.values
 
-    my.plot <- plotly::plot_ly(x = `Component Number`,
+    my.plot <- plot_ly(x = `Component Number`,
                        y = Eigenvalue,
                        mode = "lines+markers")
-    plotly::layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
+    layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
     return(my.plot)
 
 }
@@ -297,7 +301,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #'
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
-#'
+#' @importFrom flipPlots LabeledScatterPlot
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
@@ -323,7 +327,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
         labels <- row.names(x$loadings)
     }
 
-    flipPlots::LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, main = "Component Plot")
+    LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, main = "Component Plot")
 }
 
 
@@ -334,6 +338,8 @@ ComponentPlot <- function(x, show.labels = TRUE)
 #' and missing values removed or imputed as specified by the parameter \code{missing}, and \code{prepared.weights}
 #' which is a nuneric vector containing the weight values that correspond to the remaining cases (or NULL when
 #' the input weight is NULL).
+#' @importFrom  flipImputation Imputation
+#' @importFrom  flipData ExcludeCasesWithCompletelyMissingData ExcludeCasesWithAnyMissingData ErrorIfMissingDataFound
 prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 {
 
@@ -352,15 +358,15 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
     subset.data <- data[subset, ]
     if (missing == "Error if missing data")
     {
-        flipU::ErrorIfMissingDataFound(subset.data)
+        ErrorIfMissingDataFound(subset.data)
     } else if (missing == "Imputation (replace missing values with estimates)") {
-        imputed.data <- flipImputation::Imputation(data)
+        imputed.data <- Imputation(data)
         subset.data <- imputed.data[subset, ]
     } else if (missing == "Exclude cases with missing data") {
         # Ensure only complete responses remain
-        subset.data <- flipU::ExcludeCasesWithAnyMissingData(subset.data)
+        subset.data <- ExcludeCasesWithAnyMissingData(subset.data)
     } else if (missing == "Use partial data (pairwise correlations)") {
-        subset.data <- flipU::ExcludeCasesWithCompletelyMissingData(subset.data)
+        subset.data <- ExcludeCasesWithCompletelyMissingData(subset.data)
     } else {
         stop(paste0("Don't recognize the missing data option", missing))
     }
@@ -403,7 +409,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 #'
 #' @return A data frame with the same dimensions as the data which was
 #'   originally supplied to \code{\link{FactorAnalysis}}.
-#'
+#' @importFrom psych factor.scores
 #' @export
 GenerateScoresFromFactorAnalysis <- function(factor.analysis.object, method = "Regression")
 {
@@ -440,7 +446,7 @@ GenerateScoresFromFactorAnalysis <- function(factor.analysis.object, method = "R
         input.matrix <- factor.analysis.object$covariance.matrix
     }
 
-    weights.matrix <- psych::factor.scores(x = input.matrix, f = factor.analysis.object, method = translated.method)$weights
+    weights.matrix <- factor.scores(x = input.matrix, f = factor.analysis.object, method = translated.method)$weights
 
     # 3 Multiply the scaled data by the weights to produce scores
 
@@ -473,7 +479,8 @@ GenerateScoresFromFactorAnalysis <- function(factor.analysis.object, method = "R
 #'   there is missing data. The value for the sample size that is used is the
 #'   size of the smallest pairwise-complete set of cases among all pairs of
 #'   variables. This is consistent with SPSS.
-#'
+#' @importFrom flipStatistics CovarianceAndCorrelationMatrix
+#' @importFrom psych cortest.bartlett
 #' @export
 
 # For the sample size, use the min sample size of the correlation matrix
@@ -483,7 +490,7 @@ BartlettTestOfSphericity <- function(data,
                          missing = "Exclude cases with missing data")
 {
     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
-    correlation.matrix <- flipU::CovarianceAndCorrelationMatrix(
+    correlation.matrix <- CovarianceAndCorrelationMatrix(
         data = prepared.data$subset.data,
         weights = prepared.data$subset.weights,
         pairwise = missing == "Use partial data (pairwise correlations)",
@@ -504,7 +511,7 @@ BartlettTestOfSphericity <- function(data,
         sample.size <- nrow(prepared.data$subset.data)
     }
 
-    test.results <- psych::cortest.bartlett(correlation.matrix, n = sample.size)
+    test.results <- cortest.bartlett(correlation.matrix, n = sample.size)
     class(test.results) <- "flipBartlett"
 
     return(test.results)

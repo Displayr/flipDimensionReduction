@@ -7,8 +7,16 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
 Suggests:
-    testthat,
-        pysch, flipImputation, ca, flipPlots, plotly, psych, rhtmlMoonPlot, stats
+    testthat
+Imports:
+        ca,
+        flipImputation,
+        flipPlots,
+        flipStatistics,
+        plotly,
+        psych,
+        rhtmlMoonPlot,
+        stats
 Depends:
-    flipU
+    flipData
 RoxygenNote: 5.0.1

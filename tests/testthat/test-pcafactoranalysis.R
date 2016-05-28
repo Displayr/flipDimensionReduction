@@ -1,7 +1,7 @@
 context("Principal Component and Factor Analysis")
 
 # Tests which replicate options available in SPSS
-data(pcaPhoneTestData, package = "flipData")
+data(pcaPhoneTestData, package = "flipExampleData")
 test.data.1 <- pcaPhoneTestData$data.set # Most cases have some missing observations (named "q23 20% Missing" in SPSS file)
 test.data.2 <- pcaPhoneTestData$data.set.original # Most cases do not have missing observations (named "q23" in SPSS file)
 test.weight <- pcaPhoneTestData$weight

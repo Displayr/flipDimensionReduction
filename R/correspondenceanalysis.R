@@ -17,6 +17,8 @@
 #'   variable is provided, any cases with missing values on this variable are
 #'   excluded from the final data file.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
+#' @importFrom flipData GetTidyTwoDimensionalArray
+#' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
@@ -26,8 +28,8 @@ CorrespondenceAnalysis = function(x,
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   ...)
 {
-    x <- flipU::GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
-    x.ca <- ca::ca(x, ...)
+    x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
+    x.ca <- ca(x, ...)
     class(x.ca) <- c("CorrespondenceAnalysis", class(x.ca))
     x.ca$normalization <- normalization
     x.ca$x <- x
@@ -40,6 +42,9 @@ CorrespondenceAnalysis = function(x,
 #' @description Creates a plot displaying the correspondence analysis results.
 #' @param x CorrespondenceAnalysis object.
 #' @param ... further arguments passed to or from other methods.
+#' @import ca
+#' @importFrom flipPlots InteractiveLabeledScatterPlot LabeledScatterPlot CreateInteractiveScatterplotTooltips CreateInteractiveScatterplotTooltips
+#' @importFrom rhtmlMoonPlot moonplot
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
@@ -58,19 +63,19 @@ print.CorrespondenceAnalysis <- function(x, ...)
     groups <- rep(group.names, c(nrow(row.coordinates), nrow(column.coordinates)))
     if (ca.obj$output == "Scatterplot")
     {
-        tooltip.text <- c(flipPlots::CreateInteractiveScatterplotTooltips(x), flipPlots::CreateInteractiveScatterplotTooltips(t(x)))
-        print(flipPlots::InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
+        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x), CreateInteractiveScatterplotTooltips(t(x)))
+        print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
     }
     else if (ca.obj$output == "Moonplot")
     {
         if (ca.obj$normalization != "Row principal")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
-        print(rhtmlMoonPlot::moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
+        print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     }
     else if (ca.obj$output == "ggplot2")
-        print(flipPlots::LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = groups))
+        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = groups))
     else
-        ca:::print.ca(ca.obj, ...)
+        print.ca(ca.obj, ...)
 }
 
 
