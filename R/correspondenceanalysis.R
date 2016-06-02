@@ -57,9 +57,10 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (is.null(group.names))
         group.names <- c("Rows", "Columns")
     groups <- rep(group.names, c(nrow(row.coordinates), nrow(column.coordinates)))
+    x.data <- as.matrix(x$x)
     if (x$output == "Scatterplot")
     {
-        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x$x), CreateInteractiveScatterplotTooltips(t(x$x)))
+        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x.data), CreateInteractiveScatterplotTooltips(t(x.data)))
         print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
     }
     else if (x$output == "Moonplot")
