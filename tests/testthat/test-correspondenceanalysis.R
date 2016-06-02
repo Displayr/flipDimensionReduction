@@ -12,21 +12,19 @@ x.with.labels <- x
 dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet.Coke','Fanta','Lift','Pepsi'),
                                        Attribute=c('Kids', 'Teens',    "Enjoy life",   'Picks you up', 'Refreshes',    'Cheers you up',    'Energy',   'Up-to-date',   'Fun',  'When tired',   'Relax'))
 
-# dimnames(x.with.labels)[[1]][1] <- "NET"
-# dimnames(x.with.labels)[[2]][1] <- "NET"
-# CorrespondenceAnalysis(x.with.labels, row.names.to.remove = NULL,  column.names.to.remove = NULL)
 
-test_that("CorrespondenceAnalysis is OK (mainly GetTidyTwoDimensionalArray)",
-          {
-    expect_error(CorrespondenceAnalysis(x.with.labels, row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-    expect_error(CorrespondenceAnalysis(x), NA)
-    # 3D array with no names
-    z <- array(NA, c(8,11,2))
-    z[,,1] <- x
-    expect_that(CorrespondenceAnalysis(z), throws_error())
-    dimnames(z) <- list(dimnames(x.with.labels)[[1]], dimnames(x.with.labels)[[2]], 1:2)
-    expect_error(suppressWarnings(CorrespondenceAnalysis(z)), NA)
-})
+for (output in c("Scatterplot", "Moonplot", "Text", "ggplot2"))
+    test_that(paste0("CorrespondenceAnalysis is OK (mainly GetTidyTwoDimensionalArray) with ", output),
+              {
+        expect_error(CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
+        expect_error(CorrespondenceAnalysis(x), NA)
+        # 3D array with no names
+        z <- array(NA, c(8,11,2))
+        z[,,1] <- x
+        expect_that(CorrespondenceAnalysis(z, output = output), throws_error())
+        dimnames(z) <- list(dimnames(x.with.labels)[[1]], dimnames(x.with.labels)[[2]], 1:2)
+        expect_error(suppressWarnings(CorrespondenceAnalysis(z, output = output)), NA)
+    })
 
 for (output in c("Scatterplot", "Moonplot", "ggplot2", "Text"))
     test_that(paste("CorrespondenceAnalysis prints", output),

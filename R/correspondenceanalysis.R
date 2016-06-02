@@ -29,12 +29,9 @@ CorrespondenceAnalysis = function(x,
                                   ...)
 {
     x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
-    x.ca <- ca(x, ...)
-    class(x.ca) <- c("CorrespondenceAnalysis", class(x.ca))
-    x.ca$normalization <- normalization
-    x.ca$x <- x
-    x.ca$output <- output
-    x.ca
+    result <- list(x = x, normalization = normalization, output = output, original = ca(x, ...))
+    class(result) <- c("CorrespondenceAnalysis")
+    result
 }
 
 
@@ -48,34 +45,33 @@ CorrespondenceAnalysis = function(x,
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
-    ca.obj <- x
-    normed <- CANormalization(ca.obj, ca.obj$normalization)
+    ca.obj <- x$original
+    normed <- CANormalization(ca.obj, x$normalization)
     singular.values <- round(ca.obj$sv^2, 6)
     variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[1:2]
     column.labels <- paste("Dimension", 1:2, paste0("(", variance.explained, ")"))
     row.coordinates <- normed$row.coordinates
     column.coordinates <- normed$column.coordinates
     coords <- rbind(row.coordinates, column.coordinates)
-    x <- ca.obj$x
-    group.names <- names(dimnames(x))
+    group.names <- names(dimnames(x$x))
     if (is.null(group.names))
         group.names <- c("Rows", "Columns")
     groups <- rep(group.names, c(nrow(row.coordinates), nrow(column.coordinates)))
-    if (ca.obj$output == "Scatterplot")
+    if (x$output == "Scatterplot")
     {
-        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x), CreateInteractiveScatterplotTooltips(t(x)))
+        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x$x), CreateInteractiveScatterplotTooltips(t(x$x)))
         print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
     }
-    else if (ca.obj$output == "Moonplot")
+    else if (x$output == "Moonplot")
     {
-        if (ca.obj$normalization != "Row principal")
+        if (x$normalization != "Row principal")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     }
-    else if (ca.obj$output == "ggplot2")
-        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = groups))
+    else if (x$output == "ggplot2")
+        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = ))
     else
-        print.ca(ca.obj, ...)
+        print(ca.obj, ...)
 }
 
 
