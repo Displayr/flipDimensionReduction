@@ -1,10 +1,10 @@
 Package: flipDimensionReduction
 Type: Package
-Title: Functions for dimension reduction, including correspondence analysis and principal components analysis
+Title: Algorithms for dimension reduction
 Version: 0.1.0
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: person("Tim", "Bock", email = "tim.bock@numbers.net.au", role = c("aut", "cre"))
+Description: Dimension reduction algorithms, using the flip Project conventions.
+License: GPL-3
 LazyData: TRUE
 Suggests:
     testthat

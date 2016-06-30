@@ -70,7 +70,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     }
     else if (x$output == "ggplot2")
-        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = ))
+        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = groups))
     else
         print(ca.obj, ...)
 }
