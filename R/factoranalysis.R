@@ -15,16 +15,165 @@
 # "pcaPhoneTestData"
 
 
+# Currently the factor analysis isn't being included because some results don't
+# match up well with SPSS.
+#
+# #TODO: Add handling of factor and ordered factor variables. This is mostly done in R Factor Analysis,
+# # but there is currently a bug preventing me from wrapping QInputs in a list.
+#
+#
+# #' \code{FactorAnalysis}
+# #'
+# #' @description Calculate a Factor Analysis or Principal Component Analysis
+# #'
+# #' @param data A data frame with numeric columns which contains the data to be
+# #'   analyzed.
+# #' @param weights A numeric vector containing the weight for each case in data.
+# #' @param subset A logical vector which describes the subset of \code{data} to
+# #'   be analyzed.
+# #' @param missing A string specifiying what to do when the \code{data} contains
+# #'   missing values. The valid options are \code{"Error if missing data"},
+# #'   \code{"Exclude cases with missing data"}, \code{"Use partial data (pairwise
+# #'   correlations)"}, and \code{"Imputation (replace missing values with
+# #'   estimates)"}.
+# #' @param use.correlation A logical value specifying whether to use the
+# #'   correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).
+# #' @param type A string specifying the type of analysis to do. Valid options are
+# #'   \code{"PCA"}, \code{"Unweighted least squares"}, \code{"Generalized least
+# #'   squares"}, and \code{"Maximum likelihood"}.
+# #' @param rotation A string specifying the type of rotation to be used. Valid
+# #'   options are  \code{"none"}, \code{"varimax"}, \code{"quartimax"},
+# #'   \code{"bentlerT"}, \code{"equamax"}, \code{"varimin"}, \code{"geominT"},
+# #'   \code{"bifactor"}, \code{"promax"}, \code{"oblimin"}, \code{"simplimax"},
+# #'   \code{"bentlerQ"}, \code{"geominQ"}, \code{"biquartimin"}, and
+# #'   \code{"cluster"}. More details are found in package \code{psych}.
+# #' @param n.factors TODO
+# #' @param sort.coefficients.by.size A logical value determining whether loadings
+# #'   should be sorted when printed.
+# #' @param suppress.small.coefficients TODO
+# #' @param min.display.loading.value Loadings smaller than this value will not be
+# #'   displayed when printed.
+# #' @param print.type A string specifying the type of printing that should be
+# #'   done. Valid options are \code{"table"} to display a loading table,
+# #'   \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
+# #'   plot of the first two dimensions of the final loadings. The latter two
+# #'   options make use of HTML widgets.
+# #' @param plot.labels A logical value which determines whether or not the
+# #'   scatter plot will show the labels of the input data, or just integers
+# #'   specifying the column number of each variable.
+# #'
+# #' @details This function is a wrapper for the functions \code{\link[psych]{fa}}
+# #'   and \code{\link[psych]{principal}} from package \code{psych}. It adds
+# #'   options for handling of missing data, weighting, filtering, and printing.
+# #' @importFrom flipStatistics CovarianceAndCorrelationMatrix
+# #' @importFrom psych principal fa
+# #' @export
+# FactorAnalysis <- function(data,
+#                            weights = NULL,
+#                            subset = NULL,
+#                            missing = "Exclude cases with missing data",
+#                            use.correlation = TRUE,
+#                            type = "PCA",
+#                            rotation = "none",
+#                            n.factors = 1, #Need a new option to allow the user to do this with eigenvalues
+#                            sort.coefficients.by.size = FALSE,
+#                            suppress.small.coefficients = FALSE,
+#                            min.display.loading.value = 0.1,
+#                            print.type = "table",
+#                            plot.labels = TRUE)
+# {
+#
+#     # Generate the data that will be input to the correlation/covariance
+#     # matrix by filtering and imputing if specified.
+#     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
+#
+#     # Work out the number of observations to supply to psych package functions for
+#     # calculation of goodness of fit statistics.
+#     if (!is.null(weights))
+#     {
+#         n.obs <- sum(prepared.data$weights)
+#     } else {
+#         n.obs <- nrow(prepared.data$subset.data)
+#     }
+#
+#     input.matrix <- CovarianceAndCorrelationMatrix(
+#         data = prepared.data$subset.data,
+#         weights = prepared.data$subset.weights,
+#         pairwise = missing == "Use partial data (pairwise correlations)",
+#         use.correlation = use.correlation)
+#
+#     row.names(input.matrix) <- colnames(data)
+#     colnames(input.matrix) <- colnames(data)
+#
+#     # Work out which rotation to use
+#     # Convert from the strings that are to be used in the menus, which begin with upppercase letters
+#     substr(rotation, 1, 1) <- tolower(substr(rotation, 1, 1))
+#
+#     # Call the appropriate method from psych
+#
+#     if (type == "PCA")
+#     {
+#         results <- principal(input.matrix,
+#                                       nfactors = n.factors,
+#                                       rotate = rotation,
+#                                       covar = !use.correlation,
+#                                       scores = TRUE)
+#
+#     }
+#     else
+#     {
+#         # Map SPSS options to psych options
+#         method <- type
+#         # method <- switch(type,
+#         #                  "Unweighted least squares" = "pa",
+#         #                  "Generalized least squares" = "gls",
+#         #                  "Maximum likelihood" = "ml")
+#
+#         if (is.null(method))
+#         {
+#             stop(paste0("Do not recognize factor analysis type: ", type))
+#         }
+#
+#         results <- fa(input.matrix,
+#                                nfactors = n.factors,
+#                                rotate = rotation,
+#                                covar = !use.correlation,
+#                                fm = method,
+#                                scores = TRUE)
+#
+#     }
+#
+#
+#     # Transform original variables to a new set of variables if needed
+#
+#
+#
+#     # Add additional details to the output object
+#     results$sort.coefficients.by.size <- sort.coefficients.by.size
+#     results$suppress.small.coefficients <- suppress.small.coefficients
+#     results$original.data <- data
+#     results$original.weights <- weights
+#     results$data.used <- prepared.data
+#     results$use.correlation <- use.correlation
+#     results$print.type <- print.type
+#     results$plot.labels <- plot.labels
+#     if (use.correlation)
+#     {
+#         results$correlation.matrix <- input.matrix
+#     }
+#     else
+#     {
+#         results$covariance.matrix <- input.matrix
+#     }
+#
+#     class(results) <- "flipFactorAnalysis"
+#     # Return
+#     return(results)
+# }
 
 
-#TODO: Add handling of factor and ordered factor variables. This is mostly done in R Factor Analysis,
-# but there is currently a bug preventing me from wrapping QInputs in a list.
-
-
-#' \code{FactorAnalysis}
-#'
-#' @description Calculate a Factor Analysis or Principal Component Analysis
-#'
+#' \code{PrincipalComponentsAnalysis}
+#' @description Calculate a Principal Component Analysis
 #' @param data A data frame with numeric columns which contains the data to be
 #'   analyzed.
 #' @param weights A numeric vector containing the weight for each case in data.
@@ -37,23 +186,23 @@
 #'   estimates)"}.
 #' @param use.correlation A logical value specifying whether to use the
 #'   correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).
-#' @param type A string specifying the type of analysis to do. Valid options are
-#'   \code{"PCA"}, \code{"Unweighted least squares"}, \code{"Generalized least
-#'   squares"}, and \code{"Maximum likelihood"}.
 #' @param rotation A string specifying the type of rotation to be used. Valid
 #'   options are  \code{"none"}, \code{"varimax"}, \code{"quartimax"},
-#'   \code{"bentlerT"}, \code{"equamax"}, \code{"varimin"}, \code{"geominT"},
-#'   \code{"bifactor"}, \code{"promax"}, \code{"oblimin"}, \code{"simplimax"},
-#'   \code{"bentlerQ"}, \code{"geominQ"}, \code{"biquartimin"}, and
-#'   \code{"cluster"}. More details are found in package \code{psych}.
-#' @param n.factors TODO
+#'   \code{"equamax"}, \code{"promax"}, and \code{"oblimin"}.
+#' @param oblimin.delta A parameter supplied for oblimin rotations.
+#' @param promax.kappa A parameter supplied for promax rotations.
+#' @param n.factors An integer specifying the number of principal components to keep.
 #' @param sort.coefficients.by.size A logical value determining whether loadings
 #'   should be sorted when printed.
-#' @param suppress.small.coefficients TODO
+#' @param suppress.small.coefficients A logical value specifying whether components
+#' that are less than \code{min.display.loading.value} in magnitude will be replaced
+#' with blanks when printing.
 #' @param min.display.loading.value Loadings smaller than this value will not be
 #'   displayed when printed.
 #' @param print.type A string specifying the type of printing that should be
-#'   done. Valid options are \code{"table"} to display a loading table,
+#'   done. Valid options are \code{"loadings"} to display a (rotated) loading table,
+#'   \code{"structure"} to display a component structure matrix (which is the loadings
+#'   multiplied by the component correlations),
 #'   \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
 #'   plot of the first two dimensions of the final loadings. The latter two
 #'   options make use of HTML widgets.
@@ -61,181 +210,225 @@
 #'   scatter plot will show the labels of the input data, or just integers
 #'   specifying the column number of each variable.
 #'
-#' @details This function is a wrapper for the functions \code{\link[psych]{fa}}
-#'   and \code{\link[psych]{principal}} from package \code{psych}. It adds
-#'   options for handling of missing data, weighting, filtering, and printing.
-#' @importFrom flipStatistics CovarianceAndCorrelationMatrix
-#' @importFrom psych principal fa
+#' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
+#' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
+#' rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
+#' Includes handling of missing data, weighting, and filtering.
+#' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
+#' @importFrom psych principal factor.scores
 #' @export
-FactorAnalysis <- function(data,
-                           weights = NULL,
-                           subset = NULL,
-                           missing = "Exclude cases with missing data",
-                           use.correlation = TRUE,
-                           type = "PCA",
-                           rotation = "none",
-                           n.factors = 1, #Need a new option to allow the user to do this with eigenvalues
-                           sort.coefficients.by.size = FALSE,
-                           suppress.small.coefficients = FALSE,
-                           min.display.loading.value = 0.1,
-                           print.type = "table",
-                           plot.labels = TRUE)
+PrincipalComponentsAnalysis <- function(data,
+                               weights = NULL,
+                               subset = NULL,
+                               missing = "Exclude cases with missing data",
+                               use.correlation = TRUE,
+                               rotation = "none",
+                               oblimin.delta = 0,
+                               promax.kappa = 4,
+                               n.factors = 1,
+                               sort.coefficients.by.size = FALSE,
+                               suppress.small.coefficients = FALSE,
+                               min.display.loading.value = 0.1,
+                               print.type = "loadings",
+                               plot.labels = TRUE)
 {
 
     # Generate the data that will be input to the correlation/covariance
     # matrix by filtering and imputing if specified.
     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
 
-    # Work out the number of observations to supply to psych package functions for
-    # calculation of goodness of fit statistics.
-    if (!is.null(weights))
-    {
-        n.obs <- sum(prepared.data$weights)
-    } else {
-        n.obs <- nrow(prepared.data$subset.data)
-    }
+    correlation.matrix <- CovarianceAndCorrelationMatrix(data = prepared.data$subset.data,
+                                                         weights = prepared.data$subset.weights,
+                                                         pairwise = missing == "Use partial data (pairwise correlations)",
+                                                         use.correlation = TRUE)
 
-    input.matrix <- CovarianceAndCorrelationMatrix(
-        data = prepared.data$subset.data,
-        weights = prepared.data$subset.weights,
-        pairwise = missing == "Use partial data (pairwise correlations)",
-        use.correlation = use.correlation)
+    # SPSS computes the covariance matrix that it uses as an imput to PCA
+    # by first calculating the pairwise correlation matrix and then
+    # scaling by the products of the standard deviations of each pair of
+    # variables. When there is no missing data this ought to match the
+    # covariance matrix which would be computed by the usual covariance
+    # formula, but when there is missing data the two results will differ.
+    stddevs <- StandardDeviation(prepared.data$subset.data, weights = prepared.data$subset.weights)
+    stdmat <- matrix(rep(stddevs, n.factors), ncol = n.factors)
+    if (!use.correlation)
+    {
+        input.matrix <- correlation.matrix * stddevs %o% stddevs
+    } else {
+        input.matrix <- correlation.matrix
+    }
 
     row.names(input.matrix) <- colnames(data)
     colnames(input.matrix) <- colnames(data)
+
+    # Unrotated loadings
+    # Don't return all of the properties returned by
+    # principal() as they are not designed to account
+    # for weighting
+    initial.results <- principal(input.matrix,
+                                 nfactors = n.factors,
+                                 rotate = "none",
+                                 covar = !use.correlation,
+                                 scores = FALSE)
+    unrotated.loadings <- initial.results$loadings
+    loadings <- unrotated.loadings
 
     # Work out which rotation to use
     # Convert from the strings that are to be used in the menus, which begin with upppercase letters
     substr(rotation, 1, 1) <- tolower(substr(rotation, 1, 1))
 
-    # Call the appropriate method from psych
+    oblique.rotation <- rotation == "oblimin" || rotation == "promax"
 
-    if (type == "PCA")
+    # Rotate the loadings
+    if (rotation != "none")
     {
-        results <- principal(input.matrix,
-                                      nfactors = n.factors,
-                                      rotate = rotation,
-                                      covar = !use.correlation,
-                                      scores = TRUE)
-
-    }
-    else
-    {
-        # Map SPSS options to psych options
-        method <- type
-        # method <- switch(type,
-        #                  "Unweighted least squares" = "pa",
-        #                  "Generalized least squares" = "gls",
-        #                  "Maximum likelihood" = "ml")
-
-        if (is.null(method))
+        rotation.results <- RotateLoadings(unrotated.loadings,
+                                           rotation = rotation,
+                                           delta = oblimin.delta,
+                                           kappa = promax.kappa,
+                                           covar = !use.correlation,
+                                           stds = stddevs)
+        rotated.loadings <- rotation.results$rotated.loadings
+        loadings <- rotated.loadings
+        if (oblique.rotation)
         {
-            stop(paste0("Do not recognize factor analysis type: ", type))
+            structure.matrix <- rotation.results$structure.matrix
+        } else {
+            structure.matrix <- rotated.loadings
         }
+        component.correlations <- rotation.results$component.correlations
+        colnames(structure.matrix) <- colnames(loadings)
 
-        results <- fa(input.matrix,
-                               nfactors = n.factors,
-                               rotate = rotation,
-                               covar = !use.correlation,
-                               fm = method,
-                               scores = TRUE)
+    } else {
+        loadings <- unrotated.loadings
+        rotated.loadings <- unrotated.loadings
+        structure.matrix <- loadings
+        component.correlations <- NULL
+    }
+    comp.names <- colnames(unrotated.loadings)
+    colnames(rotated.loadings) <- comp.names
+    colnames(structure.matrix) <- comp.names
+    colnames(loadings) <- comp.names
+    if (!is.null(component.correlations))
+    {
+        rownames(component.correlations) <- comp.names
+        colnames(component.correlations) <- comp.names
+    }
 
+    # Rescale the loadings
+    raw.loadings <- loadings
+    raw.unrotated.loadings <- unrotated.loadings
+    raw.rotated.loadings <- rotated.loadings
+    raw.structure.matrix <- structure.matrix
+    if (!use.correlation)
+    {
+        loadings <- loadings/stdmat
+        unrotated.loadings <- unrotated.loadings/stdmat
+        rotated.loadings <- rotated.loadings/stdmat
+        structure.matrix <- structure.matrix/stdmat
+    }
+
+    # Generate score weights using the regression method.
+    # For PCA, all methods give the same answer as scores
+    # are well-defined, so there is no need to use Bartlett
+    # or Anderson.
+
+    # For oblique rotations, use structure matrix
+    # otherwise use pattern matrix
+    if (rotation == "promax" || rotation == "oblimin")
+    {
+        S <- structure.matrix
+    } else {
+        S <- loadings
+    }
+
+    score.weights <- solve(correlation.matrix, S)
+
+    # Original data is scaled befor generating scores
+    if (!is.null(weights))
+    {
+        scaled.data <- scaleDataUsingWeights(data = prepared.data$subset.data, weights = prepared.data$subset.weights)
+    } else
+    {
+        scaled.data <- scale(prepared.data$subset.data)
+    }
+
+    # Multiply the scaled data by the weights to produce scores
+    scores <- as.matrix(scaled.data) %*% score.weights
+
+    # Fill out any additional cases with missing values, so that the size of the output scores
+    # matches the number of respondents in the original data set, and that the cases are
+    # matched up correctly
+    new.data <- matrix(NA, nrow = nrow(data), ncol = ncol(scores))
+    row.names(new.data) <- row.names(data)
+    colnames(new.data) <- colnames(scores)
+    new.data[which(row.names(new.data) %in% row.names(scores)), ] <- scores
+    scores <- new.data
+
+
+    # Communalities
+    initial.communalities <- diag(input.matrix)
+    extracted.communalities <- initial.results$communality
+    if (!use.correlation)
+    {
+        rescaled.initial.communalities <- rep(1, nrow(input.matrix))
+        rescaled.extracted.communalities <- rowSums(as.matrix(unrotated.loadings)^2)
+    }
+
+    # Variance explained by factors
+
+
+    # Results
+    results <- list()
+    results$unrotated.loadings <- unrotated.loadings
+    if (rotation != "none")
+    {
+        results$rotated.loadings <- rotated.loadings
     }
 
 
-    # Transform original variables to a new set of variables if needed
+    results$loadings <- loadings
+    results$structure.matrix <- structure.matrix
 
+    results$raw.loadings <- raw.loadings
+    results$raw.unrotated.loadings <- raw.unrotated.loadings
+    results$raw.rotated.loadings <- raw.rotated.loadings
+    results$raw.structure.matrix <- raw.structure.matrix
+    results$unrotated.loadings <- unrotated.loadings
+    results$rotated.loadings <- rotated.loadings
 
-
-    # Add additional details to the output object
     results$sort.coefficients.by.size <- sort.coefficients.by.size
     results$suppress.small.coefficients <- suppress.small.coefficients
+    results$min.display.loading.value <- min.display.loading.value
     results$original.data <- data
     results$original.weights <- weights
     results$data.used <- prepared.data
     results$use.correlation <- use.correlation
     results$print.type <- print.type
     results$plot.labels <- plot.labels
-    if (use.correlation)
+    results$input.matrix <- input.matrix
+    results$values <- initial.results$values
+    results$scores <- scores
+    results$score.weights <- score.weights
+    results$rotation <- rotation
+    results$missing <- missing
+    results$component.correlations <- component.correlations
+
+
+
+    results$initial.communalities <- initial.communalities
+    results$extracted.communalities <- extracted.communalities
+    if (!use.correlation)
     {
-        results$correlation.matrix <- input.matrix
-    }
-    else
-    {
-        results$covariance.matrix <- input.matrix
+        results$rescaled.initial.communalities <- rescaled.initial.communalities
+        results$rescaled.extracted.communalities  <- rescaled.extracted.communalities
     }
 
+
     class(results) <- "flipFactorAnalysis"
-    # Return
     return(results)
 }
 
-#' @export
-print.flipFactorAnalysis <- function(x, ...)
-{
-    # TODO:
-    # Make a nice print function which allows us to easily compare results with SPSS
-    # Figure out how SPSS sorts it's component matrix
 
-    if (x$print.type == "table")
-    {
-        if (x$suppress.small.coefficients)
-        {
-            min.display.loading.value <- x$min.display.loading.value
-        }
-        else
-        {
-            min.display.loading.value <- 0
-        }
-
-        print(x$loadings,
-              digits = 3,
-              cutoff = min.display.loading.value,
-              sort = x$sort.coefficients.by.size)
-    } else if (x$print.type == "scree") {
-        print(ScreePlot(x))
-    } else {
-        print(ComponentPlot(x))
-    }
-}
-
-# A better version of print.loadings from package stats.
-# The standard version prints the wrong thing when there is
-# a single factor and the
-#' @importFrom stats setNames
-#' @export
-print.loadings <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
-{
-    Lambda <- unclass(x)
-    p <- nrow(Lambda)
-    factors <- ncol(Lambda)
-    if (sort) {
-        mx <- max.col(abs(Lambda))
-        ind <- cbind(1L:p, mx)
-        mx[abs(Lambda[ind]) < 0.5] <- factors + 1
-        Lambda <- Lambda[order(mx, 1L:p), ]
-        if (class(Lambda) == "numeric")
-        {
-            Lambda <- as.matrix(Lambda)
-            colnames(Lambda) <- colnames(x)
-        }
-    }
-    cat("\nLoadings:\n")
-    fx <- setNames(format(round(Lambda, digits)), names(Lambda))
-    nc <- nchar(fx[1L], type = "c")
-    fx[abs(Lambda) < cutoff] <- paste(rep(" ", nc), collapse = "")
-    print(fx, quote = FALSE, ...)
-    vx <- colSums(x^2)
-    varex <- rbind(`SS loadings` = vx)
-    if (is.null(attr(x, "covariance"))) {
-        varex <- rbind(varex, `Proportion Var` = vx/p)
-        if (factors > 1)
-            varex <- rbind(varex, `Cumulative Var` = cumsum(vx/p))
-    }
-    cat("\n")
-    print(round(varex, digits))
-    invisible(x)
-}
 
 
 #' \code{ScreePlot}
@@ -244,10 +437,10 @@ print.loadings <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ...)
 #'   matrix of a data frame.
 #' @param x Either a data frame, a numeric vector of eigenvalues, or the
 #'   eigenvalues from an analysis of class \code{flipFactorAnalysis} from
-#'   \code{\link{FactorAnalysis}}, or \code{fa} or \code{principal} from package
+#'   \code{\link{PrincipalComponentsAnalysis}}, or \code{fa} or \code{principal} from package
 #'   psych. When x is a data frame, additional arguments can be supplied as to
 #'   how to compute the covariance or correlation matrix.
-#' @inheritParams FactorAnalysis
+#' @inheritParams PrincipalComponentsAnalysis
 #'
 #' @return An HTML widget object from plotly containing the Scree Plot.
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix
@@ -290,7 +483,6 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
                        mode = "lines+markers")
     layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
     return(my.plot)
-
 }
 
 
@@ -305,6 +497,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
+    print(paste0("show.labels: ", show.labels))
     if (is.null(x$loadings))
     {
         stop("Input should be created by Data Reduction - Factor Analysis or Data Reduction - Principal Components Analysis")
@@ -326,14 +519,15 @@ ComponentPlot <- function(x, show.labels = TRUE)
         }
         labels <- row.names(x$loadings)
     }
-
-    LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, main = "Component Plot")
+    print("labels:")
+    print(labels)
+    LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, title = "Component Plot", fixed.aspect = TRUE)
 }
 
 
 #' \code{prepareDataForFactorAnalysis}
 #' @description Filter data, remove cases with missing values, and impute where requested.
-#' @inheritParams FactorAnalysis
+#' @inheritParams PrincipalComponentsAnalysis
 #' @return A list containing \code{subset.data}, which is a data frame which has had subset applied
 #' and missing values removed or imputed as specified by the parameter \code{missing}, and \code{prepared.weights}
 #' which is a nuneric vector containing the weight values that correspond to the remaining cases (or NULL when
@@ -360,7 +554,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
     {
         ErrorIfMissingDataFound(subset.data)
     } else if (missing == "Imputation (replace missing values with estimates)") {
-        imputed.data <- Imputation(data)
+        imputed.data <- Imputation(data)[[1]]
         subset.data <- imputed.data[subset, ]
     } else if (missing == "Exclude cases with missing data") {
         # Ensure only complete responses remain
@@ -383,94 +577,95 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 }
 
 
-#' \code{GenerateScoresFromFactorAnalysis}
-#'
-#' @description Generates a set of scores from a factor analysis or principal
-#'   component analysis, which is a new set of data corresponding to the
-#'   principal components or factors.
-#'
-#' @param factor.analysis.object The results of a factor analysis or principal
-#'   component analysis that was done using \code{\link{FactorAnalysis}}. This
-#'   provides the loadings, the raw data to transform, as well as weights and
-#'   subset information.
-#' @param method A string describing the method to use to obtain the scores. The
-#'   allowed options are \code{Regression}, \code{Bartlett}, and
-#'   \code{Anderson-Rubin}, and these map to the options used by package psych
-#'   \code{Thurstone}, \code{Bartlett}, and \code{Anderson} respectively.
-#'
-#' @details This function provides a wrapper for the function
-#'   \code{factor.scores} from package psych. It adds functionality to handle
-#'   the presence of weights. Where weights are specified the input data is
-#'   standardized using the weighted standard deviation and mean. The data that
-#'   is used to generate the scores is the same as that used to generate the
-#'   factor analysis or PCA. That is, the original subset is is used, if
-#'   imputation was specified originally, then the imputed data is used,
-#'   otherwise all cases which are not completely missing are used.
-#'
-#' @return A data frame with the same dimensions as the data which was
-#'   originally supplied to \code{\link{FactorAnalysis}}.
-#' @importFrom psych factor.scores
-#' @export
-GenerateScoresFromFactorAnalysis <- function(factor.analysis.object, method = "Regression")
-{
-    if (class(factor.analysis.object) != "flipFactorAnalysis")
-    {
-        stop("Input should be an object generated by FactorAnalysis")
-    }
-
-    # Convert the method names that we are offering, which match those in SPSS, to the equivalent
-    # names used by psych
-    translated.method <- switch(method, "Regression" = "Thurstone", "Bartlett" = "Bartlett", "Anderson-Rubin" = "Anderson")
-
-    # 1 Scale the data. Weight is used if present
-
-    subset.data <- factor.analysis.object$data.used$subset.data
-    subset.weights <- factor.analysis.object$data.used$subset.weights
-
-    if (!is.null(factor.analysis.object$original.weights))
-    {
-        scaled.data <- scaleDataUsingWeights(data = subset.data, weights = subset.weights)
-    } else
-    {
-        scaled.data <- scale(subset.data)
-    }
-
-    # 2 Generate the weights using factor.scores, using the correlation or covariance matrix and the loadings
-    #   from the factor analysis object
-
-    if (factor.analysis.object$use.correlation)
-    {
-        input.matrix <- factor.analysis.object$correlation.matrix
-    } else
-    {
-        input.matrix <- factor.analysis.object$covariance.matrix
-    }
-
-    weights.matrix <- factor.scores(x = input.matrix, f = factor.analysis.object, method = translated.method)$weights
-
-    # 3 Multiply the scaled data by the weights to produce scores
-
-    scores <- as.matrix(scaled.data) %*% weights.matrix
-
-    # 4 Fill out any additional cases with missing values, so that the size of the output scores
-    #   matches the number of respondents in the original data set, and that the cases are
-    #   matched up correctly
-
-    original.data <- factor.analysis.object$original.data
-    new.data <- matrix(NaN, nrow = nrow(original.data), ncol = ncol(scores))
-    row.names(new.data) <- row.names(original.data)
-    colnames(new.data) <- colnames(scores)
-    new.data[which(row.names(new.data) %in% row.names(scores)), ] <- scores
-
-    return(as.data.frame(new.data))
-}
+# This function has not been tested for factor analysis.
+# It gives the wrong results for Principal Components Analysis,
+# where the factor scores should be the same for the three
+# methods "Regression", "Bartlett", and "Anderson-Rubin". The
+# function I used, psych::factor.scores gives different results
+# for the three methods, leading me to think that something is
+# wrong./
+# #' \code{GenerateScoresFromFactorAnalysis}
+# #'
+# #' @description Generates a set of scores from a factor analysis or principal
+# #'   component analysis, which is a new set of data corresponding to the
+# #'   principal components or factors.
+# #'
+# #' @param factor.analysis.object The results of a factor analysis or principal
+# #'   component analysis that was done using \code{\link{FactorAnalysis}}. This
+# #'   provides the loadings, the raw data to transform, as well as weights and
+# #'   subset information.
+# #' @param method A string describing the method to use to obtain the scores. The
+# #'   allowed options are \code{Regression}, \code{Bartlett}, and
+# #'   \code{Anderson-Rubin}, and these map to the options used by package psych
+# #'   \code{Thurstone}, \code{Bartlett}, and \code{Anderson} respectively.
+# #'
+# #' @details This function provides a wrapper for the function
+# #'   \code{factor.scores} from package psych. It adds functionality to handle
+# #'   the presence of weights. Where weights are specified the input data is
+# #'   standardized using the weighted standard deviation and mean. The data that
+# #'   is used to generate the scores is the same as that used to generate the
+# #'   factor analysis or PCA. That is, the original subset is is used, if
+# #'   imputation was specified originally, then the imputed data is used,
+# #'   otherwise all cases which are not completely missing are used.
+# #'
+# #' @return A data frame with the same dimensions as the data which was
+# #'   originally supplied to \code{\link{FactorAnalysis}}.
+# #' @importFrom psych factor.scores
+# #' @export
+# GenerateScoresFromFactorAnalysis <- function(factor.analysis.object, method = "Regression")
+# {
+#     if (class(factor.analysis.object) != "flipFactorAnalysis")
+#     {
+#         stop("Input should be an object generated by FactorAnalysis")
+#     }
+#
+#     # Convert the method names that we are offering, which match those in SPSS, to the equivalent
+#     # names used by psych
+#     translated.method <- switch(method, "Regression" = "Thurstone", "Bartlett" = "Bartlett", "Anderson-Rubin" = "Anderson")
+#
+#     # 1 Scale the data. Weight is used if present
+#
+#     subset.data <- factor.analysis.object$data.used$subset.data
+#     subset.weights <- factor.analysis.object$data.used$subset.weights
+#
+#     if (!is.null(factor.analysis.object$original.weights))
+#     {
+#         scaled.data <- scaleDataUsingWeights(data = subset.data, weights = subset.weights)
+#     } else
+#     {
+#         scaled.data <- scale(subset.data)
+#     }
+#
+#     # 2 Generate the weights using factor.scores, using the correlation or covariance matrix and the loadings
+#     #   from the factor analysis object
+#
+#     input.matrix <- factor.analysis.object$input.matrix
+#
+#     weights.matrix <- factor.scores(input.matrix, f = factor.analysis.object, method = translated.method)$weights
+#
+#     # 3 Multiply the scaled data by the weights to produce scores
+#
+#     scores <- as.matrix(scaled.data) %*% weights.matrix
+#
+#     # 4 Fill out any additional cases with missing values, so that the size of the output scores
+#     #   matches the number of respondents in the original data set, and that the cases are
+#     #   matched up correctly
+#
+#     original.data <- factor.analysis.object$original.data
+#     new.data <- matrix(NaN, nrow = nrow(original.data), ncol = ncol(scores))
+#     row.names(new.data) <- row.names(original.data)
+#     colnames(new.data) <- colnames(scores)
+#     new.data[which(row.names(new.data) %in% row.names(scores)), ] <- scores
+#
+#     return(as.data.frame(new.data))
+# }
 
 #' \code{BartlettTestOfSphericity}
 #'
 #' @description Conduct the Bartlett Test of Sphericity for a set of data, which
 #'   tests that the correlation matrix of the data is not the identity matrix.
 #' @param data A data frame containing the data to test.
-#' @inheritParams FactorAnalysis
+#' @inheritParams PrincipalComponentsAnalysis
 #' @return A list containing the Chi-Square value, degrees of freedom
 #'   (\code{df}), and p-value for the test.
 #' @details This function wraps \code{\link[psych]{cortest.bartlett}}. In
@@ -506,11 +701,11 @@ BartlettTestOfSphericity <- function(data,
         sample.size <- min(sample.size.matrix)
     } else if (!is.null(weights))
     {
-        sample.size <- sum(prepared.data$weights)
+        sample.size <- sum(prepared.data$subset.weights)
+
     } else {
         sample.size <- nrow(prepared.data$subset.data)
     }
-
     test.results <- cortest.bartlett(correlation.matrix, n = sample.size)
     class(test.results) <- "flipBartlett"
 

@@ -10,7 +10,7 @@ ScreePlot(x, weights = NULL, subset = NULL,
 \arguments{
 \item{x}{Either a data frame, a numeric vector of eigenvalues, or the
 eigenvalues from an analysis of class \code{flipFactorAnalysis} from
-\code{\link{FactorAnalysis}}, or \code{fa} or \code{principal} from package
+\code{\link{PrincipalComponentsAnalysis}}, or \code{fa} or \code{principal} from package
 psych. When x is a data frame, additional arguments can be supplied as to
 how to compute the covariance or correlation matrix.}
 
