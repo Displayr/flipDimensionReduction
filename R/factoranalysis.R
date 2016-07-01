@@ -769,3 +769,54 @@ sampleSizeMatrix <- function(data, weights)
     }
     return(sample.size.matrix)
 }
+
+# Convert a variable to the appropriate form for use in a PCA.
+# - Numeric variables are unchanged.
+# - Ordered factors are replaced with their levels
+# - Non-ordered factors are converted to a set of indicator variables
+# with one variable for each level but the first.
+#' @importFrom flipTransformations FactorToNumeric
+convertVariableForFactorAnalysis <- function(variable)
+{
+    if (is.numeric(variable))
+    {
+        return(variable)
+    }
+
+    if (is.ordered(variable))
+    {
+        return(unclass(variable))
+    }
+
+    # Non-ordered factors
+    vn <- attr(variable, "question")
+    if (is.null(vn))
+    {
+        vn <- deparse(substitute(x))
+    }
+    indicator.matrix <- FactorToNumeric(variable, variable.name = vn)
+    if (ncol(indicator.matrix) > 2)
+    {
+        indicator.matrix <- indicator.matrix[, 2:ncol(indicator.matrix)]
+    } else if (ncol(indicator.matrix) == 2) {
+        cn <- colnames(indicator.matrix)[2]
+        indicator.matrix <- as.matrix(indicator.matrix[,2])
+        colnames(indicator.matrix) <- cn
+    }
+    return(indicator.matrix)
+}
+
+#' \code{ConvertVariablesForFactorAnalysis}
+#' @description Convert variables to the appropriate form for use in PCA or Factor Analysis
+#' @param variables A list of variables that you want to include in your analysis.
+#' @details Numeric variables are unchanged. Ordered factors are replaced with a numeric
+#' variable containing their levels. Non-ordered factors are converted to a set of indicator
+#' (binary) variables with one variable for each level but the first.
+ConvertVariablesForFactorAnalysis <- function(variables) {
+    .is.non.ordered.factor <- function(x) { return(is.factor(x) && !is.ordered(x))}
+    if (any(sapply(variables, .is.non.ordered.factor)))
+    {
+        warning("One or more of the inputs are non-ordered factors. They will be converted to binary variables and the first level will be excluded. Consider supplying numeric variables.")
+    }
+    return(as.data.frame(lapply(variables, convertVariableForFactorAnalysis), optional = TRUE))
+}

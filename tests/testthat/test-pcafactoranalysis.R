@@ -409,7 +409,7 @@ for (print.type in c("loadings", "structure", "Component Plot", "details"))
                                                                          use.correlation = use.correlation,
                                                                          suppress.small.coefficients = TRUE,
                                                                          sort.coefficients.by.size = TRUE), NA)
-                    expect_error(print(test.pca), NA)
+                    expect_error(capture.output(print(test.pca)), NA) #capture.output is used to suppress the contents of the printing as I only want to check that the prints don't generate an error
                 })
             }
 
@@ -463,6 +463,19 @@ test_that("Imputation", {
                                               suppress.small.coefficients = TRUE)
     expect_equal(test.pca$loadings[4,3], 0.172050972343564)
 
+})
+
+test_that("Converting factors for use in PCA", {
+
+    test.data <- test.data.2[,1:10]
+    test.data[,1] <- as.factor(test.data[,1])
+    test.data[,2] <- as.ordered(test.data[,2])
+    converted.data <- ConvertVariablesForFactorAnalysis(test.data)
+    expect_error(test.pca <- PrincipalComponentsAnalysis(data = converted.data,
+                                                         missing = "Exclude cases with missing data",
+                                                         n.factors = 5,
+                                                         print.type = "details"), NA)
+    expect_equal(test.pca$loadings[1,1], 0.2634458429558) #Value when we conduct this analysis in Q with the first variable exploded as binary variables (excluding the first level)
 })
 
 
