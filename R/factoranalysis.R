@@ -812,6 +812,7 @@ convertVariableForFactorAnalysis <- function(variable)
 #' @details Numeric variables are unchanged. Ordered factors are replaced with a numeric
 #' variable containing their levels. Non-ordered factors are converted to a set of indicator
 #' (binary) variables with one variable for each level but the first.
+#' @export
 ConvertVariablesForFactorAnalysis <- function(variables) {
     .is.non.ordered.factor <- function(x) { return(is.factor(x) && !is.ordered(x))}
     if (any(sapply(variables, .is.non.ordered.factor)))
