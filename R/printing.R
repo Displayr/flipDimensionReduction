@@ -52,9 +52,31 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         print.type <- "loadings"
     } else if (print.type == "Structure Matrix") {
         print.type <- "structure"
-    } else if (print.type == "Details") {
+    } else if (print.type == "Detailed Output") {
         print.type <- "details"
     }
+
+    # Work out caption information. This is shared between a number of print types
+    caption.info <- list()
+    if (x$use.correlation)
+    {
+        caption.info$correlation <- "Input: Correlation matrix"
+    } else {
+        caption.info$correlation <- "Input: Covariance matrix"
+    }
+    caption.info$missing <- paste0("Missing data setting: ", x$missing)
+
+    if (x$missing == "Use partial data (pairwise correlations)" || x$missing == "pairwise")
+    {
+        min.sample <- length(which(!is.na(rowSums(x$data.used$subset.data))))
+        max.sample <- nrow(x$data.used$subset.data)
+        caption.info$sample <- paste0("Sample size: ", min.sample, " to ", max.sample)
+
+    } else {
+        caption.info$sample <- paste0("Sample size: ", nrow(x$data.used$subset.data))
+    }
+    caption.info$rotation <- paste0("Rotation: ", x$rotation)
+
 
     if (print.type == "scree" || print.type == "Scree Plot") {
         print(ScreePlot(x))
@@ -110,6 +132,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                 printed.matrix <- tidied.structure.matrix
                 table.caption <- structure.caption
             }
+            table.caption <- paste(c(table.caption, unlist(caption.info)), collapse = "; ")
             dt <- DataTableWithRItemFormat(as.data.frame(printed.matrix),
                                            caption = table.caption,
                                            allow.length.change = FALSE,
@@ -119,31 +142,15 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                                            header.alignments = rep("right", ncol(printed.matrix)))
             print(dt)
         } else if (print.type == "details") {
+            nvar <- ncol(x$original.data)
             # Analysis Information
             # - Missing data setting
             # - Sample size(s)
             # - Is weighted
             # - Used a correlation or covariance matrix
-            nvar <- ncol(x$original.data)
-            cat("Principal Components Analysis\r\n")
-            if (x$use.correlation)
-            {
-                cat("Input: Correlation matrix\r\n")
-            } else {
-                cat("Input: Covariance matrix\r\n")
-            }
-            cat(paste0("Missing data setting: ", x$missing, "\r\n"))
-            if (x$missing == "Use partial data (pairwise correlations)" || x$missing == "pairwise")
-            {
-                min.sample <- length(which(!is.na(rowSums(x$data.used$subset.data))))
-                max.sample <- nrow(x$data.used$subset.data)
-                cat("Sample size: ", min.sample, " to ", max.sample, "\r\n")
-
-            } else {
-                cat(paste0("Sample size: ", nrow(x$data.used$subset.data), "\r\n"))
-            }
-            cat(paste0("Rotation: ", x$rotation, "\r\n"))
-            cat("\r\n")
+            cat("Principal Components Analysis\r\n\r\n")
+            cat(paste(unlist(caption.info), collapse = "\r\n"))
+            cat("\r\n\r\n")
 
             # Loading table
             cat(paste0(loadings.caption, ":\r\n\r\n"))
