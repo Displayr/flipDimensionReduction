@@ -776,7 +776,7 @@ sampleSizeMatrix <- function(data, weights)
 # - Non-ordered factors are converted to a set of indicator variables
 # with one variable for each level but the first.
 #' @importFrom flipTransformations FactorToNumeric
-convertVariableForFactorAnalysis <- function(variable)
+convertVariableForFactorAnalysis <- function(variable, include.question.name = TRUE)
 {
     if (is.numeric(variable))
     {
@@ -789,7 +789,13 @@ convertVariableForFactorAnalysis <- function(variable)
     }
 
     # Non-ordered factors
-    vn <- attr(variable, "question")
+#     if (include.question.name)
+#     {
+#         vn <- paste0(attr(variable, "question"), ":", attr(variable, "label"))
+#     } else {
+#         vn <- attr(variable, "label")
+#     }
+    vn <- attr(variable, "label")
     if (is.null(vn))
     {
         vn <- deparse(substitute(x))
@@ -813,11 +819,42 @@ convertVariableForFactorAnalysis <- function(variable)
 #' variable containing their levels. Non-ordered factors are converted to a set of indicator
 #' (binary) variables with one variable for each level but the first.
 #' @export
-ConvertVariablesForFactorAnalysis <- function(variables) {
+ConvertVariablesForFactorAnalysis <- function(variables)
+{
     .is.non.ordered.factor <- function(x) { return(is.factor(x) && !is.ordered(x))}
+    .recreateQVariableLabel <- function(variable, include.question.name = TRUE, delimiter = ":")
+    {
+        if (.is.non.ordered.factor(variable)) {
+            return("")
+        }
+
+        new.label = attr(variable, "label")
+        if (include.question.name)
+        {
+            if (attr(variable, "question") != attr(variable, "label"))
+            {
+                new.label <- paste0(attr(variable, "question"), delimiter, new.label)
+            }
+
+        }
+        return(new.label)
+    }
+    .getQQuestioName <- function(variable)
+    {
+        return(attr(variable, "question"))
+    }
+
+    question.names <- unlist(lapply(variables, .getQQuestioName))
+    include.question.name <- length(unique(question.names)) > 1
+
+    names(variables) <- unlist(lapply(variables, .recreateQVariableLabel, include.question.name = include.question.name))
+
     if (any(sapply(variables, .is.non.ordered.factor)))
     {
         warning("One or more of the inputs are non-ordered factors. They will be converted to binary variables and the first level will be excluded. Consider supplying numeric variables.")
     }
-    return(as.data.frame(lapply(variables, convertVariableForFactorAnalysis), optional = TRUE))
+    new.var.list <- lapply(variables, convertVariableForFactorAnalysis, include.question.name = !include.question.name)
+    return(as.data.frame(new.var.list, optional = TRUE))
 }
+
+
