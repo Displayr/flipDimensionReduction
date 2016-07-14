@@ -462,7 +462,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     {
         input.values <- x
     }
-    else if (class(x) == "flipFactorAnalysis" || class(x) == "fa" || class(x) == "principal")
+    else if (class(x) == "flipFactorAnalysis" || any(class(x) == "fa") || any(class(x) == "principal") || any(class(x) == "princomp"))
     {
         input.values <- x$values
     }
