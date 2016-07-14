@@ -500,7 +500,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
     print(paste0("show.labels: ", show.labels))
     if (is.null(x$loadings))
     {
-        stop("Input should be created by Data Reduction - Factor Analysis or Data Reduction - Principal Components Analysis")
+        stop("Input should be created by Data Reduction - Principal Components Analysis")
     }
 
     if (ncol(x$loadings) < 2)
@@ -712,10 +712,15 @@ BartlettTestOfSphericity <- function(data,
     return(test.results)
 }
 
+#' @export
 print.flipBartlett <- function(x, ...)
 {
     v <- unlist(x)
-    print(v)
+    tidied <- c("", "", "")
+    names(tidied) <- names(v)
+    tidied[c(1,3)] <- format(v[c(1,3)])
+    tidied[2] <- format.pval(v[2], digits = 2, eps = 0.001)
+    print(tidied, quote = FALSE)
 }
 
 
