@@ -720,7 +720,7 @@ print.flipBartlett <- function(x, ...)
     names(tidied) <- names(v)
     tidied[c(1,3)] <- format(v[c(1,3)])
     tidied[2] <- format.pval(v[2], digits = 2, eps = 0.001)
-    print(tidied, quote = FALSE)
+    return(tidied)
 }
 
 
