@@ -462,7 +462,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     {
         input.values <- x
     }
-    else if (class(x) == "flipFactorAnalysis" || any(class(x) == "fa") || any(class(x) == "principal") || any(class(x) == "princomp"))
+    else if (class(x) == "flipFactorAnalysis" || any(class(x) == "fa") || any(class(x) == "principal"))
     {
         input.values <- x$values
     }
@@ -497,7 +497,6 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
-    print(paste0("show.labels: ", show.labels))
     if (is.null(x$loadings))
     {
         stop("Input should be created by Data Reduction - Principal Components Analysis")
@@ -519,8 +518,6 @@ ComponentPlot <- function(x, show.labels = TRUE)
         }
         labels <- row.names(x$loadings)
     }
-    print("labels:")
-    print(labels)
     LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, title = "Component Plot", fixed.aspect = TRUE)
 }
 
