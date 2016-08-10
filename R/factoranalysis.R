@@ -233,6 +233,24 @@ PrincipalComponentsAnalysis <- function(data,
                                plot.labels = TRUE)
 {
 
+    if (rotation != "Promax" && rotation != "promax") {
+        promax.kappa = NULL
+    }
+
+    if (rotation != "Oblimin" && rotation != "oblimin") {
+        oblimin.delta = NULL
+    }
+
+    if (print.type %in% c("Component Plot", "Scree Plot")) {
+        sort.coefficients.by.size = FALSE
+        suppress.small.coefficients = FALSE
+        min.display.loading.value = 0.1
+    }
+
+    if (print.type != "Component Plot") {
+        plot.labels = TRUE
+    }
+
     # Generate the data that will be input to the correlation/covariance
     # matrix by filtering and imputing if specified.
     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
