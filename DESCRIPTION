@@ -18,6 +18,7 @@ Imports:
         plotly,
         psych,
         rhtmlMoonPlot,
+        rhtmlLabeledScatter,
         stats,
         GPArotation
 Depends:

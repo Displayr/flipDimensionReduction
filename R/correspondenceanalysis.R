@@ -40,8 +40,9 @@ CorrespondenceAnalysis = function(x,
 #' @param x CorrespondenceAnalysis object.
 #' @param ... further arguments passed to or from other methods.
 #' @import ca
-#' @importFrom flipPlots InteractiveLabeledScatterPlot LabeledScatterPlot CreateInteractiveScatterplotTooltips CreateInteractiveScatterplotTooltips
+#' @importFrom flipPlots LabeledScatterPlot CreateInteractiveScatterplotTooltips CreateInteractiveScatterplotTooltips
 #' @importFrom rhtmlMoonPlot moonplot
+#' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
@@ -60,8 +61,22 @@ print.CorrespondenceAnalysis <- function(x, ...)
     x.data <- as.matrix(x$x)
     if (x$output == "Scatterplot")
     {
-        tooltip.text <- c(CreateInteractiveScatterplotTooltips(x.data), CreateInteractiveScatterplotTooltips(t(x.data)))
-        print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
+        #tooltip.text <- c(CreateInteractiveScatterplotTooltips(x.data), CreateInteractiveScatterplotTooltips(t(x.data)))
+        print(LabeledScatter(X = coords[, 1],
+                       Y = coords[, 2],
+                       label = rownames(coords),
+                       group = groups,
+                       fixed.aspect = TRUE,
+                       title = "Correspondence analysis",
+                       x.title = column.labels[1],
+                       y.title = column.labels[2],
+                       legend.font.color = c("#5B9BD5", "#ED7D31"),
+                       labels.font.color = c("#5B9BD5", "#ED7D31")[unclass(groups)],
+                       labels.font.size = 12,
+                       title.font.size = 20,
+                       y.title.font.size = 16,
+                       x.title.font.size = 16))
+        #print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
     }
     else if (x$output == "Moonplot")
     {
@@ -70,7 +85,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     }
     else if (x$output == "ggplot2")
-        print(LabeledScatterPlot(coords, column.labels = column.labels, fixed.aspect = TRUE, group = groups))
+        print(LabeledScatterPlot(coords, column.labels = column.labels,
+                                 fixed.aspect = TRUE, group = groups))
     else
         print(ca.obj, ...)
 }

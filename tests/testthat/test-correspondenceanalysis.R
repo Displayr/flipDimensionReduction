@@ -14,6 +14,8 @@ dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet.
 
 output = "ggplot2"
 CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+output = "Scatterplot"
+CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
 
 
 for (output in c("Scatterplot", "Moonplot", "Text", "ggplot2"))
