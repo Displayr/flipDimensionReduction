@@ -12,7 +12,7 @@ test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 test_that("PCA: show.labels", {
 
     z <- PrincipalComponentsAnalysis(data = test.data.1, show.labels = TRUE, missing = "Use partial data (pairwise correlations)")
-    z2 <- PrincipalComponentsAnalysis(data = test.data.1, show.labels = FALSE, missing = "Use partial data (pairwise correlations)")
+    z2 <- PrincipalComponentsAnalysis(data = test.data.1, n.factors = 2, show.labels = FALSE, print.type = "Detailed Output", missing = "Use partial data (pairwise correlations)")
     expect_equal(rownames(z$loadings)[1], rownames(z$loadings)[1])
 })
 
