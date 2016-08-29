@@ -234,7 +234,7 @@ PrincipalComponentsAnalysis <- function(data,
                                show.labels = TRUE,
                                plot.labels = TRUE)
 {
-
+print("a")
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
     }
@@ -255,12 +255,15 @@ PrincipalComponentsAnalysis <- function(data,
 
     # Generate the data that will be input to the correlation/covariance
     # matrix by filtering and imputing if specified.
+print("b")
     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
+print("c")
 
     correlation.matrix <- CovarianceAndCorrelationMatrix(data = prepared.data$subset.data,
                                                          weights = prepared.data$subset.weights,
                                                          pairwise = missing == "Use partial data (pairwise correlations)",
                                                          use.correlation = TRUE)
+print("d")
 
     # SPSS computes the covariance matrix that it uses as an imput to PCA
     # by first calculating the pairwise correlation matrix and then
