@@ -235,6 +235,12 @@ PrincipalComponentsAnalysis <- function(data,
                                plot.labels = TRUE)
 {
 
+    if (show.labels)
+    {
+        variable.labels <- sapply(data, function(x) attr(x, "label"))
+        variable.labels[is.null(variable.labels)] <- colnames(data)
+        colnames(data) <- variable.labels
+    }
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
     }
@@ -277,14 +283,7 @@ PrincipalComponentsAnalysis <- function(data,
         input.matrix <- correlation.matrix
     }
 
-    if (show.labels)
-    {
-        column.labels <- sapply(data, function(x) attr(x, "label"))
-        column.labels[is.null(column.labels)] <- colnames(data)
-    }
-    else
-        column.labels <- colnames(data)
-    colnames(input.matrix) <- row.names(input.matrix) <- column.labels
+    #colnames(input.matrix) <- row.names(input.matrix) <- variable.labels
 
     # Unrotated loadings
     # Don't return all of the properties returned by
