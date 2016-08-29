@@ -70,7 +70,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        title = "Correspondence analysis",
                        x.title = column.labels[1],
                        y.title = column.labels[2],
-                       axis.font.size = 10,
+                       axis.font.size = 8,
                        labels.font.size = 12,
                        title.font.size = 20,
                        y.title.font.size = 16,
