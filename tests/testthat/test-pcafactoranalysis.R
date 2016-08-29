@@ -11,12 +11,10 @@ data(cola, package = "flipExampleData")
 
 test_that("PCA: binary", {
     zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
-    z1 <- flipTransformations::AsNumeric(zd)
+    z1 <- flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE)
     z <- PrincipalComponentsAnalysis(data = z1)
-
-
-    z2 <- PrincipalComponentsAnalysis(data = test.data.1, n.factors = 2, show.labels = FALSE, print.type = "Detailed Output", missing = "Use partial data (pairwise correlations)")
-    expect_equal(rownames(z$loadings)[1], rownames(z$loadings)[1])
+    z2 <- flipTransformations::AsNumeric(zd, binary = TRUE, remove.first = TRUE)
+    z <- PrincipalComponentsAnalysis(data = z2)
 })
 
 
