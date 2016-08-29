@@ -9,6 +9,13 @@ test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 
 
+test_that("PCA: show.labels", {
+
+    z <- PrincipalComponentsAnalysis(data = test.data.1, show.labels = TRUE, missing = "Use partial data (pairwise correlations)")
+    z2 <- PrincipalComponentsAnalysis(data = test.data.1, show.labels = FALSE, missing = "Use partial data (pairwise correlations)")
+    expect_equal(rownames(z$loadings)[1], rownames(z$loadings)[1])
+})
+
 # Compare the first eigenvalue of the input matrix with that reported in SPSS
 test_that("Compare Eigenvalues with SPSS Results", {
 
@@ -470,8 +477,8 @@ test_that("Converting factors for use in PCA", {
     test.data <- test.data.2[,1:10]
     test.data[,1] <- as.factor(test.data[,1])
     test.data[,2] <- as.ordered(test.data[,2])
-    converted.data <- ConvertVariablesForFactorAnalysis(test.data)
-    expect_error(test.pca <- PrincipalComponentsAnalysis(data = converted.data,
+    converted.data <- flipTransformations::AsNumeric(test.data, binary = TRUE)#ConvertVariablesForFactorAnalysis(test.data)
+    expect_error(test.pca <- PrincipalComponentsAnalysis(data = converted.data[, -1],
                                                          missing = "Exclude cases with missing data",
                                                          n.factors = 5,
                                                          print.type = "details"), NA)

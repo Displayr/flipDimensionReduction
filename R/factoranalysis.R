@@ -206,6 +206,7 @@
 #'   \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
 #'   plot of the first two dimensions of the final loadings. The latter two
 #'   options make use of HTML widgets.
+#' @param show.labels If \code{TRUE}, labels are shown rather than name in outputs.
 #' @param plot.labels A logical value which determines whether or not the
 #'   scatter plot will show the labels of the input data, or just integers
 #'   specifying the column number of each variable.
@@ -230,6 +231,7 @@ PrincipalComponentsAnalysis <- function(data,
                                suppress.small.coefficients = FALSE,
                                min.display.loading.value = 0.1,
                                print.type = "loadings",
+                               show.labels = TRUE,
                                plot.labels = TRUE)
 {
 
@@ -275,8 +277,14 @@ PrincipalComponentsAnalysis <- function(data,
         input.matrix <- correlation.matrix
     }
 
-    row.names(input.matrix) <- colnames(data)
-    colnames(input.matrix) <- colnames(data)
+    if (show.labels)
+    {
+        column.labels <- sapply(data, function(x) attr(x, "label"))
+        column.labels[is.null(column.labels)] <- colnames(data)
+    }
+    else
+        column.labels <- colnames(data)
+    colnames(input.matrix) <- row.names(input.matrix) <- column.labels
 
     # Unrotated loadings
     # Don't return all of the properties returned by
@@ -836,49 +844,49 @@ convertVariableForFactorAnalysis <- function(variable, include.question.name = T
     return(indicator.matrix)
 }
 
-#' \code{ConvertVariablesForFactorAnalysis}
-#' @description Convert variables to the appropriate form for use in PCA or Factor Analysis
-#' @param variables A list of variables that you want to include in your analysis.
-#' @details Numeric variables are unchanged. Ordered factors are replaced with a numeric
-#' variable containing their levels. Non-ordered factors are converted to a set of indicator
-#' (binary) variables with one variable for each level but the first.
-#' @export
-ConvertVariablesForFactorAnalysis <- function(variables)
-{
-    .is.non.ordered.factor <- function(x) { return(is.factor(x) && !is.ordered(x))}
-    .recreateQVariableLabel <- function(variable, include.question.name = TRUE, delimiter = ":")
-    {
-        if (.is.non.ordered.factor(variable)) {
-            return("")
-        }
-
-        new.label = attr(variable, "label")
-        if (include.question.name)
-        {
-            if (attr(variable, "question") != attr(variable, "label"))
-            {
-                new.label <- paste0(attr(variable, "question"), delimiter, new.label)
-            }
-
-        }
-        return(new.label)
-    }
-    .getQQuestioName <- function(variable)
-    {
-        return(attr(variable, "question"))
-    }
-
-    question.names <- unlist(lapply(variables, .getQQuestioName))
-    include.question.name <- length(unique(question.names)) > 1
-
-    names(variables) <- unlist(lapply(variables, .recreateQVariableLabel, include.question.name = include.question.name))
-
-    if (any(sapply(variables, .is.non.ordered.factor)))
-    {
-        warning("One or more of the inputs are non-ordered factors. They will be converted to binary variables and the first level will be excluded. Consider supplying numeric variables.")
-    }
-    new.var.list <- lapply(variables, convertVariableForFactorAnalysis, include.question.name = !include.question.name)
-    return(as.data.frame(new.var.list, optional = TRUE))
-}
+#' #' \code{ConvertVariablesForFactorAnalysis}
+#' #' @description Convert variables to the appropriate form for use in PCA or Factor Analysis
+#' #' @param variables A list of variables that you want to include in your analysis.
+#' #' @details Numeric variables are unchanged. Ordered factors are replaced with a numeric
+#' #' variable containing their levels. Non-ordered factors are converted to a set of indicator
+#' #' (binary) variables with one variable for each level but the first.
+#' #' @export
+#' ConvertVariablesForFactorAnalysis <- function(variables)
+#' {
+#'     .is.non.ordered.factor <- function(x) { return(is.factor(x) && !is.ordered(x))}
+#'     .recreateQVariableLabel <- function(variable, include.question.name = TRUE, delimiter = ":")
+#'     {
+#'         if (.is.non.ordered.factor(variable)) {
+#'             return("")
+#'         }
+#'
+#'         new.label = attr(variable, "label")
+#'         if (include.question.name)
+#'         {
+#'             if (attr(variable, "question") != attr(variable, "label"))
+#'             {
+#'                 new.label <- paste0(attr(variable, "question"), delimiter, new.label)
+#'             }
+#'
+#'         }
+#'         return(new.label)
+#'     }
+#'     .getQQuestioName <- function(variable)
+#'     {
+#'         return(attr(variable, "question"))
+#'     }
+#'
+#'     question.names <- unlist(lapply(variables, .getQQuestioName))
+#'     include.question.name <- length(unique(question.names)) > 1
+#'
+#'     names(variables) <- unlist(lapply(variables, .recreateQVariableLabel, include.question.name = include.question.name))
+#'
+#'     if (any(sapply(variables, .is.non.ordered.factor)))
+#'     {
+#'         warning("One or more of the inputs are non-ordered factors. They will be converted to binary variables and the first level will be excluded. Consider supplying numeric variables.")
+#'     }
+#'     new.var.list <- lapply(variables, convertVariableForFactorAnalysis, include.question.name = !include.question.name)
+#'     return(as.data.frame(new.var.list, optional = TRUE))
+#' }
 
 

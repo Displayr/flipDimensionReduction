@@ -9,7 +9,7 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   rotation = "none", oblimin.delta = 0, promax.kappa = 4, n.factors = 1,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
-  plot.labels = TRUE)
+  show.labels = TRUE, plot.labels = TRUE)
 }
 \arguments{
 \item{data}{A data frame with numeric columns which contains the data to be
@@ -56,6 +56,8 @@ multiplied by the component correlations),
 \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
 plot of the first two dimensions of the final loadings. The latter two
 options make use of HTML widgets.}
+
+\item{show.labels}{If \code{TRUE}, labels are shown rather than name in outputs.}
 
 \item{plot.labels}{A logical value which determines whether or not the
 scatter plot will show the labels of the input data, or just integers

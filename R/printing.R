@@ -24,7 +24,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     {
         if (x$sort.coefficients.by.size)
         {
-            input.matrix <- flipDimensionReduction:::sortLoadings(input.matrix)
+            input.matrix <- sortLoadings(input.matrix)
         }
 
         if (x$suppress.small.coefficients)
