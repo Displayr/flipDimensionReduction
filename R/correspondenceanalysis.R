@@ -70,8 +70,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        title = "Correspondence analysis",
                        x.title = column.labels[1],
                        y.title = column.labels[2],
-                       legend.font.color = c("#5B9BD5", "#ED7D31"),
-                       labels.font.color = c("#5B9BD5", "#ED7D31")[unclass(groups)],
+                       color = c("#5B9BD5", "#ED7D31"),
                        labels.font.size = 12,
                        title.font.size = 20,
                        y.title.font.size = 16,
@@ -114,5 +113,3 @@ CANormalization <- function(ca.object, normalization = "Principal")
         "Principal" = 1, "Row principal" = 0, "Column principal" = 1, "Symmetrical (\u00BD)" = 0.5, "None" = 0))
     list(row.coordinates = rows, column.coordinates = columns)
 }
-
-
