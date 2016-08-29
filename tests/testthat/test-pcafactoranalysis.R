@@ -7,6 +7,17 @@ test.data.1 <- pcaPhoneTestData$data.set # Most cases have some missing observat
 test.data.2 <- pcaPhoneTestData$data.set.original # Most cases do not have missing observations (named "q23" in SPSS file)
 test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
+data(cola, package = "flipExampleData")
+
+test_that("PCA: binary", {
+    zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
+    z1 <- flipTransformations::AsNumeric(zd)
+    z <- PrincipalComponentsAnalysis(data = z1)
+
+
+    z2 <- PrincipalComponentsAnalysis(data = test.data.1, n.factors = 2, show.labels = FALSE, print.type = "Detailed Output", missing = "Use partial data (pairwise correlations)")
+    expect_equal(rownames(z$loadings)[1], rownames(z$loadings)[1])
+})
 
 
 test_that("PCA: show.labels", {
