@@ -8,6 +8,14 @@ test.data.2 <- pcaPhoneTestData$data.set.original # Most cases do not have missi
 test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 
+z <- function(x){
+   p <- function(x)
+   {
+       return(matrix(1, 10000000,100000))
+   }
+   p(x)
+}
+z(21332)
 
 test_that("PCA: show.labels", {
 
