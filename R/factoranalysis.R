@@ -506,7 +506,8 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     my.plot <- plot_ly(x = `Component Number`,
                        y = Eigenvalue,
                        mode = "lines+markers")
-    layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
+    my.plot <- layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
+    my.plot <- plotly::config(displayModeBar = FALSE)
     return(my.plot)
 }
 
@@ -831,7 +832,7 @@ convertVariableForFactorAnalysis <- function(variable, include.question.name = T
     {
         vn <- deparse(substitute(x))
     }
-    indicator.matrix <- FactorToNumeric(variable, variable.name = vn)
+    indicator.matrix <- FactorToNumeric(variable, name = vn)
     if (ncol(indicator.matrix) > 2)
     {
         indicator.matrix <- indicator.matrix[, 2:ncol(indicator.matrix)]
