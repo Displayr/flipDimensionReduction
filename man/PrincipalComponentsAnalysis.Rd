@@ -6,7 +6,8 @@
 \usage{
 PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   missing = "Exclude cases with missing data", use.correlation = TRUE,
-  rotation = "none", oblimin.delta = 0, promax.kappa = 4, n.factors = 1,
+  rotation = "none", oblimin.delta = 0, promax.kappa = 4,
+  select.n.rule = "Kaiser rule", eigen.min = 1, n.factors = 1,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
   show.labels = TRUE, plot.labels = TRUE)
@@ -37,7 +38,11 @@ options are  \code{"none"}, \code{"varimax"}, \code{"quartimax"},
 
 \item{promax.kappa}{A parameter supplied for promax rotations.}
 
-\item{n.factors}{An integer specifying the number of principal components to keep.}
+\item{select.n.rule}{Method for selecting the number of principal components to keep. May be one of \code{"Kaiser rule"}, \code{"Eigenvalues over"}, or \code{"Number of components"}.}
+
+\item{eigen.min}{Cut-off above which eigenvalues are selected. Used if \code{select.n.rule} is \code{"Eigenvalues over"}.}
+
+\item{n.factors}{An integer specifying the number of principal components to keep. Used if \code{select.n.rule} is \code{"Number of components"}.}
 
 \item{sort.coefficients.by.size}{A logical value determining whether loadings
 should be sorted when printed.}

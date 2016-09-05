@@ -191,7 +191,9 @@
 #'   \code{"equamax"}, \code{"promax"}, and \code{"oblimin"}.
 #' @param oblimin.delta A parameter supplied for oblimin rotations.
 #' @param promax.kappa A parameter supplied for promax rotations.
-#' @param n.factors An integer specifying the number of principal components to keep.
+#' @param select.n.rule Method for selecting the number of principal components to keep. May be one of \code{"Kaiser rule"}, \code{"Eigenvalues over"}, or \code{"Number of components"}.
+#' @param n.factors An integer specifying the number of principal components to keep. Used if \code{select.n.rule} is \code{"Number of components"}.
+#' @param eigen.min Cut-off above which eigenvalues are selected. Used if \code{select.n.rule} is \code{"Eigenvalues over"}.
 #' @param sort.coefficients.by.size A logical value determining whether loadings
 #'   should be sorted when printed.
 #' @param suppress.small.coefficients A logical value specifying whether components
@@ -226,6 +228,8 @@ PrincipalComponentsAnalysis <- function(data,
                                rotation = "none",
                                oblimin.delta = 0,
                                promax.kappa = 4,
+                               select.n.rule = "Kaiser rule",
+                               eigen.min = 1.0,
                                n.factors = 1,
                                sort.coefficients.by.size = FALSE,
                                suppress.small.coefficients = FALSE,
@@ -234,7 +238,10 @@ PrincipalComponentsAnalysis <- function(data,
                                show.labels = TRUE,
                                plot.labels = TRUE)
 {
-
+    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
+        n.factors <- ncol(data)
+    if (select.n.rule == "Kaiser rule")
+        eigen.min <- 1.0
     if (show.labels)
     {
         variable.labels <- sapply(data, function(x) attr(x, "label"))
@@ -294,6 +301,18 @@ PrincipalComponentsAnalysis <- function(data,
                                  rotate = "none",
                                  covar = !use.correlation,
                                  scores = FALSE)
+
+    # Re-run if selection of components is based on eigenvalues
+    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
+    {
+        n.factors <- length(which(initial.results$values > eigen.min))
+        initial.results <- principal(input.matrix,
+                                 nfactors = n.factors,
+                                 rotate = "none",
+                                 covar = !use.correlation,
+                                 scores = FALSE)
+    }
+
     unrotated.loadings <- initial.results$loadings
     loadings <- unrotated.loadings
 
