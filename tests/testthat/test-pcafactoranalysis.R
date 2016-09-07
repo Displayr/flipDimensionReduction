@@ -435,7 +435,7 @@ for (print.type in c("loadings", "structure", "Component Plot", "details"))
                                                                          use.correlation = use.correlation,
                                                                          suppress.small.coefficients = TRUE,
                                                                          sort.coefficients.by.size = TRUE), NA)
-                    expect_error(capture.output(print(test.pca)), NA) #capture.output is used to suppress the contents of the printing as I only want to check that the prints don't generate an error
+                    expect_error(capture.output(suppressWarnings(print(test.pca))), NA) #capture.output is used to suppress the contents of the printing as I only want to check that the prints don't generate an error
                 })
             }
 
