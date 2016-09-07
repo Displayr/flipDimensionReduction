@@ -18,6 +18,16 @@ test_that("PCA: binary", {
 })
 
 
+test_that("PCA: Select components with Kaiser rule", {
+    test.pca <- PrincipalComponentsAnalysis(data=test.data.1, use.correlation = T, missing = "Use partial data (pairwise correlations)", select.n.rule = "Kaiser rule")
+    expect_equal(ncol(test.pca$loadings), 8)
+})
+
+test_that("PCA: Select components by eigenvalue", {
+    test.pca <- PrincipalComponentsAnalysis(data=test.data.1, use.correlation = T, missing = "Use partial data (pairwise correlations)", select.n.rule = "Eigenvalues over", eigen.min = 2)
+    expect_equal(ncol(test.pca$loadings), 2)
+})
+
 test_that("PCA: show.labels", {
 
     z <- PrincipalComponentsAnalysis(data = test.data.1, show.labels = TRUE, missing = "Use partial data (pairwise correlations)")

@@ -228,7 +228,7 @@ PrincipalComponentsAnalysis <- function(data,
                                rotation = "none",
                                oblimin.delta = 0,
                                promax.kappa = 4,
-                               select.n.rule = "Kaiser rule",
+                               select.n.rule = "Number of factors",
                                eigen.min = 1.0,
                                n.factors = 1,
                                sort.coefficients.by.size = FALSE,
@@ -238,8 +238,6 @@ PrincipalComponentsAnalysis <- function(data,
                                show.labels = TRUE,
                                plot.labels = TRUE)
 {
-    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
-        n.factors <- ncol(data)
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels)
@@ -282,7 +280,6 @@ PrincipalComponentsAnalysis <- function(data,
     # covariance matrix which would be computed by the usual covariance
     # formula, but when there is missing data the two results will differ.
     stddevs <- StandardDeviation(prepared.data$subset.data, weights = prepared.data$subset.weights)
-    stdmat <- matrix(rep(stddevs, n.factors), ncol = n.factors)
     if (!use.correlation)
     {
         input.matrix <- correlation.matrix * stddevs %o% stddevs
@@ -291,6 +288,20 @@ PrincipalComponentsAnalysis <- function(data,
     }
 
     #colnames(input.matrix) <- row.names(input.matrix) <- variable.labels
+
+    # Compute eigenvalues for component selection
+    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
+    {
+        eigens <- eigen(input.matrix, only.values=T)
+        if (!use.correlation)
+        {
+            warning("Select components with eigenvalues > ",
+                    eigen.min, " times mean of eigenvalues as we are using unscaled covariance matrix\n")
+            eigen.min <- mean(eigens$values)
+        }
+        n.factors <- length(which(eigens$values > eigen.min))
+    }
+    stdmat <- matrix(rep(stddevs, n.factors), ncol = n.factors)
 
     # Unrotated loadings
     # Don't return all of the properties returned by
@@ -301,18 +312,6 @@ PrincipalComponentsAnalysis <- function(data,
                                  rotate = "none",
                                  covar = !use.correlation,
                                  scores = FALSE)
-
-    # Re-run if selection of components is based on eigenvalues
-    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
-    {
-        n.factors <- length(which(initial.results$values > eigen.min))
-        initial.results <- principal(input.matrix,
-                                 nfactors = n.factors,
-                                 rotate = "none",
-                                 covar = !use.correlation,
-                                 scores = FALSE)
-    }
-
     unrotated.loadings <- initial.results$loadings
     loadings <- unrotated.loadings
 
@@ -323,6 +322,12 @@ PrincipalComponentsAnalysis <- function(data,
     oblique.rotation <- rotation == "oblimin" || rotation == "promax"
 
     # Rotate the loadings
+    if (n.factors == 1 & rotation != "none")
+    {
+        warning("No rotation for single-component analysis\n")
+        rotation <- "none"
+    }
+
     if (rotation != "none")
     {
         rotation.results <- RotateLoadings(unrotated.loadings,
