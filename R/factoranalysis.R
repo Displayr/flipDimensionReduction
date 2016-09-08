@@ -353,7 +353,7 @@ PrincipalComponentsAnalysis <- function(data,
         structure.matrix <- loadings
         component.correlations <- NULL
     }
-    comp.names <- colnames(unrotated.loadings)
+    comp.names <- paste("Component", 1:n.factors)
     colnames(rotated.loadings) <- comp.names
     colnames(structure.matrix) <- comp.names
     colnames(loadings) <- comp.names
