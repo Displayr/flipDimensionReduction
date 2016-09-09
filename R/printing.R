@@ -50,10 +50,15 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     if (print.type == "Loadings Table")
     {
         print.type <- "loadings"
-    } else if (print.type == "Structure Matrix") {
+    } else if (print.type == "Structure Matrix")
+    {
         print.type <- "structure"
-    } else if (print.type == "Detailed Output") {
+    } else if (print.type == "Detailed Output")
+    {
         print.type <- "details"
+    } else if (print.type == "Variance Explained")
+    {
+        print.type <- "variance"
     }
 
     # Work out caption information. This is shared between a number of print types
@@ -82,6 +87,27 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         print(ScreePlot(x))
     } else if (print.type == "Component Plot") {
         print(ComponentPlot(x, show.labels = x$plot.labels))
+    } else if (print.type == "variance") {
+        eigenvalues <- x$values
+        variance.proportions = eigenvalues/sum(eigenvalues)*100
+        cumulative.proportions = cumsum(variance.proportions)
+        variance.table <- cbind(eigenvalues, variance.proportions, cumulative.proportions)
+        rownames(variance.table) <- paste("Component", 1:length(eigenvalues))
+        colnames(variance.table) <- c("Eigenvalue", "% of Variance", "Cumulative %")
+
+        variance.table <- setNames(format(round(variance.table, 2)), NULL)
+        # Don't mention the rotation as this information is relevant to the unrotated components
+        caption.info$rotation <- NULL
+        table.caption <- paste(c("Unrotated Variance Explained", unlist(caption.info)), collapse = "; ")
+
+        dt <- DataTableWithRItemFormat(as.data.frame(variance.table),
+                                       caption = table.caption,
+                                       allow.length.change = FALSE,
+                                       page.length = nrow(variance.table),
+                                       allow.paging = FALSE,
+                                       show.info = FALSE,
+                                       header.alignments = rep("right", 3))
+        print(dt)
     } else {
         # Table printing
 

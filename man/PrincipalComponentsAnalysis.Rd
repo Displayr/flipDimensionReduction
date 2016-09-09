@@ -57,7 +57,10 @@ displayed when printed.}
 \item{print.type}{A string specifying the type of printing that should be
 done. Valid options are \code{"loadings"} to display a (rotated) loading table,
 \code{"structure"} to display a component structure matrix (which is the loadings
-multiplied by the component correlations),
+multiplied by the component correlations), \code{"details"} to display a plain-text
+output containing more details from the analysis, \code{"variance"} to display a
+table showing the original eigenvalues of the input, and the corresponding variance
+explained,
 \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
 plot of the first two dimensions of the final loadings. The latter two
 options make use of HTML widgets.}

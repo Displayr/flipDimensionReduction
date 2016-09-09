@@ -416,7 +416,7 @@ test_that("Compare Scores with SPSS", {
 
 
 # Test that the print options do not generate errors in any combination
-for (print.type in c("loadings", "structure", "Component Plot", "details"))
+for (print.type in c("loadings", "structure", "Component Plot", "details", "variance"))
 {
     for (rotation in c("none", "varimax", "promax"))
     {
