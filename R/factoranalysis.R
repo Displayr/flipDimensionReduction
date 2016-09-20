@@ -546,7 +546,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #'
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
-#' @importFrom flipPlots LabeledScatterPlot
+#' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
@@ -571,7 +571,23 @@ ComponentPlot <- function(x, show.labels = TRUE)
         }
         labels <- row.names(x$loadings)
     }
-    LabeledScatterPlot(x$loadings[, 1:2], row.labels = labels, title = "Component Plot", fixed.aspect = TRUE)
+    coords <- x$loadings
+    groups <- 1:nrow(coords)
+    LabeledScatter(X = coords[, 1],
+                   Y = coords[, 2],
+                   label = rownames(coords),
+                   group = groups,
+                   fixed.aspect = TRUE,
+                   title = "Component Plot",
+                   x.title = "Component 1",
+                   y.title = "Component 2",
+                   axis.font.size = 8,
+                   labels.font.size = 12,
+                   title.font.size = 20,
+                   y.title.font.size = 16,
+                   x.title.font.size = 16,
+                   legend.show = FALSE)
+
 }
 
 
