@@ -257,7 +257,7 @@ PrincipalComponentsAnalysis <- function(data,
         oblimin.delta = NULL
     }
 
-    if (print.type %in% c("Component Plot", "Scree Plot")) {
+    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained")) {
         sort.coefficients.by.size = FALSE
         suppress.small.coefficients = FALSE
         min.display.loading.value = 0.1

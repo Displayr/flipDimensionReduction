@@ -24,8 +24,6 @@ principal coordinates. Note that the plotting occurs via
 \code{\link[flipPlots]{InteractiveLabeledScatterPlot}} is plotted.
 Otherwise, a \code{\link[flipPlots]{LabeledScatterPlot}} is plotted.}
 
-\item{output}{How the tree is represented: \code{"Sankey"}, \code{"Tree"}, or \code{"Text"}.}
-
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 
 \item{column.names.to.remove}{A vector of the column labels to remove.

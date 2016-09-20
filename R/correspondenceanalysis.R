@@ -22,7 +22,6 @@
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
-    #' @param output How the tree is represented: \code{"Sankey"}, \code{"Tree"}, or \code{"Text"}.
                                   output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
