@@ -560,8 +560,6 @@ ComponentPlot <- function(x, show.labels = TRUE)
         stop("There aren't enough components to plot.")
     }
 
-    ### Wait for update to flipPlots
-
     labels <- as.character(1:nrow(x$loadings))
     if (show.labels)
     {
@@ -571,6 +569,17 @@ ComponentPlot <- function(x, show.labels = TRUE)
         }
         labels <- row.names(x$loadings)
     }
+
+    x.label = "Component 1"
+    y.label = "Component 2"
+    if (!(x$rotation %in% c("promax", "oblimin"))){
+        ss.loadings <- colSums(x$loadings^2)
+        variance.explained <- ss.loadings/nrow(x$loadings)
+        x.label <- paste0(x.label, " (", round(variance.explained[1]*100, digits = 2), "% variance explained)")
+        y.label <- paste0(y.label, " (", round(variance.explained[2]*100, digits = 2), "% variance explained)")
+    }
+
+
     coords <- x$loadings
     groups <- 1:nrow(coords)
     LabeledScatter(X = coords[, 1],
@@ -579,8 +588,8 @@ ComponentPlot <- function(x, show.labels = TRUE)
                    group = groups,
                    fixed.aspect = TRUE,
                    title = "Component Plot",
-                   x.title = "Component 1",
-                   y.title = "Component 2",
+                   x.title = x.label,
+                   y.title = y.label,
                    axis.font.size = 8,
                    labels.font.size = 12,
                    title.font.size = 20,
