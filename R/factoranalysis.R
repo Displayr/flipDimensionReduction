@@ -570,9 +570,15 @@ ComponentPlot <- function(x, show.labels = TRUE)
         labels <- row.names(x$loadings)
     }
 
-    x.label = "Component 1"
-    y.label = "Component 2"
-    if (!(x$rotation %in% c("promax", "oblimin"))){
+    x.label <- "Component 1"
+    y.label <- "Component 2"
+    add.ve <- FALSE
+    if ("princomp" %in% class(x))
+        add.ve <- TRUE
+    if (any(c("psych", "flipFactorAnalysis") %in% class(x)) && !(x$rotation %in% c("promax", "oblimin")))
+        add.ve <- TRUE
+
+    if (add.ve) {
         ss.loadings <- colSums(x$loadings^2)
         variance.explained <- ss.loadings/nrow(x$loadings)
         x.label <- paste0(x.label, " (", round(variance.explained[1]*100, digits = 2), "% variance explained)")

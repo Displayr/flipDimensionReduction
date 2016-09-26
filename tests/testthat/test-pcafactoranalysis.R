@@ -505,6 +505,14 @@ test_that("Converting factors for use in PCA", {
 })
 
 
+test_that("Component Plot works for PCA objects created by princomp and psych", {
+    dd <- test.data.2[!is.na(rowSums(test.data.2)),]
+    test.princomp <- princomp(dd)
+    expect_error(ComponentPlot(test.princomp), NA)
+    test.psych <- psych::principal(test.data.1, nfactors = 5)
+    expect_error(ComponentPlot(test.psych), NA)
+})
+
 
 
 #     # Comparisons with results from Applied Multivariate Statistics for the Social Sciences
