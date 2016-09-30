@@ -461,7 +461,7 @@ PrincipalComponentsAnalysis <- function(data,
     results$values <- initial.results$values
     results$scores <- scores
     results$score.weights <- score.weights
-    results$rotation <- paste(toupper(substr(rotation, 1, 1)), substr(rotation, 2, nchar(rotation)), sep="")
+    results$rotation <- rotation
     results$missing <- missing
     results$component.correlations <- component.correlations
 

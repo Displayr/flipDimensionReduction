@@ -80,7 +80,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     } else {
         caption.info$sample <- paste0("Sample size: ", nrow(x$data.used$subset.data))
     }
-    caption.info$rotation <- paste0("Rotation: ", x$rotation)
+    caption.info$rotation <- paste0("Rotation: ", toupper(substr(x$rotation, 1, 1)), substr(x$rotation, 2, nchar(x$rotation)))
 
 
     if (print.type == "scree" || print.type == "Scree Plot") {
