@@ -220,6 +220,7 @@
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
 #' rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
 #' Includes handling of missing data, weighting, and filtering.
+#' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
 #' @importFrom psych principal factor.scores
 #' @export
@@ -245,8 +246,7 @@ PrincipalComponentsAnalysis <- function(data,
         eigen.min <- 1.0
     if (show.labels)
     {
-        variable.labels <- sapply(data, function(x) attr(x, "label"))
-        variable.labels[is.null(variable.labels)] <- colnames(data)
+        variable.labels <- Labels(data)
         colnames(data) <- variable.labels
     }
     if (rotation != "Promax" && rotation != "promax") {
