@@ -527,10 +527,13 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     `Component Number` <- 1:length(input.values)
     Eigenvalue <- input.values
 
-    my.plot <- plot_ly(x = `Component Number`,
-                       y = Eigenvalue,
+    my.plot <- plot_ly(x = ~`Component Number`,
+                       y = ~Eigenvalue,
                        mode = "lines+markers")
-    my.plot <- layout(p = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
+    my.plot <- layout(p = my.plot,
+                      title = "Scree Plot",
+                      yaxis = list(range = c(0, max(input.values) + 1)),
+                      xaxis = list(title = "Component Number"))
     my.plot <- plotly::config(p = my.plot, displayModeBar = FALSE)
     return(my.plot)
 }
