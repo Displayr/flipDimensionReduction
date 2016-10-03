@@ -245,9 +245,9 @@ PrincipalComponentsAnalysis <- function(data,
         eigen.min <- 1.0
     if (show.labels)
     {
-        variable.labels <- sapply(data, function(x) attr(x, "label"))
-        variable.labels[is.null(variable.labels)] <- colnames(data)
-        colnames(data) <- variable.labels
+        #variable.labels <- sapply(data, function(x) attr(x, "label"))
+        #variable.labels[is.null(variable.labels)] <- colnames(data)
+        colnames(data) <- Labels(data)#variable.labels
     }
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
