@@ -220,6 +220,7 @@
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
 #' rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
 #' Includes handling of missing data, weighting, and filtering.
+#' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
 #' @importFrom psych principal factor.scores
 #' @export
@@ -244,11 +245,7 @@ PrincipalComponentsAnalysis <- function(data,
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels)
-    {
-        #variable.labels <- sapply(data, function(x) attr(x, "label"))
-        #variable.labels[is.null(variable.labels)] <- colnames(data)
         colnames(data) <- Labels(data)#variable.labels
-    }
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
     }
@@ -533,8 +530,8 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     my.plot <- plot_ly(x = `Component Number`,
                        y = Eigenvalue,
                        mode = "lines+markers")
-    my.plot <- layout(plot = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
-    my.plot <- plotly::config(displayModeBar = FALSE)
+    my.plot <- layout(p = my.plot, title = "Scree Plot", yaxis = list(range = c(0, max(input.values) + 1)))
+    my.plot <- plotly::config(p = my.plot, displayModeBar = FALSE)
     return(my.plot)
 }
 
