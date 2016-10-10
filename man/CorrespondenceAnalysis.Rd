@@ -19,8 +19,9 @@ which plots the principal coordinates (i.e., the standard coordinates
 multiplied by the singular values). \code{"Row principal"} and \code{"Column
 principal"} plot the standard coordinates of the columns (rows) against the
 principal coordinates. Note that the plotting occurs via
-\code{\link{print.CorrespondenceAnalysis}}.
-@param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, \code{"Text"}, or \code{"ggplot2"}.
+\code{\link{print.CorrespondenceAnalysis}}.}
+
+\item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, \code{"Text"}, or \code{"ggplot2"}.
 \code{\link[flipPlots]{InteractiveLabeledScatterPlot}} is plotted.
 Otherwise, a \code{\link[flipPlots]{LabeledScatterPlot}} is plotted.}
 

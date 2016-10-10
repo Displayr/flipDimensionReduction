@@ -14,29 +14,24 @@ sortLoadings <- function(x) {
 
 
 
-
-#' @importFrom flipFormat DataTableWithRItemFormat
+#' @importFrom stats lm.fit setNames
+#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable
 #' @export
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
+    min.display.loading.value <- if (x$suppress.small.coefficients) x$min.display.loading.value else 0
 
-    .tidy.loadings <- function(x, input.matrix, digits)
+    .tidy.loadings <- function(x, input.matrix)
     {
         if (x$sort.coefficients.by.size)
-        {
             input.matrix <- sortLoadings(input.matrix)
-        }
+        as.matrix(unclass(input.matrix))
+    }
 
-        if (x$suppress.small.coefficients)
-        {
-            min.display.loading.value <- x$min.display.loading.value
-        }
-        else
-        {
-            min.display.loading.value <- 0
-        }
+    .create.printed.loadings <- function(x, input.matrix, digits)
+    {
+        tidy.matrix <- .tidy.loadings(x, input.matrix)
 
-        tidy.matrix <- as.matrix(unclass(input.matrix))
         p <- nrow(tidy.matrix)
         n.factors <- ncol(tidy.matrix)
 
@@ -89,38 +84,15 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         print(ComponentPlot(x, show.labels = x$plot.labels))
     } else if (print.type == "variance") {
         eigenvalues <- x$values
-        variance.proportions = eigenvalues/sum(eigenvalues)*100
+        variance.proportions = eigenvalues / sum(eigenvalues)
         cumulative.proportions = cumsum(variance.proportions)
-        variance.table <- cbind(eigenvalues, variance.proportions, cumulative.proportions)
-        rownames(variance.table) <- paste("Component", 1:length(eigenvalues))
-        colnames(variance.table) <- c("Eigenvalue", "% of Variance", "Cumulative %")
-
-        variance.table <- setNames(format(round(variance.table, 2)), NULL)
         # Don't mention the rotation as this information is relevant to the unrotated components
         caption.info$rotation <- NULL
         table.caption <- paste(c("Unrotated Variance Explained", unlist(caption.info)), collapse = "; ")
-
-        dt <- DataTableWithRItemFormat(as.data.frame(variance.table),
-                                       caption = table.caption,
-                                       allow.length.change = FALSE,
-                                       page.length = nrow(variance.table),
-                                       allow.paging = FALSE,
-                                       show.info = FALSE,
-                                       header.alignments = rep("right", 3))
-        print(dt)
+        tbl <- VarianceExplainedTable(eigenvalues, variance.proportions, cumulative.proportions,
+                                      title = "Variance Explained", footer = table.caption)
+        print(tbl)
     } else {
-        # Table printing
-
-        if (print.type == "loadings" || print.type == "details")
-        {
-            tidied.loadings.matrix <- .tidy.loadings(x, input.matrix = x$loadings, digits = digits)
-        }
-
-        if (print.type == "structure" || print.type == "details")
-        {
-            tidied.structure.matrix <- .tidy.loadings(x, input.matrix = x$structure.matrix, digits = digits)
-        }
-
         # What kind of table is being printed?
         if (x$use.correlation)
         {
@@ -148,27 +120,29 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
         }
 
-        if (print.type == "loadings" || print.type == "structure")
-        {
-            if (print.type == "loadings")
-            {
-                printed.matrix <- tidied.loadings.matrix
-                table.caption <- loadings.caption
-            } else {
-                printed.matrix <- tidied.structure.matrix
-                table.caption <- structure.caption
-            }
-            table.caption <- paste(c(table.caption, unlist(caption.info)), collapse = "; ")
-            dt <- DataTableWithRItemFormat(as.data.frame(printed.matrix),
-                                           caption = table.caption,
-                                           allow.length.change = FALSE,
-                                           page.length = nrow(printed.matrix),
-                                           allow.paging = FALSE,
-                                           show.info = FALSE,
-                                           header.alignments = rep("right", ncol(printed.matrix)))
-            print(dt)
+        ss.loadings <- if (x$rotation == "promax" || x$rotation == "oblimin")
+            colSums(x$structure.matrix ^ 2)
+        else
+            colSums(x$loadings ^ 2)
+        nvar <- ncol(x$original.data)
+
+        if (print.type == "loadings") {
+            tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$loadings),
+                                    ss.loadings / nvar, NULL, x$values, min.display.loading.value,
+                                    title = "Principal Component Loadings",
+                                    footer = paste(c(loadings.caption, unlist(caption.info)), collapse = "; "))
+            print(tbl)
+        } else if (print.type == "structure") {
+            tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
+                                    NULL, ss.loadings, x$values, min.display.loading.value,
+                                    title = "Principal Component Structure",
+                                    footer = paste(c(structure.caption, unlist(caption.info)), collapse = "; "))
+            print(tbl)
         } else if (print.type == "details") {
-            nvar <- ncol(x$original.data)
+            # Table printing
+            tidied.loadings.matrix <- .create.printed.loadings(x, input.matrix = x$loadings, digits = digits)
+            tidied.structure.matrix <- .create.printed.loadings(x, input.matrix = x$structure.matrix, digits = digits)
+
             # Analysis Information
             # - Missing data setting
             # - Sample size(s)
@@ -192,12 +166,10 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             {
                 cat(paste0("\r\n", structure.caption, ":\r\n\r\n"))
                 print(tidied.structure.matrix, quote = FALSE)
-                ss.loadings <- colSums(x$structure.matrix^2)
                 ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
                 cat("\r\n")
                 print(round(ve.table, digits))
             } else {
-                ss.loadings <- colSums(x$loadings^2)
                 ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
                 ve.table <- rbind(ve.table, `% of Variance` = ss.loadings/nvar*100)
                 if (ncol(x$loadings) > 1)
