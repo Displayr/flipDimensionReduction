@@ -128,13 +128,13 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
         if (print.type == "loadings") {
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$loadings),
-                                    ss.loadings / nvar, NULL, x$values, min.display.loading.value,
+                                    ss.loadings / nvar, x$values, min.display.loading.value,
                                     title = "Principal Component Loadings",
                                     footer = paste(c(loadings.caption, unlist(caption.info)), collapse = "; "))
             print(tbl)
         } else if (print.type == "structure") {
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
-                                    NULL, ss.loadings, x$values, min.display.loading.value,
+                                    NULL, x$values, min.display.loading.value,
                                     title = "Principal Component Structure",
                                     footer = paste(c(structure.caption, unlist(caption.info)), collapse = "; "))
             print(tbl)
