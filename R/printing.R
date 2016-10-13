@@ -131,13 +131,11 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         {
             ss.loadings <- colSums(x$loadings ^ 2)
             eigenvalue.label <- "Eigenvalue"
-            eigenvalue.note <- ""
         }
         else
         {
             ss.loadings <- colSums(x$structure.matrix ^ 2)
             eigenvalue.label <- "Eigenvalue*"
-            eigenvalue.note <- "*Rotation Sums of Squared Loadings"
         }
 
         if (print.type == "loadings") {
@@ -149,8 +147,11 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                 subtitle <- ""
                 variance.explained <- NULL
             }
-
-            footer <- paste(c(loadings.caption, unlist(caption.info), eigenvalue.note, eigenvalues.caption), collapse = "; ")
+            footer <- if (!oblique.rotation)
+                paste(c(loadings.caption, unlist(caption.info), eigenvalues.caption), collapse = "; ")
+            else
+                paste(c(loadings.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
+                        eigenvalues.caption), collapse = "; ")
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$loadings),
                                     variance.explained, ss.loadings, min.display.loading.value,
                                     title = "Principal Component Loadings", subtitle = subtitle,
@@ -158,7 +159,12 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                                     eigenvalue.label = eigenvalue.label)
             print(tbl)
         } else if (print.type == "structure") {
-            footer <- paste(c(structure.caption, unlist(caption.info), eigenvalue.note, eigenvalues.caption), collapse = "; ")
+
+            footer <- if (!oblique.rotation)
+                paste(c(structure.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
+                        eigenvalues.caption), collapse = "; ")
+            else
+                paste(c(structure.caption, unlist(caption.info), eigenvalues.caption), collapse = "; ")
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
                                     NULL, ss.loadings, min.display.loading.value,
                                     title = "Principal Component Structure",
