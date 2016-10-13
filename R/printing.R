@@ -161,10 +161,10 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         } else if (print.type == "structure") {
 
             footer <- if (!oblique.rotation)
+                paste(c(structure.caption, unlist(caption.info), eigenvalues.caption), collapse = "; ")
+            else
                 paste(c(structure.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
                         eigenvalues.caption), collapse = "; ")
-            else
-                paste(c(structure.caption, unlist(caption.info), eigenvalues.caption), collapse = "; ")
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
                                     NULL, ss.loadings, min.display.loading.value,
                                     title = "Principal Component Structure",
