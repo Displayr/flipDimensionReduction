@@ -15,7 +15,7 @@ sortLoadings <- function(x) {
 
 
 #' @importFrom stats lm.fit setNames
-#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable
+#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent
 #' @export
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
@@ -77,7 +77,6 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     }
     caption.info$rotation <- paste0("Rotation: ", toupper(substr(x$rotation, 1, 1)), substr(x$rotation, 2, nchar(x$rotation)))
 
-
     if (print.type == "scree" || print.type == "Scree Plot") {
         print(ScreePlot(x))
     } else if (print.type == "Component Plot") {
@@ -115,28 +114,56 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             }
         }
 
-        if (print.type == "structure" && x$rotation != "promax" && x$rotation != "oblimin")
-        {
-            warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
-        }
+        nvar <- ncol(x$original.data)
+        eigenvalues.caption <- paste("Unrotated eigenvalues:",
+                                     paste0(paste0(rep("(", nvar), 1:nvar, rep(") ", nvar), FormatWithDecimals(x$values, 2)), collapse = ", "))
 
-        ss.loadings <- if (x$rotation == "promax" || x$rotation == "oblimin")
+        oblique.rotation <- x$rotation == "oblimin" || x$rotation == "promax"
+        if (print.type == "structure" && !oblique.rotation)
+            warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
+
+        ss.loadings <- if (oblique.rotation)
             colSums(x$structure.matrix ^ 2)
         else
             colSums(x$loadings ^ 2)
-        nvar <- ncol(x$original.data)
+
+        if (!oblique.rotation)
+        {
+            ss.loadings <- colSums(x$loadings ^ 2)
+            eigenvalue.label <- "Eigenvalue"
+            eigenvalue.note <- ""
+        }
+        else
+        {
+            ss.loadings <- colSums(x$structure.matrix ^ 2)
+            eigenvalue.label <- "Eigenvalue*"
+            eigenvalue.note <- "*Rotation Sums of Squared Loadings"
+        }
 
         if (print.type == "loadings") {
+            if (!oblique.rotation) {
+                subtitle <- paste(ncol(x$loadings), ifelse(ncol(x$loadings) == 1, "component", "components"),
+                                  "explaining", FormatAsPercent(sum(ss.loadings) / nvar, 3), "of the variance")
+                variance.explained <- ss.loadings / nvar
+            } else {
+                subtitle <- ""
+                variance.explained <- NULL
+            }
+
+            footer <- paste(c(loadings.caption, unlist(caption.info), eigenvalue.note, eigenvalues.caption), collapse = "; ")
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$loadings),
-                                    ss.loadings / nvar, x$values, min.display.loading.value,
-                                    title = "Principal Component Loadings",
-                                    footer = paste(c(loadings.caption, unlist(caption.info)), collapse = "; "))
+                                    variance.explained, ss.loadings, min.display.loading.value,
+                                    title = "Principal Component Loadings", subtitle = subtitle,
+                                    footer = footer,
+                                    eigenvalue.label = eigenvalue.label)
             print(tbl)
         } else if (print.type == "structure") {
+            footer <- paste(c(structure.caption, unlist(caption.info), eigenvalue.note, eigenvalues.caption), collapse = "; ")
             tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
-                                    NULL, x$values, min.display.loading.value,
+                                    NULL, ss.loadings, min.display.loading.value,
                                     title = "Principal Component Structure",
-                                    footer = paste(c(structure.caption, unlist(caption.info)), collapse = "; "))
+                                    footer = footer,
+                                    eigenvalue.label = eigenvalue.label)
             print(tbl)
         } else if (print.type == "details") {
             # Table printing
@@ -162,7 +189,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             # If there is an oblique rotation then
             # we don't print the variance-explained, because
             # the factors are correlated.
-            if (x$rotation == "promax" || x$rotation == "oblimin")
+            if (oblique.rotation)
             {
                 cat(paste0("\r\n", structure.caption, ":\r\n\r\n"))
                 print(tidied.structure.matrix, quote = FALSE)
