@@ -219,6 +219,7 @@
 #' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
 #' rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
+#' Initial components with large negative components will signs flipped to give positive components.
 #' Includes handling of missing data, weighting, and filtering.
 #' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
@@ -313,6 +314,10 @@ PrincipalComponentsAnalysis <- function(data,
                                  covar = !use.correlation,
                                  scores = FALSE)
     unrotated.loadings <- initial.results$loadings
+
+    # Flip eigenvectors so the largest loadings are positive
+    unrotated.loadings <- apply(unrotated.loadings, 2,
+                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
     loadings <- unrotated.loadings
 
     # Work out which rotation to use
@@ -337,8 +342,6 @@ PrincipalComponentsAnalysis <- function(data,
                                            covar = !use.correlation,
                                            stds = stddevs)
         rotated.loadings <- rotation.results$rotated.loadings
-        rotated.loadings <- apply(rotated.loadings, 2,
-                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
 
         loadings <- rotated.loadings
         if (oblique.rotation)
@@ -351,9 +354,6 @@ PrincipalComponentsAnalysis <- function(data,
         colnames(structure.matrix) <- colnames(loadings)
 
     } else {
-
-        unrotated.loadings <- apply(unrotated.loadings, 2,
-                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
         loadings <- unrotated.loadings
         rotated.loadings <- unrotated.loadings
         structure.matrix <- loadings
