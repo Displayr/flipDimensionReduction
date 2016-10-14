@@ -337,6 +337,9 @@ PrincipalComponentsAnalysis <- function(data,
                                            covar = !use.correlation,
                                            stds = stddevs)
         rotated.loadings <- rotation.results$rotated.loadings
+        rotated.loadings <- apply(rotated.loadings, 2,
+                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
+
         loadings <- rotated.loadings
         if (oblique.rotation)
         {
@@ -348,6 +351,9 @@ PrincipalComponentsAnalysis <- function(data,
         colnames(structure.matrix) <- colnames(loadings)
 
     } else {
+
+        unrotated.loadings <- apply(unrotated.loadings, 2,
+                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
         loadings <- unrotated.loadings
         rotated.loadings <- unrotated.loadings
         structure.matrix <- loadings
