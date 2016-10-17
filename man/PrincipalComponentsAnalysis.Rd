@@ -78,7 +78,7 @@ Calculate a Principal Component Analysis
 This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
 PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
 rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
-Initial components with large negative components will signs flipped to give positive components.
+Components with large negative loadings will have signs flipped to give positive components after rotation.
 Includes handling of missing data, weighting, and filtering.
 }
 

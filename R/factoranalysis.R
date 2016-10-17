@@ -219,7 +219,7 @@
 #' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
 #' rotation includes a Kaiser normalization and a method of Promax which matches what SPSS does.
-#' Initial components with large negative components will signs flipped to give positive components.
+#' Components with large negative loadings will have signs flipped to give positive components after rotation.
 #' Includes handling of missing data, weighting, and filtering.
 #' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
@@ -341,19 +341,28 @@ PrincipalComponentsAnalysis <- function(data,
                                            kappa = promax.kappa,
                                            covar = !use.correlation,
                                            stds = stddevs)
-        rotated.loadings <- rotation.results$rotated.loadings
+        sign.loadings <- apply(rotation.results$rotated.loadings, 2,
+                                 function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
+        rotated.loadings <- rotation.results$rotated.loadings * sign.loadings
 
         loadings <- rotated.loadings
         if (oblique.rotation)
         {
-            structure.matrix <- rotation.results$structure.matrix
+            structure.matrix <- rotation.results$structure.matrix * sign.loadings
         } else {
             structure.matrix <- rotated.loadings
         }
+        sign.matrix <- tcrossprod(sign.loadings[1,], sign.loadings[1,])
         component.correlations <- rotation.results$component.correlations
+        if (!is.null(component.correlations))
+            component.correlations <- component.correlations * sign.matrix
         colnames(structure.matrix) <- colnames(loadings)
 
     } else {
+
+        sign.loadings <- apply(unrotated.loadings, 2,
+                                 function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
+        unrotated.loadings <- unrotated.loadings * sign.loadings
         loadings <- unrotated.loadings
         rotated.loadings <- unrotated.loadings
         structure.matrix <- loadings
