@@ -12,8 +12,6 @@ x.with.labels <- x
 dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet.Coke','Fanta','Lift','Pepsi'),
                                        Attribute=c('Kids', 'Teens',    "Enjoy life",   'Picks you up', 'Refreshes',    'Cheers you up',    'Energy',   'Up-to-date',   'Fun',  'When tired',   'Relax'))
 
-output = "ggplot2"
-CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
 output = "Scatterplot"
 CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
 
@@ -37,18 +35,23 @@ for (output in c("Scatterplot", "Moonplot", "ggplot2", "Text"))
         expect_error(CorrespondenceAnalysis(x.with.labels, row.names.to.remove = "NET",  column.names.to.remove = "NET", output = output), NA)
         expect_error(CorrespondenceAnalysis(x,output = output), NA)
     })
-#
-# test_that("Normalization warning",
-# {
-#     output =
-#     expect_that(CorrespondenceAnalysis(x.with.labels, row.names.to.remove = "NET",column.names.to.remove = "NET",
-#                                        output = "Moonplot"),
-#                 gives_warning())
-# })
-#
-# test_that("Normalization warning",
-# {
-#     expect_that(CorrespondenceAnalysis(x.with.labels, normalization = "Row principal", row.names.to.remove = "NET",column.names.to.remove = "NET", output = "Moonplot"),
-#                 not(gives_warning("'Normalization'")))
-# })
-#
+
+
+
+test_that("Row and column labels",
+          {
+                x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+                expect_equal(x$row.column.names, c("Brand",  "Attribute"))
+
+                attr(x.with.labels, "row.column.names") <- c("My rows", "My columns")
+                x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+                expect_equal(x$row.column.names, c("Brand",  "Attribute"))
+
+                names(dimnames(x.with.labels)) <- NULL
+                x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+                expect_equal(x$row.column.names, c("My rows", "My columns"))
+
+                attr(x.with.labels, "row.column.names") <- NULL
+                x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+                expect_equal(x$row.column.names, c("Rows",  "Columns"))
+          })
