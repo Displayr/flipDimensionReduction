@@ -11,7 +11,7 @@ data(cola, package = "flipExampleData")
 
 test_that("PCA: binary", {
     zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
-    z1 <- flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE)
+    z1 <- suppressWarnings(flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE))
     z <- PrincipalComponentsAnalysis(data = z1)
     z2 <- flipTransformations::AsNumeric(zd, binary = TRUE, remove.first = TRUE)
     z <- PrincipalComponentsAnalysis(data = z2)
@@ -496,7 +496,7 @@ test_that("Converting factors for use in PCA", {
     test.data <- test.data.2[,1:10]
     test.data[,1] <- as.factor(test.data[,1])
     test.data[,2] <- as.ordered(test.data[,2])
-    converted.data <- flipTransformations::AsNumeric(test.data, binary = TRUE)#ConvertVariablesForFactorAnalysis(test.data)
+    converted.data <- suppressWarnings(flipTransformations::AsNumeric(test.data, binary = TRUE))#ConvertVariablesForFactorAnalysis(test.data)
     expect_error(test.pca <- PrincipalComponentsAnalysis(data = converted.data[, -1],
                                                          missing = "Exclude cases with missing data",
                                                          n.factors = 5,
