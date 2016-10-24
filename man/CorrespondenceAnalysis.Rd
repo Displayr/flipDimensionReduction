@@ -36,4 +36,9 @@ excluded from the final data file.}
 \description{
 Removes rows or columns from the table.
 }
+\details{
+Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
+and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
+If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
+}
 
