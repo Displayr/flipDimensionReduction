@@ -16,6 +16,9 @@
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
 #'   excluded from the final data file.
+#' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
+#' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
+#' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -27,8 +30,18 @@ CorrespondenceAnalysis = function(x,
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   ...)
 {
+    row.column.names.attribute <- attr(x, "row.column.names")
     x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
-    result <- list(x = x, normalization = normalization, output = output, original = ca(x, ...))
+    row.column.names <- names(dimnames(x))
+    if (is.null(row.column.names))
+        row.column.names <- row.column.names.attribute
+    if (is.null(row.column.names))
+        row.column.names <- c("Rows", "Columns")
+    result <- list(x = x,
+                   row.column.names = row.column.names,
+                   normalization = normalization,
+                   output = output,
+                   original = ca(x, ...))
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -53,10 +66,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
     row.coordinates <- normed$row.coordinates
     column.coordinates <- normed$column.coordinates
     coords <- rbind(row.coordinates, column.coordinates)
-    group.names <- names(dimnames(x$x))
-    if (is.null(group.names))
-        group.names <- c("Rows", "Columns")
-    groups <- rep(group.names, c(nrow(row.coordinates), nrow(column.coordinates)))
+    row.column.names <- x$row.column.names
+    groups <- rep(x$row.column.names, c(nrow(row.coordinates), nrow(column.coordinates)))
     x.data <- as.matrix(x$x)
     if (x$output == "Scatterplot")
     {
@@ -82,9 +93,6 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     }
-    else if (x$output == "ggplot2")
-        print(LabeledScatterPlot(coords, column.labels = column.labels,
-                                 fixed.aspect = TRUE, group = groups))
     else
         print(ca.obj, ...)
 }
