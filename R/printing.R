@@ -15,7 +15,7 @@ sortLoadings <- function(x) {
 
 
 #' @importFrom stats lm.fit setNames
-#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent
+#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent ExtractCommonPrefix
 #' @export
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
@@ -152,10 +152,16 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             else
                 paste(c(loadings.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
                         eigenvalues.caption), collapse = "; ")
-            tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$loadings),
-                                    variance.explained, ss.loadings, min.display.loading.value,
-                                    title = "Principal Component Loadings", subtitle = subtitle,
-                                    footer = footer,
+            loadings <- .tidy.loadings(x, input.matrix = x$loadings)
+            extracted <- ExtractCommonPrefix(row.names(loadings))
+            title <- "Principal Component Loadings"
+            if (!is.na(extracted$common.prefix))
+            {
+                title <- paste0(title, ": ", extracted$common.prefix)
+                row.names(loadings) <- extracted$shortened.labels
+            }
+            tbl <- PCALoadingsTable(loadings, variance.explained, ss.loadings, min.display.loading.value,
+                                    title = title, subtitle = subtitle, footer = footer,
                                     eigenvalue.label = eigenvalue.label)
             print(tbl)
         } else if (print.type == "structure") {
@@ -165,11 +171,16 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             else
                 paste(c(structure.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
                         eigenvalues.caption), collapse = "; ")
-            tbl <- PCALoadingsTable(.tidy.loadings(x, input.matrix = x$structure.matrix),
-                                    NULL, ss.loadings, min.display.loading.value,
-                                    title = "Principal Component Structure",
-                                    footer = footer,
-                                    eigenvalue.label = eigenvalue.label)
+            loadings <- .tidy.loadings(x, input.matrix = x$structure.matrix)
+            extracted <- ExtractCommonPrefix(row.names(loadings))
+            title <- "Principal Component Structure"
+            if (!is.na(extracted$common.prefix))
+            {
+                title <- paste0(title, ": ", extracted$common.prefix)
+                row.names(loadings) <- extracted$shortened.labels
+            }
+            tbl <- PCALoadingsTable(loadings, NULL, ss.loadings, min.display.loading.value, title = title,
+                                    footer = footer, eigenvalue.label = eigenvalue.label)
             print(tbl)
         } else if (print.type == "details") {
             # Table printing
