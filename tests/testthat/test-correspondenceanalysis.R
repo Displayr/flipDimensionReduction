@@ -54,4 +54,17 @@ test_that("Row and column labels",
                 attr(x.with.labels, "row.column.names") <- NULL
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
                 expect_equal(x$row.column.names, c("Rows",  "Columns"))
+
+                xd <- array(runif(9), dim = c(3, 3, 3), dimnames = list(A = c("a","a","a"), B = c("a","a","a"), C = c("a","a","a")))
+                x <- CorrespondenceAnalysis(xd)
+                expect_equal(x$row.column.names, c("A",  "B"))
+
+                names(dimnames(xd)) <- NULL
+                x <- CorrespondenceAnalysis(xd)
+                expect_equal(x$row.column.names, c("A",  "B"))
+
+                attr(xd, "row.column.names") <- c("Alpha", "Beta")
+                x <- CorrespondenceAnalysis(xd)
+                expect_equal(x$row.column.names, c("A",  "B"))
+
           })
