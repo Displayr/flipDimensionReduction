@@ -52,7 +52,6 @@ CorrespondenceAnalysis = function(x,
 #' @param x CorrespondenceAnalysis object.
 #' @param ... further arguments passed to or from other methods.
 #' @import ca
-#' @importFrom flipPlots LabeledScatterPlot CreateInteractiveScatterplotTooltips CreateInteractiveScatterplotTooltips
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export

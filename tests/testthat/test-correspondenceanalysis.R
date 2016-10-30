@@ -16,7 +16,7 @@ output = "Scatterplot"
 CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
 
 
-for (output in c("Scatterplot", "Moonplot", "Text", "ggplot2"))
+for (output in c("Scatterplot", "Moonplot", "Text"))
     test_that(paste0("CorrespondenceAnalysis is OK (mainly GetTidyTwoDimensionalArray) with ", output),
               {
         expect_error(CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
@@ -29,7 +29,7 @@ for (output in c("Scatterplot", "Moonplot", "Text", "ggplot2"))
         expect_error(suppressWarnings(CorrespondenceAnalysis(z, output = output)), NA)
     })
 
-for (output in c("Scatterplot", "Moonplot", "ggplot2", "Text"))
+for (output in c("Scatterplot", "Moonplot",  "Text"))
     test_that(paste("CorrespondenceAnalysis prints", output),
     {
         expect_error(CorrespondenceAnalysis(x.with.labels, row.names.to.remove = "NET",  column.names.to.remove = "NET", output = output), NA)
@@ -61,10 +61,10 @@ test_that("Row and column labels",
 
                 names(dimnames(xd)) <- NULL
                 x <- CorrespondenceAnalysis(xd)
-                expect_equal(x$row.column.names, c("A",  "B"))
+                expect_equal(x$row.column.names, c("Rows",  "Columns"))
 
                 attr(xd, "row.column.names") <- c("Alpha", "Beta")
                 x <- CorrespondenceAnalysis(xd)
-                expect_equal(x$row.column.names, c("A",  "B"))
+                expect_equal(x$row.column.names, c("Alpha",  "Beta"))
 
           })
