@@ -1,4 +1,4 @@
-#' \code{WWTable}
+#' \code{WeightedTable}
 #' @description Generalisation of the \code{table} function in base to handle weights
 #' @param ... one or more objects which can be interpretated as factors, or a list or dataframe whose components can be so interpreted
 #' @param exclude levels to remove for all factors in \code{...}
@@ -119,13 +119,13 @@ WeightedTable <- function (...,
 #' @export
 
 MultipleCorrespondenceAnalysis <- function(formula,
-                               data = NULL,
-                               output = c("Scatterplot", "Moonplot", "Text"),
-                               weights = NULL,
-                               subset = NULL,
-                               missing = "Exclude cases with missing data",
-                               auxiliary.data = NULL,
-                               show.labels = FALSE)
+                                           data = NULL,
+                                           output = c("Scatterplot", "Moonplot", "Text"),
+                                           weights = NULL,
+                                           subset = NULL,
+                                           missing = "Exclude cases with missing data",
+                                           auxiliary.data = NULL,
+                                           show.labels = FALSE)
 {
     # Data cleaning
     cl <- match.call()
@@ -153,30 +153,38 @@ MultipleCorrespondenceAnalysis <- function(formula,
     w.est <- processed.data$weights
     if (!is.null(w.est))
     {
-        w.min <- max(1, min(w.est[w.est > 0]))
+        # Rescale weights as mjca gives rounding errors when weights are small
+        w.min <- min(1, min(w.est[w.est > 0]))
         w.est <- w.est/w.min
     }
     datfreq <- WeightedTable(processed.data$estimation.data,
                              weights=w.est)
     obj <- mjca(datfreq, nd=NA)
 
-    obj$levelnames.ord <- sprintf("%s:%s", rep(colnames(processed.data$estimation.data), lapply(processed.data$estimation.data, nlevels)),
-                                     unlist(lapply(data, levels)))
-    obj$levelnames.show <- ifelse(!show.labels, obj$levelnames.ord,
-                                  sprintf("%s:%s", rep(Labels(processed.data$estimation.data),
-                                                lapply(processed.data$estimation.data, nlevels)),
-                                                unlist(lapply(data, levels))))
-
+    obj$levelnames.ord <- sprintf("%s:%s",
+                                  rep(colnames(data), lapply(processed.data$estimation.data, nlevels)),
+                                  unlist(lapply(processed.data$estimation.data, levels)))
+    obj$variablenames <- if(!show.labels) obj$levelnames.ord
+                         else sprintf("%s:%s",
+                                        rep(Labels(data), lapply(processed.data$estimation.data, nlevels)),
+                                        unlist(lapply(processed.data$estimation.data, levels)))
+    if (show.labels)
+        obj$colnames <- Labels(data)
 
     colnames(obj$colcoord) <- sprintf("Dimension %d", 1:ncol(obj$colcoord))
     colnames(obj$colpcoord) <- sprintf("Dimension %d", 1:ncol(obj$colpcoord))
-    rownames(obj$colcoord) <- obj$levelnames       # out of order
+    rownames(obj$colcoord) <- obj$levelnames
     rownames(obj$colpcoord) <- obj$levelnames
     obj$colcoord <- obj$colcoord[obj$levelnames.ord,]
     obj$colpcoord <- obj$colpcoord[obj$levelnames.ord,]
+    rownames(obj$colcoord) <- obj$variablenames
+    rownames(obj$colpcoord) <- obj$variablenames
 
     obj$output <- output
-    obj$original.data <- data
+    obj$show.labels <- show.labels
+    if (missing == "Imputation (replace missing values with estimates)")
+        data <- processed.data$data
+    obj$data <- data
     obj$processed.data <- processed.data
     class(obj) <- "mca"
     return(obj)
@@ -190,13 +198,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
 print.mca <- function(object)
 {
-    # Print output
     if (object$output == "Scatterplot")
     {
         groups <- rep(object$colnames, object$levels.n)
         print(LabeledScatter(X = object$colpcoord[,1],
                        Y = object$colpcoord[,2],
-                       label = object$levelnames.ord,
+                       label = object$variablenames,
                        group = groups,
                        fixed.aspect = TRUE,
                        title = "Multiple correspondence analysis",
@@ -211,25 +218,29 @@ print.mca <- function(object)
 
     if (object$output == "Moonplot")
     {
-
+        print(moonplot(object$colpcoord[,1:2], object$colpcoord[,1:2]))
     }
 
     if (object$output == "Text")
     {
         sum.tab <- data.frame('Canonical correlation' = object$sv,
                               'Inertia' = object$sv^2,
-                              'Proportion explained' = object$inertia.e)
+                              'Proportion explained' = object$inertia.e,
+                              check.names = FALSE)
         print(sum.tab)
+        cat("\n\nStandard Coordinates\n")
         print(object$colcoord)
+        cat("\n\nPrincipal Coordinates\n")
         print(object$colpcoord)
     }
 }
 
 #' \code{predict.mca}
 #' @description Predict coordinates of new data with multiple correspondance analysis
-#' @param object A mjca object created using \code{MultipleCorrespondenceAnalysis}.
+#' @param object A mca object created using \code{MultipleCorrespondenceAnalysis}.
 #' @param newdata A data frame containing factor variables. Levels must match the factors used to construct the model
 #' @importFrom flipTransformations FactorToIndicators
+#' @importFrom flipFormat Labels
 #' @export
 
 predict.mca <- function(object, newdata = NULL)
@@ -238,20 +249,22 @@ predict.mca <- function(object, newdata = NULL)
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
 
     if (is.null(newdata))
-        newdata <- object$orig.data
+        newdata <- object$data
 
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
-    # remove empty factors?
-    colnames(tab.newdata) <- sprintf("%s:%s", rep(colnames(newdata), lapply(newdata, nlevels)),
+    col.names <- if (!object$show.labels) colnames(newdata)
+                 else Labels(newdata)
+    colnames(tab.newdata) <- sprintf("%s:%s", rep(col.names, unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
-    if (length(setdiff(colnames(tab.newdata), object$levelnames.ord)) > 0)
-        stop("Levels of new data does not match estimation data\n")
-    tab.newdata <- tab.newdata[object$levelnames.ord,]   # in case levels have changed order
+    extra.levels <- setdiff(colnames(tab.newdata), object$variablenames)
+    if (length(extra.levels) > 0 && rowSums(tab.newdata[,extra.levels]) > 0)
+        stop("Factor levels of new data has levels not in estimation data: ", extra.levels, "\n")
+    tab.newdata <- tab.newdata[,object$variablenames]
 
     coord <- crossprod(t(tab.newdata), object$colpcoord)
     #dist2.row <- rowSums(t((t(tab.newdata) - object$colmass)^2/object$colmass))
     #cos2 <- coord^2/dist2.row
     #coord <- coord[, 1:ncp, drop=FALSE]
-    colnames(coord) <- paste("Dim", 1:ncp)
+    #colnames(coord) <- paste("Dim", 1:ncp)
     return(coord)
 }
