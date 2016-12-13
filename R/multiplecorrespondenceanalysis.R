@@ -195,16 +195,16 @@ MultipleCorrespondenceAnalysis <- function(formula,
         data <- processed.data$data
     obj$data <- data
     obj$processed.data <- processed.data
-    class(obj) <- "mca"
+    class(obj) <- "mcaObj"
     return(obj)
 }
 
-#' \code{print.mca}
+#' \code{print.mcaObj}
 #' @param object The multiple correspondance analysis object to be analysed
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 
-print.mca <- function(object)
+print.mcaObj <- function(object)
 {
     if (object$output == "Scatterplot")
     {
@@ -248,9 +248,9 @@ print.mca <- function(object)
 #' @importFrom flipFormat Labels
 #' @export
 
-predict.mca <- function(object, newdata = NULL)
+predict.mcaObj <- function(object, newdata = NULL)
 {
-    if (!inherits(object, "mca"))
+    if (!inherits(object, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
 
     if (is.null(newdata))
