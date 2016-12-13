@@ -144,9 +144,9 @@ MultipleCorrespondenceAnalysis <- function(formula,
     if (ncol(data) < 2)
         stop("At least two factors are required for multiple correspondence analysis\n")
 
-    if (!is.null(weights) & length(weights) != nrow(data))
+    if (!is.null(weights) && length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
-    if (!is.null(subset) & length(subset) != nrow(data))
+    if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
         stop("length of subset does not match the number of observations in data\n")
     processed.data <- EstimationData(formula, data, subset, weights, missing)
 
