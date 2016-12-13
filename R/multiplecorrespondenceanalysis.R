@@ -210,7 +210,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #'
 plot_mcaObj <- function(x)
 {
-    if (!inherits(object, "mcaObj"))
+    if (!inherits(x, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
 
      groups <- rep(x$colnames, x$levels.n)
