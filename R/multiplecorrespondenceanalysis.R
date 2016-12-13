@@ -82,7 +82,6 @@ WeightedTable <- function (...,
         dn <- c(dn, list(ll))
         bin <- bin + pd * (as.integer(cat) - 1L)
         pd <- pd * nl
-        #cat("bin", bin, "\n")
     }
 
     names(dn) <- dnn
@@ -120,7 +119,7 @@ WeightedTable <- function (...,
 
 MultipleCorrespondenceAnalysis <- function(formula,
                                            data = NULL,
-                                           output = c("Scatterplot", "Moonplot", "Text"),
+                                           output = c("Text", "Scatterplot")[1],
                                            weights = NULL,
                                            subset = NULL,
                                            missing = "Exclude cases with missing data",
@@ -142,6 +141,9 @@ MultipleCorrespondenceAnalysis <- function(formula,
     weights <- eval(substitute(weights), data, parent.frame())
     data <- GetData(.formula, data, auxiliary.data)
 
+    if (ncol(data) < 2)
+        stop("At least two factors are required for multiple correspondence analysis\n")
+
     if (!is.null(weights) & length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
     if (!is.null(subset) & length(subset) != nrow(data))
@@ -157,10 +159,13 @@ MultipleCorrespondenceAnalysis <- function(formula,
         w.min <- min(1, min(w.est[w.est > 0]))
         w.est <- w.est/w.min
     }
-    datfreq <- WeightedTable(processed.data$estimation.data,
-                             weights=w.est)
+    datfreq <- WeightedTable(processed.data$estimation.data, weights=w.est)
     obj <- mjca(datfreq, nd=NA)
 
+    # Label data output
+    # levelnames.ord always use colnames(data) and should match levelnames given by mjca
+    # the only difference is that they keep the order of the original factor levels
+    # variable names may use Label - they are for display only
     obj$levelnames.ord <- sprintf("%s:%s",
                                   rep(colnames(data), lapply(processed.data$estimation.data, nlevels)),
                                   unlist(lapply(processed.data$estimation.data, levels)))
@@ -168,11 +173,13 @@ MultipleCorrespondenceAnalysis <- function(formula,
                          else sprintf("%s:%s",
                                         rep(Labels(data), lapply(processed.data$estimation.data, nlevels)),
                                         unlist(lapply(processed.data$estimation.data, levels)))
-    if (show.labels)
-        obj$colnames <- Labels(data)
+    empty.levels <- which(!obj$levelnames.ord %in% obj$levelnames)
+    if (length(empty.levels) > 0)
+    {
+        obj$levelnames.ord <- obj$levelnames.ord[-empty.levels]
+        obj$variablenames  <- obj$variablenames[-empty.levels]
+    }
 
-    colnames(obj$colcoord) <- sprintf("Dimension %d", 1:ncol(obj$colcoord))
-    colnames(obj$colpcoord) <- sprintf("Dimension %d", 1:ncol(obj$colpcoord))
     rownames(obj$colcoord) <- obj$levelnames
     rownames(obj$colpcoord) <- obj$levelnames
     obj$colcoord <- obj$colcoord[obj$levelnames.ord,]
@@ -180,8 +187,10 @@ MultipleCorrespondenceAnalysis <- function(formula,
     rownames(obj$colcoord) <- obj$variablenames
     rownames(obj$colpcoord) <- obj$variablenames
 
+    # Save object
+    if (show.labels)
+        obj$colnames <- Labels(data)
     obj$output <- output
-    obj$show.labels <- show.labels
     if (missing == "Imputation (replace missing values with estimates)")
         data <- processed.data$data
     obj$data <- data
@@ -192,7 +201,6 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
 #' \code{print.mca}
 #' @param object The multiple correspondance analysis object to be analysed
-#' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 
@@ -216,22 +224,19 @@ print.mca <- function(object)
                        x.title.font.size = 16))
     }
 
-    if (object$output == "Moonplot")
-    {
-        print(moonplot(object$colpcoord[,1:2], object$colpcoord[,1:2]))
-    }
-
     if (object$output == "Text")
     {
+        cat("Multiple correspondence analysis\n")
+        cat(object$processed.data$description, "\n\n")
         sum.tab <- data.frame('Canonical correlation' = object$sv,
                               'Inertia' = object$sv^2,
                               'Proportion explained' = object$inertia.e,
                               check.names = FALSE)
-        print(sum.tab)
+        print(sum.tab, digits=2)
         cat("\n\nStandard Coordinates\n")
-        print(object$colcoord)
+        print(object$colcoord, digits=2)
         cat("\n\nPrincipal Coordinates\n")
-        print(object$colpcoord)
+        print(object$colpcoord, digits=2)
     }
 }
 
@@ -252,19 +257,38 @@ predict.mca <- function(object, newdata = NULL)
         newdata <- object$data
 
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
-    col.names <- if (!object$show.labels) colnames(newdata)
-                 else Labels(newdata)
-    colnames(tab.newdata) <- sprintf("%s:%s", rep(col.names, unlist(lapply(newdata, nlevels))),
+    colnames(tab.newdata) <- sprintf("%s:%s", rep(colnames(newdata), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
-    extra.levels <- setdiff(colnames(tab.newdata), object$variablenames)
+    extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
     if (length(extra.levels) > 0 && rowSums(tab.newdata[,extra.levels]) > 0)
         stop("Factor levels of new data has levels not in estimation data: ", extra.levels, "\n")
-    tab.newdata <- tab.newdata[,object$variablenames]
+    tab.newdata <- tab.newdata[,object$levelnames.ord]
 
-    coord <- crossprod(t(tab.newdata), object$colpcoord)
-    #dist2.row <- rowSums(t((t(tab.newdata) - object$colmass)^2/object$colmass))
-    #cos2 <- coord^2/dist2.row
-    #coord <- coord[, 1:ncp, drop=FALSE]
-    #colnames(coord) <- paste("Dim", 1:ncp)
-    return(coord)
+    ndim <- ncol(object$colcoord)
+    ndata <- nrow(tab.newdata)
+    nq <- ncol(newdata)
+    csum <- colSums(tab.newdata)
+    denom <- sqrt(csum * nq)
+    zx <- sweep(tab.newdata, 2, denom, "/")
+    x.svd <- svd(zx)
+
+    fac <- matrix(NA, ndata, ndim)
+    for (r in 1:ndata)
+        for (c in 1:ndim)
+            fac[r,c] <- x.svd$u[r,c+1]/(nq*x.svd$d[c+1])
+
+    ind.prop <- prop.table(as.matrix(tab.newdata), 2)
+    pred <- t(ind.prop) %*% fac
+
+    results <- c()
+    for (c in 1:ndim)
+    {
+        vec <- rep(0, ndata)
+        fmult <- object$colcoord[1,c]/pred[1,c]
+        for (i in 1:ndata)
+            vec[i] <- fac[i,c] * fmult * object$sv[c]
+        results <- cbind(results, vec)
+    }
+    colnames(results) <- sprintf("Dimension %d", 1:ndim)
+    return(results)
 }

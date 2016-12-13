@@ -7,7 +7,7 @@
 \method{predict}{mca}(object, newdata = NULL)
 }
 \arguments{
-\item{object}{A mjca object created using \code{MultipleCorrespondenceAnalysis}.}
+\item{object}{A mca object created using \code{MultipleCorrespondenceAnalysis}.}
 
 \item{newdata}{A data frame containing factor variables. Levels must match the factors used to construct the model}
 }

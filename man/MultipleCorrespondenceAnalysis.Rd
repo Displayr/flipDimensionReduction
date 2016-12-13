@@ -4,10 +4,10 @@
 \alias{MultipleCorrespondenceAnalysis}
 \title{\code{MultipleCorrespondanenceAnalysis}}
 \usage{
-MultipleCorrespondenceAnalysis(formula, data = NULL,
-  output = c("Scatterplot", "Moonplot", "Text"), weights = NULL,
-  subset = NULL, missing = "Exclude cases with missing data",
-  auxiliary.data = NULL, show.labels = FALSE)
+MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
+  "Scatterplot")[1], weights = NULL, subset = NULL,
+  missing = "Exclude cases with missing data", auxiliary.data = NULL,
+  show.labels = FALSE)
 }
 \arguments{
 \item{data}{A data frame containing factor variables.}

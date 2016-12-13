@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiplecorrespondenceanalysis.R
 \name{WeightedTable}
 \alias{WeightedTable}
-\title{\code{WWTable}}
+\title{\code{WeightedTable}}
 \usage{
 WeightedTable(..., weights = NULL, exclude = if (useNA == "no") c(NA, NaN),
   useNA = c("no", "ifany", "always"), dnn = list.names(...),
