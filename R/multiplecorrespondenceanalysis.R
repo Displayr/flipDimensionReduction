@@ -141,9 +141,6 @@ MultipleCorrespondenceAnalysis <- function(formula,
     weights <- eval(substitute(weights), data, parent.frame())
     data <- GetData(.formula, data, auxiliary.data)
 
-    if (ncol(data) < 2)
-        stop("At least two factors are required for multiple correspondence analysis\n")
-
     if (!is.null(weights) && length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
     if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
@@ -160,6 +157,10 @@ MultipleCorrespondenceAnalysis <- function(formula,
         w.est <- w.est/w.min
     }
     datfreq <- WeightedTable(processed.data$estimation.data, weights=w.est)
+    dd <- dim(datfreq)
+    if (length(dd) <= 2 && min(dd) <= 2)
+        stop("Not enough category combinations. Try including more variables in the analysis\n")
+
     obj <- mjca(datfreq, nd=NA)
 
     # Label data output
@@ -186,6 +187,8 @@ MultipleCorrespondenceAnalysis <- function(formula,
     obj$colpcoord <- obj$colpcoord[obj$levelnames.ord,]
     rownames(obj$colcoord) <- obj$variablenames
     rownames(obj$colpcoord) <- obj$variablenames
+    colnames(obj$colcoord) <- sprintf("Dimension %d", 1:ncol(obj$colcoord))
+    colnames(obj$colpcoord) <- sprintf("Dimension %d", 1:ncol(obj$colpcoord))
 
     # Save object
     if (show.labels)
@@ -226,17 +229,21 @@ print.mcaObj <- function(x, ...)
 
     if (x$output == "Text")
     {
+        oo <- options(scipen = 5)
+        ndim <- ncol(x$colpcoord)
         cat("Multiple correspondence analysis\n")
         cat(x$processed.data$description, "\n\n")
         sum.tab <- data.frame('Canonical correlation' = x$sv,
                               'Inertia' = x$sv^2,
                               'Proportion explained' = x$inertia.e,
                               check.names = FALSE)
-        print(sum.tab, digits=2)
+        rownames(sum.tab) <- sprintf("Dimension %d", 1:nrow(sum.tab))
+        print(sum.tab[1:ndim,], digits=2)
         cat("\n\nStandard Coordinates\n")
         print(x$colcoord, digits=2)
         cat("\n\nPrincipal Coordinates\n")
         print(x$colpcoord, digits=2)
+        on.exit(options(oo))
     }
 }
 
@@ -254,14 +261,26 @@ predict.mcaObj <- function(object, newdata = NULL)
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
 
     if (is.null(newdata))
+    {
         newdata <- object$data
+        ind.ret <- 1:nrow(newdata)
+    }
+    else
+    {
+        cnames <- intersect(colnames(object$data), colnames(newdata))
+        if (length(cnames) < ncol(object$data))
+            stop("newdata is missing variables in the model\n")
+        ind.ret <- 1:nrow(newdata)
+        newdata <- rbind(newdata[,cnames], object$data)
+    }
 
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
     colnames(tab.newdata) <- sprintf("%s:%s", rep(colnames(newdata), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
     extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
     if (length(extra.levels) > 0 && rowSums(tab.newdata[,extra.levels]) > 0)
-        stop("Factor levels of new data has levels not in estimation data: ", extra.levels, "\n")
+        stop("Factor levels of new data contains levels not in estimation data: ",
+             paste(extra.levels, collapse=", "), "\n")
     tab.newdata <- tab.newdata[,object$levelnames.ord]
 
     ndim <- ncol(object$colcoord)
@@ -290,5 +309,9 @@ predict.mcaObj <- function(object, newdata = NULL)
         results <- cbind(results, vec)
     }
     colnames(results) <- sprintf("Dimension %d", 1:ndim)
-    return(results)
+
+    #coords <- crossprod(t(tab.newdata), object$colpcoord)
+    #coords2 <- sweep(coords, 2, object$colcoord[1,]/pred[1,]*object$sv[1:ndim], "*")
+    #return(list(results=results, coords=coords2))
+    return(results[ind.ret,,drop=FALSE])
 }
