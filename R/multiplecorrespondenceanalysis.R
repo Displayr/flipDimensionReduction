@@ -202,6 +202,34 @@ MultipleCorrespondenceAnalysis <- function(formula,
     return(obj)
 }
 
+#' \code{plot_mcaObj}
+#' @description Plots object even if output is set to \code{"Text"}
+#' @param object The multiple correspondance analysis object to be analysed
+#' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @export
+#'
+plot_mcaObj <- function(x)
+{
+    if (!inherits(object, "mcaObj"))
+        stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
+
+     groups <- rep(x$colnames, x$levels.n)
+        print(LabeledScatter(X = x$colpcoord[,1],
+                       Y = x$colpcoord[,2],
+                       label = x$variablenames,
+                       group = groups,
+                       fixed.aspect = TRUE,
+                       title = "Multiple correspondence analysis",
+                       x.title = "Dimension 1",
+                       y.title = "Dimension 2",
+                       axis.font.size = 8,
+                       labels.font.size = 12,
+                       title.font.size = 20,
+                       y.title.font.size = 16,
+                       x.title.font.size = 16))
+}
+
+
 #' \code{print.mcaObj}
 #' @param object The multiple correspondance analysis object to be analysed
 #' @importFrom rhtmlLabeledScatter LabeledScatter
@@ -247,34 +275,22 @@ print.mcaObj <- function(x, ...)
     }
 }
 
-#' \code{predict.mca}
-#' @description Predict coordinates of new data with multiple correspondance analysis
+#' \code{fit.mca}
+#' @description Computes coordinates from multiple correspondance analysis
 #' @param object A mca object created using \code{MultipleCorrespondenceAnalysis}.
-#' @param newdata A data frame containing factor variables. Levels must match the factors used to construct the model
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
 #' @export
 
-predict.mcaObj <- function(object, newdata = NULL)
+fit.mcaObj <- function(object, keep.missing = FALSE)
 {
     if (!inherits(object, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
 
-    if (is.null(newdata))
-    {
-        newdata <- object$data
-        ind.ret <- 1:nrow(newdata)
-    }
-    else
-    {
-        cnames <- intersect(colnames(object$data), colnames(newdata))
-        if (length(cnames) < ncol(object$data))
-            stop("newdata is missing variables in the model\n")
-        ind.ret <- 1:nrow(newdata)
-        newdata <- rbind(newdata[,cnames], object$data)
-    }
-
+    newdata <- object$data
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
+
+    # Checking that data is compatible - may not be needed since we do not predict for new data
     colnames(tab.newdata) <- sprintf("%s:%s", rep(colnames(newdata), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
     extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
@@ -310,8 +326,17 @@ predict.mcaObj <- function(object, newdata = NULL)
     }
     colnames(results) <- sprintf("Dimension %d", 1:ndim)
 
+    results2 <- results
+    ind.missing <- which(!object$processed.data$post.missing.data.estimation.sample)
+    if (keep.missing && length(ind.missing) > 0)
+    {
+        results2 <- rbind(results2, matrix(NA, nrow=length(ind.missing), ncol=ndim))
+        results2[,] <- NA
+        results2[!ind.missing,] <- results[1:ndata,]
+    }
+
     #coords <- crossprod(t(tab.newdata), object$colpcoord)
     #coords2 <- sweep(coords, 2, object$colcoord[1,]/pred[1,]*object$sv[1:ndim], "*")
     #return(list(results=results, coords=coords2))
-    return(results[ind.ret,,drop=FALSE])
+    return(results2)
 }

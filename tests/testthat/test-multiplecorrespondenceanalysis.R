@@ -21,7 +21,7 @@ test_that("MCA canonical correlation with no weighting", {
                        c(0.11,0.06,0.04,0.027,0.018,0.011))
           expect_equal(round(default.res$inertia.e[1:6], 3),
                        c(0.424,0.123,0.055,0.026,0.011,0.004))
-          pred <- predict(default.res)
+          coord <- fit.mcaObj(default.res)
           expect_equal(round(pred[1:10,1], 3),
                        c(-0.193,-0.077,0.189,-0.009,-0.077,0.098,0.039,0.128,0.161,-0.180))
 })
@@ -59,20 +59,12 @@ test_that("Impute missing data", {
 
 filt.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola,
                                            subset = as.numeric(cola$URLID) <= 300)
-filt.pred <- predict(filt.res)
+coord <- fit.mcaObj(filt.res)
+coord.withNAs <- fit.mcaObj(filt.res, keep.missing = T)
 test_that("Filters", {
           expect_equal(nrow(filt.res$processed.data$estimation.data), 300)
           expect_equal(nrow(filt.pred), 327)
           # check predicted values for last 27 cases
-})
-
-test_that("Predict on new data", {
-            new.dat <- cola[1:30, 113:117] # drop label names
-            new.dat2 <- new.dat
-            colnames(new.dat2) <- sprintf("qq%d", 12:16)
-            expect_error(predict(label.res), NA)
-            expect_error(predict(label.res, newdata=new.dat), NA)
-            expect_error(predict(label.res, newdata=new.dat2))
 })
 
 
