@@ -237,24 +237,6 @@ plot_mcaObj <- function(x)
 
 print.mcaObj <- function(x, ...)
 {
-    if (x$output == "Scatterplot")
-    {
-        groups <- rep(x$colnames, x$levels.n)
-        print(LabeledScatter(X = x$colpcoord[,1],
-                       Y = x$colpcoord[,2],
-                       label = x$variablenames,
-                       group = groups,
-                       fixed.aspect = TRUE,
-                       title = "Multiple correspondence analysis",
-                       x.title = "Dimension 1",
-                       y.title = "Dimension 2",
-                       axis.font.size = 8,
-                       labels.font.size = 12,
-                       title.font.size = 20,
-                       y.title.font.size = 16,
-                       x.title.font.size = 16))
-    }
-
     if (x$output == "Text")
     {
         oo <- options(scipen = 5)
@@ -272,7 +254,25 @@ print.mcaObj <- function(x, ...)
         cat("\n\nPrincipal Coordinates\n")
         print(x$colpcoord, digits=2)
         on.exit(options(oo))
+    } else
+    {
+        #if (x$output == "Scatterplot")
+        groups <- rep(x$colnames, x$levels.n)
+        print(LabeledScatter(X = x$colpcoord[,1],
+                       Y = x$colpcoord[,2],
+                       label = x$variablenames,
+                       group = groups,
+                       fixed.aspect = TRUE,
+                       title = "Multiple correspondence analysis",
+                       x.title = "Dimension 1",
+                       y.title = "Dimension 2",
+                       axis.font.size = 8,
+                       labels.font.size = 12,
+                       title.font.size = 20,
+                       y.title.font.size = 16,
+                       x.title.font.size = 16))
     }
+
 }
 
 #' \code{fit.mca}
