@@ -204,14 +204,14 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 
-print.mcaObj <- function(object)
+print.mcaObj <- function(x, ...)
 {
-    if (object$output == "Scatterplot")
+    if (x$output == "Scatterplot")
     {
-        groups <- rep(object$colnames, object$levels.n)
-        print(LabeledScatter(X = object$colpcoord[,1],
-                       Y = object$colpcoord[,2],
-                       label = object$variablenames,
+        groups <- rep(x$colnames, x$levels.n)
+        print(LabeledScatter(X = x$colpcoord[,1],
+                       Y = x$colpcoord[,2],
+                       label = x$variablenames,
                        group = groups,
                        fixed.aspect = TRUE,
                        title = "Multiple correspondence analysis",
@@ -224,19 +224,19 @@ print.mcaObj <- function(object)
                        x.title.font.size = 16))
     }
 
-    if (object$output == "Text")
+    if (x$output == "Text")
     {
         cat("Multiple correspondence analysis\n")
-        cat(object$processed.data$description, "\n\n")
-        sum.tab <- data.frame('Canonical correlation' = object$sv,
-                              'Inertia' = object$sv^2,
-                              'Proportion explained' = object$inertia.e,
+        cat(x$processed.data$description, "\n\n")
+        sum.tab <- data.frame('Canonical correlation' = x$sv,
+                              'Inertia' = x$sv^2,
+                              'Proportion explained' = x$inertia.e,
                               check.names = FALSE)
         print(sum.tab, digits=2)
         cat("\n\nStandard Coordinates\n")
-        print(object$colcoord, digits=2)
+        print(x$colcoord, digits=2)
         cat("\n\nPrincipal Coordinates\n")
-        print(object$colpcoord, digits=2)
+        print(x$colpcoord, digits=2)
     }
 }
 
