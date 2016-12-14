@@ -2,6 +2,7 @@
 % Please edit documentation in R/factoranalysis.R
 \name{PrincipalComponentsAnalysis}
 \alias{PrincipalComponentsAnalysis}
+\alias{fitted.flipFactorAnalysis}
 \title{\code{PrincipalComponentsAnalysis}}
 \usage{
 PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
@@ -11,6 +12,8 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
   show.labels = TRUE, plot.labels = TRUE)
+
+\method{fitted}{flipFactorAnalysis}(object, ...)
 }
 \arguments{
 \item{data}{A data frame with numeric columns which contains the data to be
@@ -70,6 +73,8 @@ options make use of HTML widgets.}
 \item{plot.labels}{A logical value which determines whether or not the
 scatter plot will show the labels of the input data, or just integers
 specifying the column number of each variable.}
+
+\item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
 }
 \description{
 Calculate a Principal Component Analysis

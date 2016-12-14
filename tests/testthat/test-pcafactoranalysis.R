@@ -491,6 +491,23 @@ test_that("Imputation", {
 
 })
 
+
+test_that("Filters", {
+
+    filt <- (1:nrow(test.data.1)) > 300
+    test.pca <- PrincipalComponentsAnalysis(data = test.data.1,
+                                              missing = "Imputation (replace missing values with estimates)",
+                                              subset = filt,
+                                              print.type = "loadings",
+                                              n.factors = 5,
+                                              suppress.small.coefficients = TRUE)
+    sc.pca <- fitted(test.pca)
+    expect_equal(all(!is.na(sc.pca[which(filt),1])), TRUE)
+    expect_equal(all(is.na(sc.pca[which(!filt),1])), TRUE)
+    expect_equal(nrow(sc.pca), nrow(test.data.1))
+})
+
+
 test_that("Converting factors for use in PCA", {
 
     test.data <- test.data.2[,1:10]

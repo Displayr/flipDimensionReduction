@@ -11,6 +11,8 @@ WeightedTable(..., weights = NULL, exclude = if (useNA == "no") c(NA, NaN),
 \arguments{
 \item{...}{one or more objects which can be interpretated as factors, or a list or dataframe whose components can be so interpreted}
 
+\item{weights}{numeric vector of sampling weights}
+
 \item{exclude}{levels to remove for all factors in \code{...}}
 
 \item{useNA}{whether to include \code{NA} values in the table}

@@ -4,10 +4,12 @@
 \alias{print.mcaObj}
 \title{\code{print.mcaObj}}
 \usage{
-\method{print}{mcaObj}(x, ...)
+\method{print}{mcaObj}(x, digits = 3, ...)
 }
 \arguments{
-\item{object}{The multiple correspondance analysis object to be analysed}
+\item{x}{The multiple correspondance analysis object to be analysed.}
+
+\item{digits}{Integer indicating number of decimal places to be used.}
 }
 \description{
 \code{print.mcaObj}

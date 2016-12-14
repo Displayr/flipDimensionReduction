@@ -492,6 +492,15 @@ PrincipalComponentsAnalysis <- function(data,
     return(results)
 }
 
+#' @rdname PrincipalComponentsAnalysis
+#' @param object Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.
+#' @export
+
+fitted.flipFactorAnalysis <- function(object, ...)
+{
+    return(object$scores)
+}
+
 
 
 

@@ -2,14 +2,19 @@
 % Please edit documentation in R/multiplecorrespondenceanalysis.R
 \name{MultipleCorrespondenceAnalysis}
 \alias{MultipleCorrespondenceAnalysis}
+\alias{fitted.mcaObj}
 \title{\code{MultipleCorrespondanenceAnalysis}}
 \usage{
 MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
   "Scatterplot")[1], weights = NULL, subset = NULL,
   missing = "Exclude cases with missing data", auxiliary.data = NULL,
   show.labels = FALSE)
+
+\method{fitted}{mcaObj}(object, ...)
 }
 \arguments{
+\item{formula}{Symbolic description of the model to be fitted}
+
 \item{data}{A data frame containing factor variables.}
 
 \item{output}{Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.}
@@ -19,6 +24,16 @@ MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
 \item{subset}{A logical vector which describes the subset of \code{data} to be analysed.}
 
 \item{missing}{A string specifiying what to do when the data contains missing values. This should be one of \code{"Error if missing data", "Exclude cases with missing data"}, and \code{"Imputation (replace missing values with estimates)"}.}
+
+\item{auxiliary.data}{A \code{data.frame} containing additional variables
+to be used in imputation (if required). While adding more variables will improve
+the quality of the imputation, it will dramatically slow down the time to estimate.
+Factors and Character variables with a large number of categories should not be included,
+as they will both slow down the data and are unlikely to be useful}
+
+\item{show.labels}{A logical indicating whether \code{"Label"} attribute should be used for reporting results}
+
+\item{object}{Object of class \code{"mcaObj"} created using \code{MultipleComponentsAnalysis}.}
 }
 \description{
 Calculate multiple correspondence analysis of categorical variables

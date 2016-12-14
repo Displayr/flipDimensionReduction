@@ -1,6 +1,7 @@
 #' \code{WeightedTable}
 #' @description Generalisation of the \code{table} function in base to handle weights
 #' @param ... one or more objects which can be interpretated as factors, or a list or dataframe whose components can be so interpreted
+#' @param weights numeric vector of sampling weights
 #' @param exclude levels to remove for all factors in \code{...}
 #' @param useNA whether to include \code{NA} values in the table
 #' @param dnn the names to given to the dimensions in the result
@@ -107,11 +108,18 @@ WeightedTable <- function (...,
 
 #' \code{MultipleCorrespondanenceAnalysis}
 #' @description Calculate multiple correspondence analysis of categorical variables
+#' @param formula Symbolic description of the model to be fitted
 #' @param data A data frame containing factor variables.
 #' @param output Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.
 #' @param weights A numeric vector containing the weight for each case in \code{data}.
 #' @param subset A logical vector which describes the subset of \code{data} to be analysed.
 #' @param missing A string specifiying what to do when the data contains missing values. This should be one of \code{"Error if missing data", "Exclude cases with missing data"}, and \code{"Imputation (replace missing values with estimates)"}.
+#' @param auxiliary.data A \code{data.frame} containing additional variables
+#'  to be used in imputation (if required). While adding more variables will improve
+#'  the quality of the imputation, it will dramatically slow down the time to estimate.
+#'  Factors and Character variables with a large number of categories should not be included,
+#'  as they will both slow down the data and are unlikely to be useful
+#' @param show.labels A logical indicating whether \code{"Label"} attribute should be used for reporting results
 #' @importFrom flipData EstimationData
 #' @importFrom flipFormat Labels
 #' @importFrom ca mjca
@@ -205,11 +213,11 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
 #' \code{plot.mcaObj}
 #' @description Plots scatterplot of two largest principal coordinates from MCA analysis
-#' @param object The multiple correspondance analysis object to be analysed
+#' @param x The multiple correspondance analysis object to be analysed
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 #'
-plot.mcaObj <- function(x)
+plot.mcaObj <- function(x, ...)
 {
     if (!inherits(x, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
@@ -232,11 +240,12 @@ plot.mcaObj <- function(x)
 
 
 #' \code{print.mcaObj}
-#' @param object The multiple correspondance analysis object to be analysed
+#' @param x The multiple correspondance analysis object to be analysed.
+#' @param digits Integer indicating number of decimal places to be used.
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 
-print.mcaObj <- function(x, ...)
+print.mcaObj <- function(x, digits = 3, ...)
 {
     if (x$output == "Text")
     {
@@ -248,11 +257,11 @@ print.mcaObj <- function(x, ...)
                               'Proportion explained' = x$inertia.e,
                               check.names = FALSE)
         rownames(sum.tab) <- sprintf("Dimension %d", 1:nrow(sum.tab))
-        print(round(sum.tab[1:ndim,], digits=3))
+        print(round(sum.tab[1:ndim,], digits=digits))
         cat("\n\nStandard Coordinates\n")
-        print(round(x$colcoord, digits=3))
+        print(round(x$colcoord, digits=digits))
         cat("\n\nPrincipal Coordinates\n")
-        print(round(x$colpcoord, digits=3))
+        print(round(x$colpcoord, digits=digits))
     } else
     {
         #if (x$output == "Scatterplot")
@@ -274,9 +283,8 @@ print.mcaObj <- function(x, ...)
 
 }
 
-#' \code{fitted.mcaObJ}
-#' @description Computes projected coordinates from multiple correspondance analysis
-#' @param object A mca object created using \code{MultipleCorrespondenceAnalysis}.
+#' @rdname MultipleCorrespondenceAnalysis
+#' @param object Object of class \code{"mcaObj"} created using \code{MultipleComponentsAnalysis}.
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
 #' @export

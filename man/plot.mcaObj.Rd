@@ -4,10 +4,10 @@
 \alias{plot.mcaObj}
 \title{\code{plot.mcaObj}}
 \usage{
-\method{plot}{mcaObj}(x)
+\method{plot}{mcaObj}(x, ...)
 }
 \arguments{
-\item{object}{The multiple correspondance analysis object to be analysed}
+\item{x}{The multiple correspondance analysis object to be analysed}
 }
 \description{
 Plots scatterplot of two largest principal coordinates from MCA analysis
