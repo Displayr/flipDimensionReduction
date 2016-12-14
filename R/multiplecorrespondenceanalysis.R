@@ -145,17 +145,22 @@ MultipleCorrespondenceAnalysis <- function(formula,
         stop("length of weights does not match the number of observations in data\n")
     if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
         stop("length of subset does not match the number of observations in data\n")
+
+    # Processed data deals with missing values but does not remove filters
+    # Imputation seems to know to not use the filtered values
     processed.data <- EstimationData(formula, data, subset, weights, missing)
+    data.used <- processed.data[subset,]   #used for estimation and fitting
+    index.data.used <- processed.data$post.missing.data.estimation.sample & subset
 
-
-    # MCA
-    w.est <- processed.data$weights
+    w.est <- processed.data$weights[subset]
     if (!is.null(w.est))
     {
         # Rescale weights as mjca gives rounding errors when weights are small
         w.min <- min(1, min(w.est[w.est > 0]))
         w.est <- w.est/w.min
     }
+
+    # MCA
     datfreq <- WeightedTable(processed.data$estimation.data, weights=w.est)
     dd <- dim(datfreq)
     if (length(dd) <= 2 && min(dd) <= 2)
@@ -191,6 +196,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     colnames(obj$colpcoord) <- sprintf("Dimension %d", 1:ncol(obj$colpcoord))
 
     # Save object
+    # We only need to save data.used, index.data.used, and data.description
     if (show.labels)
         obj$colnames <- Labels(data)
     obj$output <- output
@@ -275,14 +281,14 @@ print.mcaObj <- function(x, ...)
 
 }
 
-#' \code{fit.mca}
-#' @description Computes coordinates from multiple correspondance analysis
+#' \code{fitted.mcaObJ}
+#' @description Computes projected coordinates from multiple correspondance analysis
 #' @param object A mca object created using \code{MultipleCorrespondenceAnalysis}.
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
 #' @export
 
-fit.mcaObj <- function(object, keep.missing = FALSE)
+fitted.mcaObj <- function(object, ...)
 {
     if (!inherits(object, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
@@ -326,17 +332,17 @@ fit.mcaObj <- function(object, keep.missing = FALSE)
     }
     colnames(results) <- sprintf("Dimension %d", 1:ndim)
 
-    results2 <- results
+    results.full <- results
     ind.missing <- which(!object$processed.data$post.missing.data.estimation.sample)
-    if (keep.missing && length(ind.missing) > 0)
+    if (length(ind.missing) > 0)
     {
-        results2 <- rbind(results2, matrix(NA, nrow=length(ind.missing), ncol=ndim))
-        results2[,] <- NA
-        results2[!ind.missing,] <- results[1:ndata,]
+        results.full <- rbind(results.full, matrix(NA, nrow=length(ind.missing), ncol=ndim))
+        results.full[,] <- NA
+        results.full[!ind.missing,] <- results[1:ndata,]
     }
 
     #coords <- crossprod(t(tab.newdata), object$colpcoord)
     #coords2 <- sweep(coords, 2, object$colcoord[1,]/pred[1,]*object$sv[1:ndim], "*")
     #return(list(results=results, coords=coords2))
-    return(results2)
+    return(results.full)
 }
