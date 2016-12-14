@@ -108,7 +108,7 @@ WeightedTable <- function (...,
 #' \code{MultipleCorrespondanenceAnalysis}
 #' @description Calculate multiple correspondence analysis of categorical variables
 #' @param data A data frame containing factor variables.
-#' @param output Specify output generated. May be one of \code{"Scatterplot", "Moonplot"} or \code{"Text"}.
+#' @param output Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.
 #' @param weights A numeric vector containing the weight for each case in \code{data}.
 #' @param subset A logical vector which describes the subset of \code{data} to be analysed.
 #' @param missing A string specifiying what to do when the data contains missing values. This should be one of \code{"Error if missing data", "Exclude cases with missing data"}, and \code{"Imputation (replace missing values with estimates)"}.
@@ -146,26 +146,23 @@ MultipleCorrespondenceAnalysis <- function(formula,
     if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
         stop("length of subset does not match the number of observations in data\n")
 
-    # Processed data deals with missing values but does not remove filters
-    # Imputation seems to know to not use the filtered values
+    # MCA does not do prediction so no need to retain filtered data
     processed.data <- EstimationData(formula, data, subset, weights, missing)
-    data.used <- processed.data[subset,]   #used for estimation and fitting
-    index.data.used <- processed.data$post.missing.data.estimation.sample & subset
-
-    w.est <- processed.data$weights[subset]
-    if (!is.null(w.est))
+    is.data.used <- processed.data$post.missing.data.estimation.sample
+    data.used <- processed.data$estimation.data
+    weights.used <- processed.data$weights
+    if (!is.null(weights.used))
     {
         # Rescale weights as mjca gives rounding errors when weights are small
-        w.min <- min(1, min(w.est[w.est > 0]))
-        w.est <- w.est/w.min
+        w.min <- min(1, min(weights.used[weights.used > 0]))
+        weights.used <- weights.used/w.min
     }
 
     # MCA
-    datfreq <- WeightedTable(processed.data$estimation.data, weights=w.est)
+    datfreq <- WeightedTable(data.used, weights=weights.used)
     dd <- dim(datfreq)
     if (length(dd) <= 2 && min(dd) <= 2)
-        stop("Not enough category combinations. Try including more variables in the analysis\n")
-
+        stop("Cannot perform SVD on data matrix. Try including more variables in the analysis\n")
     obj <- mjca(datfreq, nd=NA)
 
     # Label data output
@@ -173,12 +170,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
     # the only difference is that they keep the order of the original factor levels
     # variable names may use Label - they are for display only
     obj$levelnames.ord <- sprintf("%s:%s",
-                                  rep(colnames(data), lapply(processed.data$estimation.data, nlevels)),
-                                  unlist(lapply(processed.data$estimation.data, levels)))
+                                  rep(colnames(data), lapply(data.used, nlevels)),
+                                  unlist(lapply(data.used, levels)))
     obj$variablenames <- if(!show.labels) obj$levelnames.ord
                          else sprintf("%s:%s",
-                                        rep(Labels(data), lapply(processed.data$estimation.data, nlevels)),
-                                        unlist(lapply(processed.data$estimation.data, levels)))
+                                        rep(Labels(data), lapply(data.used, nlevels)),
+                                        unlist(lapply(data.used, levels)))
     empty.levels <- which(!obj$levelnames.ord %in% obj$levelnames)
     if (length(empty.levels) > 0)
     {
@@ -196,25 +193,23 @@ MultipleCorrespondenceAnalysis <- function(formula,
     colnames(obj$colpcoord) <- sprintf("Dimension %d", 1:ncol(obj$colpcoord))
 
     # Save object
-    # We only need to save data.used, index.data.used, and data.description
     if (show.labels)
         obj$colnames <- Labels(data)
     obj$output <- output
-    if (missing == "Imputation (replace missing values with estimates)")
-        data <- processed.data$data
-    obj$data <- data
-    obj$processed.data <- processed.data
+    obj$data.used <- data.used
+    obj$is.data.used <- is.data.used
+    obj$data.description <- processed.data$description
     class(obj) <- "mcaObj"
     return(obj)
 }
 
-#' \code{plot_mcaObj}
-#' @description Plots object even if output is set to \code{"Text"}
+#' \code{plot.mcaObj}
+#' @description Plots scatterplot of two largest principal coordinates from MCA analysis
 #' @param object The multiple correspondance analysis object to be analysed
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @export
 #'
-plot_mcaObj <- function(x)
+plot.mcaObj <- function(x)
 {
     if (!inherits(x, "mcaObj"))
         stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
@@ -245,21 +240,19 @@ print.mcaObj <- function(x, ...)
 {
     if (x$output == "Text")
     {
-        oo <- options(scipen = 5)
         ndim <- ncol(x$colpcoord)
         cat("Multiple correspondence analysis\n")
-        cat(x$processed.data$description, "\n\n")
+        cat(x$data.description, "\n\n")
         sum.tab <- data.frame('Canonical correlation' = x$sv,
                               'Inertia' = x$sv^2,
                               'Proportion explained' = x$inertia.e,
                               check.names = FALSE)
         rownames(sum.tab) <- sprintf("Dimension %d", 1:nrow(sum.tab))
-        print(sum.tab[1:ndim,], digits=2)
+        print(round(sum.tab[1:ndim,], digits=3))
         cat("\n\nStandard Coordinates\n")
-        print(x$colcoord, digits=2)
+        print(round(x$colcoord, digits=3))
         cat("\n\nPrincipal Coordinates\n")
-        print(x$colpcoord, digits=2)
-        on.exit(options(oo))
+        print(round(x$colpcoord, digits=3))
     } else
     {
         #if (x$output == "Scatterplot")
@@ -290,10 +283,7 @@ print.mcaObj <- function(x, ...)
 
 fitted.mcaObj <- function(object, ...)
 {
-    if (!inherits(object, "mcaObj"))
-        stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
-
-    newdata <- object$data
+    newdata <- object$data.used
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
 
     # Checking that data is compatible - may not be needed since we do not predict for new data
@@ -321,28 +311,17 @@ fitted.mcaObj <- function(object, ...)
     ind.prop <- prop.table(as.matrix(tab.newdata), 2)
     pred <- t(ind.prop) %*% fac
 
+    nfull <- length(object$is.data.used)
+    index <- which(object$is.data.used) # length should be ndata
     results <- c()
     for (c in 1:ndim)
     {
-        vec <- rep(0, ndata)
+        vec <- rep(NA, nfull)
         fmult <- object$colcoord[1,c]/pred[1,c]
         for (i in 1:ndata)
-            vec[i] <- fac[i,c] * fmult * object$sv[c]
+            vec[index[i]] <- fac[i,c] * fmult * object$sv[c]
         results <- cbind(results, vec)
     }
     colnames(results) <- sprintf("Dimension %d", 1:ndim)
-
-    results.full <- results
-    ind.missing <- which(!object$processed.data$post.missing.data.estimation.sample)
-    if (length(ind.missing) > 0)
-    {
-        results.full <- rbind(results.full, matrix(NA, nrow=length(ind.missing), ncol=ndim))
-        results.full[,] <- NA
-        results.full[!ind.missing,] <- results[1:ndata,]
-    }
-
-    #coords <- crossprod(t(tab.newdata), object$colpcoord)
-    #coords2 <- sweep(coords, 2, object$colcoord[1,]/pred[1,]*object$sv[1:ndim], "*")
-    #return(list(results=results, coords=coords2))
-    return(results.full)
+    return(results)
 }

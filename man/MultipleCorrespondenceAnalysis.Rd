@@ -12,7 +12,7 @@ MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
 \arguments{
 \item{data}{A data frame containing factor variables.}
 
-\item{output}{Specify output generated. May be one of \code{"Scatterplot", "Moonplot"} or \code{"Text"}.}
+\item{output}{Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.}
 
 \item{weights}{A numeric vector containing the weight for each case in \code{data}.}
 
