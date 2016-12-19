@@ -122,6 +122,7 @@ WeightedTable <- function (...,
 #' @param show.labels A logical indicating whether \code{"Label"} attribute should be used for reporting results
 #' @importFrom flipData EstimationData
 #' @importFrom flipFormat Labels
+#' @importFrom flipTransformations Factor
 #' @importFrom ca mjca
 #' @export
 
@@ -148,6 +149,20 @@ MultipleCorrespondenceAnalysis <- function(formula,
     }
     weights <- eval(substitute(weights), data, parent.frame())
     data <- GetData(.formula, data, auxiliary.data)
+
+    # Turn binary variables into proper factors
+    data <- as.data.frame(lapply(data, function(x){
+        if (class(x) == "integer")
+        {
+            x.lev <- sort(unique(as.character(x)))
+            if (all(x.lev == c("0", "1")))
+            {
+                x.lev <- c("No", "Yes")
+            }
+            x <- Factor(x, labels = x.lev)
+        }
+        return(x)
+    }))
 
     if (!is.null(weights) && length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
