@@ -4,8 +4,9 @@
 \alias{PrincipalComponentsBiplot}
 \title{\code{PrincipalComponentsBiplot}}
 \usage{
-PrincipalComponentsBiplot(x, output = c("Scatterplot", "Moonplot", "Text")[1],
-  row.names.to.remove = c("NET", "Total", "SUM"),
+PrincipalComponentsBiplot(x, normalization = c("Principal", "Row principal",
+  "Column principal", "Symmetrical", "None")[1], output = c("Scatterplot",
+  "Moonplot", "Text")[1], row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"))
 }
 \arguments{
@@ -26,7 +27,8 @@ Performs PCA on a table and outputs biplot
 x2 <- cbind(Glance=c(0.016, 0.058, 0.061, 0.038, 0.01),
            FairlyThorough=c(0.022, 0.147, 0.093, 0.128, 0.022),
            VeryThorough=c(0.006,0.064,0.125,0.157,0.051))
-rownames(x2) <- c("SomePrimary","PrimaryCompleted","SomeSecondary","SecondaryCompleted","SomeTertiary")
+rownames(x2) <- c("SomePrimary","PrimaryCompleted","SomeSecondary",
+                  "SecondaryCompleted","SomeTertiary")
 PrincipalComponentsBiplot(x2, output="Moonplot")
 
 }
