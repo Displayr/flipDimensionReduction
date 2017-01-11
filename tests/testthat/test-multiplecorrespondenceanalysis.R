@@ -8,14 +8,6 @@ default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola)
 weighted.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, weights=wg)
 label.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, show.labels=T)
 
-test_that("WeightTable is correct", {
-    tab0 <- table(cola$Q13, cola$Q14)
-    tab1 <- WeightedTable(cola$Q13, cola$Q14)
-    tab2 <- WeightedTable(cola$Q13, cola$Q14, weights=rep(0.1,327))
-    expect_equal(tab0, tab1)
-    expect_equal(tab1/10, tab2)
-})
-
 test_that("MCA canonical correlation with no weighting", {
           expect_equal(round(default.res$sv[1:6], 3),
                        c(0.11,0.06,0.04,0.027,0.018,0.011))

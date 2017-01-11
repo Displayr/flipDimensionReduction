@@ -75,6 +75,8 @@ scatter plot will show the labels of the input data, or just integers
 specifying the column number of each variable.}
 
 \item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
+
+\item{...}{Not used.}
 }
 \description{
 Calculate a Principal Component Analysis

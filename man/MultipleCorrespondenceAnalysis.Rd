@@ -34,6 +34,8 @@ as they will both slow down the data and are unlikely to be useful}
 \item{show.labels}{A logical indicating whether \code{"Label"} attribute should be used for reporting results}
 
 \item{object}{Object of class \code{"mcaObj"} created using \code{MultipleComponentsAnalysis}.}
+
+\item{...}{Not used.}
 }
 \description{
 Calculate multiple correspondence analysis of categorical variables

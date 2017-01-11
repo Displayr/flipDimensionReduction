@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{The multiple correspondance analysis object to be analysed}
+
+\item{...}{Not used}
 }
 \description{
 Plots scatterplot of two largest principal coordinates from MCA analysis

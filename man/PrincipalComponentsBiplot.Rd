@@ -10,7 +10,13 @@ PrincipalComponentsBiplot(x, normalization = c("Principal", "Row principal",
   column.names.to.remove = c("NET", "Total", "SUM"))
 }
 \arguments{
-\item{x}{A table containing rows and columns#'}
+\item{x}{A table containing rows and columns}
+
+\item{normalization}{Method used to standarize coordinates of biplot. The default method is \code{"Principal"},
+which plots the principal coordinates (i.e., the standard coordinates
+multiplied by the singular values). \code{"Row principal"} and \code{"Column
+principal"} plot the standard coordinates of the columns (rows) against the
+principal coordinates.}
 
 \item{output}{Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.}
 

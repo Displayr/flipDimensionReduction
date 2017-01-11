@@ -1,6 +1,11 @@
 #' \code{PrincipalComponentsBiplot}
 #' @description Performs PCA on a table and outputs biplot
-#' @param x A table containing rows and columns#'
+#' @param x A table containing rows and columns
+#' @param normalization Method used to standarize coordinates of biplot. The default method is \code{"Principal"},
+#'   which plots the principal coordinates (i.e., the standard coordinates
+#'   multiplied by the singular values). \code{"Row principal"} and \code{"Column
+#'   principal"} plot the standard coordinates of the columns (rows) against the
+#'   principal coordinates.
 #' @param output Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
@@ -55,6 +60,7 @@ PrincipalComponentsBiplot <- function(x,
 #' \code{print.PCAbiplot}
 #' @description Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
+#' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @export

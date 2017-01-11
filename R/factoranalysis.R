@@ -494,6 +494,7 @@ PrincipalComponentsAnalysis <- function(data,
 
 #' @rdname PrincipalComponentsAnalysis
 #' @param object Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.
+#' @param ... Not used.
 #' @export
 
 fitted.flipFactorAnalysis <- function(object, ...)

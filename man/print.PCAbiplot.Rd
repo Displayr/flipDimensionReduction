@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{An object created using \code{PrincipalComponentsBiplot}.}
+
+\item{...}{Not used}
 }
 \description{
 Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.

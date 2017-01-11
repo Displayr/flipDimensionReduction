@@ -10,6 +10,8 @@
 \item{x}{The multiple correspondance analysis object to be analysed.}
 
 \item{digits}{Integer indicating number of decimal places to be used.}
+
+\item{...}{Not used}
 }
 \description{
 \code{print.mcaObj}
