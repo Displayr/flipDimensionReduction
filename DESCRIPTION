@@ -23,4 +23,15 @@ Imports:
         GPArotation
 Depends:
     flipData
+Remotes:
+        NumbersInternational/flipU,
+        NumbersInternational/flipTransformations,
+        NumbersInternational/flipImputation,
+        NumbersInternational/flipFormat,
+        NumbersInternational/flipData,
+        NumbersInternational/flipPlots,
+        NumbersInternational/flipStatistics,
+        NumbersInternational/flipTransformations,
+        NumbersInternational/rhtmlMoonPlot,
+        NumbersInternational/rhtmlLabeledScatter
 RoxygenNote: 5.0.1
