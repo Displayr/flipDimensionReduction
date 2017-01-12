@@ -7,3 +7,5 @@ warnings_are_errors: false
 
 before_install:
   Rscript -e 'update.packages(ask = FALSE)'
+
+r_github_packages: hadley/devtools#1263
