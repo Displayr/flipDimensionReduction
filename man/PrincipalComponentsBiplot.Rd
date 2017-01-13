@@ -7,7 +7,8 @@
 PrincipalComponentsBiplot(x, normalization = c("Principal", "Row principal",
   "Column principal", "Symmetrical", "None")[1], output = c("Scatterplot",
   "Moonplot", "Text")[1], row.names.to.remove = c("NET", "Total", "SUM"),
-  column.names.to.remove = c("NET", "Total", "SUM"))
+  column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
+  col.color = "#ED7D31")
 }
 \arguments{
 \item{x}{A table containing rows and columns}
@@ -25,9 +26,18 @@ principal coordinates.}
 \item{column.names.to.remove}{A vector of the column labels to remove.
 variable is provided, any cases with missing values on this variable are
 excluded from the final data file.}
+
+\item{row.color}{Color to display row-attributes in scatterplot.}
+
+\item{col.color}{Color to display column-attributes in scatterplot.}
 }
 \description{
 Performs PCA on a table and outputs biplot
+}
+\details{
+Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
+and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
+If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 }
 \examples{
 x2 <- cbind(Glance=c(0.016, 0.058, 0.061, 0.038, 0.01),

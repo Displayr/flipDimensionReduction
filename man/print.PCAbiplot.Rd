@@ -10,6 +10,10 @@
 \item{x}{An object created using \code{PrincipalComponentsBiplot}.}
 
 \item{...}{Not used}
+
+\item{color1}{A string specifying the color of the row-attributes in the scatterplot}
+
+\item{color2}{A string specifying the color of the column-attributes in the scatterplot}
 }
 \description{
 Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.

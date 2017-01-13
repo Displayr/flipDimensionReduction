@@ -11,6 +11,11 @@
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
 #'   excluded from the final data file.
+#' @param row.color Color to display row-attributes in scatterplot.
+#' @param col.color Color to display column-attributes in scatterplot.
+#' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
+#' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
+#' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @examples
 #' x2 <- cbind(Glance=c(0.016, 0.058, 0.061, 0.038, 0.01),
@@ -25,10 +30,17 @@ PrincipalComponentsBiplot <- function(x,
                       normalization = c("Principal", "Row principal", "Column principal", "Symmetrical", "None")[1],
                       output = c("Scatterplot", "Moonplot", "Text")[1],
                       row.names.to.remove = c("NET", "Total", "SUM"),
-                      column.names.to.remove = c("NET", "Total", "SUM"))
+                      column.names.to.remove = c("NET", "Total", "SUM"),
+                      row.color = '#5B9BD5',
+                      col.color = '#ED7D31')
 {
-    if (length(dim(x)) != 2)
-        stop("Input should be a table with rows and columns\n")
+    row.column.names.attribute <- attr(x, "row.column.names")
+    x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
+    row.column.names <- names(dimnames(x))
+    if (is.null(row.column.names))
+        row.column.names <- row.column.names.attribute
+    if (is.null(row.column.names))
+        row.column.names <- c("Rows", "Columns")
 
     x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
     row.names <- rownames(x)
@@ -43,15 +55,19 @@ PrincipalComponentsBiplot <- function(x,
     rownames(res$u) <- row.names
     rownames(res$v) <- col.names
 
+    res$row.column.names <- row.column.names
     res$normalization <- normalization
     p.row <- switch(normalization, 'Principal'= 1, 'Row principal' = 1, 'Column principal' = 0,
                                    'Symmetrical' = 0.5, 'None' = 0)
     p.col <- switch(normalization, 'Principal'= 1, 'Row principal' = 0, 'Column principal' = 1,
                                    'Symmetrical' = 0.5, 'None' = 0)
 
-    res$rowcoords <- sweep(res$u, 2, res$d^{p.row}, "*")
-    res$colcoords <- sweep(res$v, 2, res$d^{p.col}, "*")
-    res$output <- output
+    c.row <- res$d^{p.row}
+    c.col <- res$d^{p.col}
+    res$rowcoords <- sweep(res$u, 2, c.row/c.row[1], "*")
+    res$colcoords <- sweep(res$v, 2, c.col/c.col[1], "*")
+    res$row.color <- row.color
+    res$col.color <- col.color
     res$output <- output
     class(res) <- "PCAbiplot"
     return(res)
@@ -60,25 +76,30 @@ PrincipalComponentsBiplot <- function(x,
 #' \code{print.PCAbiplot}
 #' @description Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
+#' @param color1 A string specifying the color of the row-attributes in the scatterplot
+#' @param color2 A string specifying the color of the column-attributes in the scatterplot
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @export
 print.PCAbiplot <- function(x, ...)
 {
+    evals <- x$d ^ 2
+    pvar <- evals/sum(evals) * 100
     if (x$output == "Scatterplot")
     {
        coords <- rbind(x$rowcoords[,1:2],
                        x$colcoords[,1:2])
-       groups <- rep(c("Rows","Columns"), c(nrow(x$rowcoords), nrow(x$colcoords)))
+       groups <- rep(x$row.column.names, c(nrow(x$rowcoords), nrow(x$colcoords)))
        print(LabeledScatter(X = coords[, 1],
                Y = coords[, 2],
                label = rownames(coords),
                group = groups,
+               colors = c(x$row.color, x$col.color),
                fixed.aspect = TRUE,
                title = "Principal Components Analysis Biplot",
-               x.title = colnames(coords)[1],
-               y.title = colnames(coords)[2],
+               x.title = sprintf("%s (%.1f%%)", colnames(coords)[1], pvar[1]),
+               y.title = sprintf("%s (%.1f%%)", colnames(coords)[2], pvar[2]),
                axis.font.size = 8,
                labels.font.size = 12,
                title.font.size = 20,
@@ -90,8 +111,6 @@ print.PCAbiplot <- function(x, ...)
 
     } else
     {
-        evals <- x$d ^ 2
-        pvar <- evals/sum(evals) * 100
         etab <- cbind(Eigenvalue=evals,
                       'Percent variance' = pvar,
                       'Cumulative percent' = cumsum(pvar))
