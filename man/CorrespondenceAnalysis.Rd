@@ -7,7 +7,8 @@
 CorrespondenceAnalysis(x, normalization = "Principal",
   output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
   row.names.to.remove = c("NET", "Total", "SUM"),
-  column.names.to.remove = c("NET", "Total", "SUM"), ...)
+  column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
+  col.color = "#ED7D31", ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -30,6 +31,10 @@ Otherwise, a \code{\link[flipPlots]{LabeledScatterPlot}} is plotted.}
 \item{column.names.to.remove}{A vector of the column labels to remove.
 variable is provided, any cases with missing values on this variable are
 excluded from the final data file.}
+
+\item{row.color}{Color to display row-attributes in scatterplot.}
+
+\item{col.color}{Color to display column-attributes in scatterplot.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

@@ -19,7 +19,7 @@ multiplied by the singular values). \code{"Row principal"} and \code{"Column
 principal"} plot the standard coordinates of the columns (rows) against the
 principal coordinates.}
 
-\item{output}{Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.}
+\item{output}{Specify output generated. May be one of \code{"Scatterplot", "Moonplot"} or \code{"Text"}.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 

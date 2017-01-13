@@ -6,7 +6,7 @@
 #'   multiplied by the singular values). \code{"Row principal"} and \code{"Column
 #'   principal"} plot the standard coordinates of the columns (rows) against the
 #'   principal coordinates.
-#' @param output Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.
+#' @param output Specify output generated. May be one of \code{"Scatterplot", "Moonplot"} or \code{"Text"}.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
@@ -76,8 +76,6 @@ PrincipalComponentsBiplot <- function(x,
 #' \code{print.PCAbiplot}
 #' @description Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
-#' @param color1 A string specifying the color of the row-attributes in the scatterplot
-#' @param color2 A string specifying the color of the column-attributes in the scatterplot
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlMoonPlot moonplot

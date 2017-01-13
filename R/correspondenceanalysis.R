@@ -19,6 +19,8 @@
 #' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
 #' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
 #' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
+#' @param row.color Color to display row-attributes in scatterplot.
+#' @param col.color Color to display column-attributes in scatterplot.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -28,6 +30,8 @@ CorrespondenceAnalysis = function(x,
                                   output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
+                                  row.color = '#5B9BD5',
+                                  col.color = '#ED7D31',
                                   ...)
 {
     row.column.names.attribute <- attr(x, "row.column.names")
@@ -41,6 +45,8 @@ CorrespondenceAnalysis = function(x,
                    row.column.names = row.column.names,
                    normalization = normalization,
                    output = output,
+                   row.color = row.color,
+                   col.color = col.color,
                    original = ca(x, ...))
     class(result) <- c("CorrespondenceAnalysis")
     result
@@ -75,6 +81,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        Y = coords[, 2],
                        label = rownames(coords),
                        group = groups,
+                       colors = c(x$row.color, x$col.color),
                        fixed.aspect = TRUE,
                        title = "Correspondence analysis",
                        x.title = column.labels[1],
