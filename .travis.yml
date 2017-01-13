@@ -9,3 +9,7 @@ before_install:
   Rscript -e 'update.packages(ask = FALSE)'; mv description_for_travisCI DESCRIPTION; cat DESCRIPTION
 
 r_github_packages: hadley/devtools#1263
+
+script: -|
+  R CMD build .
+  travis_wait 60 R CMD check flipRegression.tar.gz
