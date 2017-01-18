@@ -32,6 +32,6 @@ Remotes:
         NumbersInternational/flipPlots,
         NumbersInternational/flipStatistics,
         NumbersInternational/flipTransformations,
-        NumbersInternational/rhtmlMoonplot,
+        NumbersInternational/rhtmlMoonPlot,
         NumbersInternational/rhtmlLabeledScatter
 RoxygenNote: 5.0.1

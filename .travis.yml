@@ -1,4 +1,5 @@
 language: R
+dist: trusty  # ubuntu 14.04 has additional libraries available
 sudo: false
 cache: packages
 warnings_are_errors: false
@@ -19,8 +20,8 @@ notifications:
     on_success: change
     on_failure: always
 
-after_script: >-
-  if [ $TRAVIS_EVENT_TYPE == "push"]; then
+after_success: >-
+  if [ $TRAVIS_EVENT_TYPE == "push" ] ; then
     curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipRegression/requests";
     curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipStartup/requests";
     curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipTables/requests";
