@@ -1,15 +1,22 @@
 language: R
 dist: trusty  # ubuntu 14.04 has additional libraries available
-sudo: false
+sudo: required
 cache: packages
 warnings_are_errors: false
 
+# install debian libraries to match R-servers
 # update pre-installed packages to latest versions
 before_install:
-  Rscript -e 'update.packages(ask = FALSE)'
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
+  - sudo Rscript -e 'update.packages(ask = FALSE)'
 
 # last stable version of devtools does not support private depositories
 r_github_packages: hadley/devtools#1263
+
+script:
+  - R CMD build --no-manual --no-build-vignettes --no-resave-data .
+  - R CMD check --as-cran --no-manual --no-build-vignettes *.tar.gz
 
 notifications:
   slack:
@@ -19,15 +26,3 @@ notifications:
       - "Build <%{build_url}|#%{build_number}> %{result} in %{repository_name}@%{branch} by %{author}: <%{compare_url}|%{commit_message}>"
     on_success: change
     on_failure: always
-
-after_success: >-
-  if [ $TRAVIS_EVENT_TYPE == "push" ] ; then
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipRegression/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipStartup/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipTables/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipTextAnalysis/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipTrees/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipAnalysisOfVariance/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipMultivariates/requests";
-    curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $ACCESS_TOKEN" -d '{"request":{"message":"Build triggered by flipDimensionReduction", "branch":"master"}}' "https://api.travis-ci.org/repo/NumbersInternational%2FflipCluster/requests";
-  fi
