@@ -16,7 +16,9 @@ r_github_packages: hadley/devtools#1263
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
-  - R CMD check --as-cran --no-manual --no-build-vignettes *.tar.gz
+  - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
+  - sudo Rscript -e 'install.packages("roxygen2")'
+  - Rscript -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'
 
 notifications:
   slack:
@@ -26,3 +28,4 @@ notifications:
       - "Build <%{build_url}|#%{build_number}> %{result} in %{repository_name}@%{branch} by %{author}: <%{compare_url}|%{commit_message}>"
     on_success: change
     on_failure: always
+

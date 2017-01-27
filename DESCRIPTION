@@ -15,6 +15,7 @@ Imports:
         flipStatistics,
         flipFormat,
         flipTransformations,
+        flipChartBasics,
         plotly,
         psych,
         rhtmlMoonPlot,
@@ -25,6 +26,7 @@ Depends:
     flipData
 Remotes:
         NumbersInternational/flipU,
+        NumbersInternational/flipChartBasics,
         NumbersInternational/flipTransformations,
         NumbersInternational/flipImputation,
         NumbersInternational/flipFormat,

@@ -13,7 +13,7 @@
 #'  Factors and Character variables with a large number of categories should not be included,
 #'  as they will both slow down the data and are unlikely to be useful
 #' @param show.labels A logical indicating whether \code{"Label"} attribute should be used for reporting results
-#' @importFrom flipData EstimationData
+#' @importFrom flipData EstimationData GetData
 #' @importFrom flipFormat Labels
 #' @importFrom flipTransformations Factor
 #' @importFrom flipStatistics WeightedTable
