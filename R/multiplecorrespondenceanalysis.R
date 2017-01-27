@@ -3,6 +3,7 @@
 #' @param formula Symbolic description of the model to be fitted
 #' @param data A data frame containing factor variables.
 #' @param output Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.
+#' @param scatter.palette Color palette used for Scatterplot output.
 #' @param weights A numeric vector containing the weight for each case in \code{data}.
 #' @param subset A logical vector which describes the subset of \code{data} to be analysed.
 #' @param missing A string specifiying what to do when the data contains missing values. This should be one of \code{"Error if missing data", "Exclude cases with missing data"}, and \code{"Imputation (replace missing values with estimates)"}.
@@ -22,6 +23,7 @@
 MultipleCorrespondenceAnalysis <- function(formula,
                                            data = NULL,
                                            output = c("Text", "Scatterplot")[1],
+                                           scatter.palette = "Default colors",
                                            weights = NULL,
                                            subset = NULL,
                                            missing = "Exclude cases with missing data",
@@ -112,39 +114,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
     if (show.labels)
         obj$colnames <- Labels(data)
     obj$output <- output
+    obj$scatter.palette <- scatter.palette
     obj$data.used <- data.used
     obj$is.data.used <- is.data.used
     obj$data.description <- processed.data$description
     class(obj) <- "mcaObj"
     return(obj)
-}
-
-#' \code{plot.mcaObj}
-#' @description Plots scatterplot of two largest principal coordinates from MCA analysis
-#' @param x The multiple correspondance analysis object to be analysed
-#' @param ... Not used
-#' @importFrom rhtmlLabeledScatter LabeledScatter
-#' @export
-#'
-plot.mcaObj <- function(x, ...)
-{
-    if (!inherits(x, "mcaObj"))
-        stop("object must be an mca object created using MultipleCorrespondence Analysis()\n")
-
-     groups <- rep(x$colnames, x$levels.n)
-        print(LabeledScatter(X = x$colpcoord[,1],
-                       Y = x$colpcoord[,2],
-                       label = x$variablenames,
-                       group = groups,
-                       fixed.aspect = TRUE,
-                       title = "Multiple correspondence analysis",
-                       x.title = "Dimension 1",
-                       y.title = "Dimension 2",
-                       axis.font.size = 8,
-                       labels.font.size = 12,
-                       title.font.size = 20,
-                       y.title.font.size = 16,
-                       x.title.font.size = 16))
 }
 
 
@@ -153,6 +128,7 @@ plot.mcaObj <- function(x, ...)
 #' @param digits Integer indicating number of decimal places to be used.
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom flipChartBasics ChartColors
 #' @export
 
 print.mcaObj <- function(x, digits = 3, ...)
@@ -176,10 +152,12 @@ print.mcaObj <- function(x, digits = 3, ...)
     {
         #if (x$output == "Scatterplot")
         groups <- rep(x$colnames, x$levels.n)
+        gcolors <- ChartColors(length(x$colnames), x$scatter.palette, trim.light.colors=TRUE)
         print(LabeledScatter(X = x$colpcoord[,1],
                        Y = x$colpcoord[,2],
                        label = x$variablenames,
                        group = groups,
+                       colors = gcolors,
                        fixed.aspect = TRUE,
                        title = "Multiple correspondence analysis",
                        x.title = "Dimension 1",

@@ -6,9 +6,9 @@
 \title{\code{MultipleCorrespondanenceAnalysis}}
 \usage{
 MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
-  "Scatterplot")[1], weights = NULL, subset = NULL,
-  missing = "Exclude cases with missing data", auxiliary.data = NULL,
-  show.labels = FALSE)
+  "Scatterplot")[1], scatter.palette = "qColors", weights = NULL,
+  subset = NULL, missing = "Exclude cases with missing data",
+  auxiliary.data = NULL, show.labels = FALSE)
 
 \method{fitted}{mcaObj}(object, ...)
 }
@@ -18,6 +18,8 @@ MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
 \item{data}{A data frame containing factor variables.}
 
 \item{output}{Specify output generated. May be one of \code{"Scatterplot"} or \code{"Text"}.}
+
+\item{scatter.palette}{Color palette used for Scatterplot output.}
 
 \item{weights}{A numeric vector containing the weight for each case in \code{data}.}
 
