@@ -30,5 +30,5 @@ notifications:
 
 after_success: >-
   if [ $TRAVIS_EVENT_TYPE == 'push' ] ; then
-    Rscript -e 'require(devtools); install_github("NumbersInternational/travisCI"); library(travisCI); UpdateUpstream(use.local=T)';
+    Rscript -e 'require(devtools); install_github("NumbersInternational/travisCI"); travisCI::TriggerDownstreamBuilds()';
   fi
