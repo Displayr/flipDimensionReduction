@@ -17,7 +17,7 @@ script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
   - sudo Rscript -e 'install.packages("roxygen2")'
-  - if [ -d tests/testthat ]; then Rscript -e 'library(methods); res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'; fi
+  - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'; fi
 
 notifications:
   slack:
@@ -28,7 +28,8 @@ notifications:
     on_success: change
     on_failure: always
 
+# Warning notifications and downstream package builds are implemented
+# by calling R functions so they can be updated in this package without
+# committing a new change to .travis.yml in each repository
 after_success: >-
-  if [ $TRAVIS_EVENT_TYPE == 'push' ] ; then
-    Rscript -e 'require(devtools); install_github("NumbersInternational/travisCI"); travisCI::TriggerDownstreamBuilds()';
-  fi
+  Rscript -e "require(devtools); install_github('NumbersInternational/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
