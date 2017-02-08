@@ -9,7 +9,6 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
-  - sudo Rscript -e 'update.packages(ask = FALSE)'
 
 # last stable version of devtools does not support private depositories
 r_github_packages: hadley/devtools#1263
@@ -18,7 +17,7 @@ script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
   - sudo Rscript -e 'install.packages("roxygen2")'
-  - Rscript -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'
+  - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'; fi
 
 notifications:
   slack:
@@ -29,3 +28,8 @@ notifications:
     on_success: change
     on_failure: always
 
+# Warning notifications and downstream package builds are implemented
+# by calling R functions so they can be updated in this package without
+# committing a new change to .travis.yml in each repository
+after_success: >-
+  Rscript -e "require(devtools); install_github('NumbersInternational/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
