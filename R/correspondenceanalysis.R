@@ -10,8 +10,6 @@
 #'   principal coordinates. Note that the plotting occurs via
 #'   \code{\link{print.CorrespondenceAnalysis}}.
 #' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, \code{"Text"}, or \code{"ggplot2"}.
-#'   \code{\link[flipPlots]{InteractiveLabeledScatterPlot}} is plotted.
-#'   Otherwise, a \code{\link[flipPlots]{LabeledScatterPlot}} is plotted.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
