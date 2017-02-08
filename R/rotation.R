@@ -33,7 +33,7 @@ RotateLoadings <- function(loadings, rotation = "varimax", delta = 0, kappa = 4,
     # Not needed for Promax because promax does not have an objective function, and because it
     # deals with normalization differently.
     if (rotation != "promax") {
-        W <- GPArotation:::NormalizingWeight(loadings, normalize = TRUE)
+        W <- gpa.normalizing.weight(loadings, normalize = TRUE)
         normalized.loadings <- loadings / W
     }
 
@@ -41,26 +41,26 @@ RotateLoadings <- function(loadings, rotation = "varimax", delta = 0, kappa = 4,
     {
         rotation.results <- GPForth(normalized.loadings, Tmat=diag(ncol(normalized.loadings)), normalize=FALSE, eps=1e-5, maxit=1000, method=rotation, methodArgs=NULL)
         rotated.loadings <- rotation.results$loadings
-        objective <- GPArotation:::vgQ.varimax(rotated.loadings)$f
+        objective <- gpa.vgQ.varimax(rotated.loadings)$f
         iterations <- rotation.results$Table
     } else if (rotation == "quartimax")
     {
         rotation.results <- GPForth(normalized.loadings, Tmat=diag(ncol(normalized.loadings)), normalize=FALSE, eps=1e-5, maxit=1000, method=rotation, methodArgs=NULL)
         rotated.loadings <- rotation.results$loadings
-        objective <- GPArotation:::vgQ.quartimax(rotated.loadings)$f
+        objective <- gpa.vgQ.quartimax(rotated.loadings)$f
         iterations <- rotation.results$Table
     } else if (rotation == "equamax")
     {
         rotation.results <- GPForth(normalized.loadings, Tmat=diag(ncol(normalized.loadings)), normalize=FALSE, eps=1e-5, maxit=1000, method="cf", methodArgs=list(kappa = ncol(loadings)/(2*nrow(loadings)) ))
         rotated.loadings <- rotation.results$loadings
-        objective <- GPArotation:::vgQ.cf(rotated.loadings, kappa = ncol(rotated.loadings)/(2*nrow(rotated.loadings)))$f
+        objective <- gpa.vgQ.cf(rotated.loadings, kappa = ncol(rotated.loadings)/(2*nrow(rotated.loadings)))$f
         iterations <- rotation.results$Table
     } else if (rotation == "oblimin")
     {
         rotation.results <- GPFoblq(normalized.loadings, Tmat=diag(ncol(normalized.loadings)), normalize=FALSE, eps=1e-5, maxit=1000, method=rotation, methodArgs=list(gam = delta))
         rotated.loadings <- rotation.results$loadings
         component.correlations <- rotation.results$Phi
-        objective <- GPArotation:::vgQ.oblimin(rotated.loadings, gam  = delta)$f
+        objective <- gpa.vgQ.oblimin(rotated.loadings, gam  = delta)$f
         iterations <- rotation.results$Table
     } else if (rotation == "promax")
     {
@@ -185,16 +185,16 @@ get.objective.for.loadings <- function(loadings, method, gam = NULL, kappa = NUL
     x1 <- x1 <- diag(1/sqrt(diag(x %*% t(x)))) %*% x
     if (method == "varimax")
     {
-        objective <- GPArotation:::vgQ.varimax(x1)$f
+        objective <- gpa.vgQ.varimax(x1)$f
     } else if (method == "quartimax")
     {
-        objective <- GPArotation:::vgQ.quartimax(x1)$f
+        objective <- gpa.vgQ.quartimax(x1)$f
     } else if (method == "equamax")
     {
-        objective <- GPArotation:::vgQ.cf(x1, kappa = ncol(x1)/(2*nrow(x1)))$f
+        objective <- gpa.vgQ.cf(x1, kappa = ncol(x1)/(2*nrow(x1)))$f
     } else if (method == "oblimin")
     {
-        objective <- GPArotation:::vgQ.oblimin(x1, gam = gam)$f
+        objective <- gpa.vgQ.oblimin(x1, gam = gam)$f
     } else {
         warning(paste0("No objective function for ", method))
         objective <- NaN

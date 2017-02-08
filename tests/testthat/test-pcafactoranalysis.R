@@ -255,11 +255,11 @@ test_that("Rotations", {
 
     # Objective functions for SPSS Rotations
     #Small Case 1
-    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 1 varimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 1 quartimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 1 equamax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "small case 1 oblimin 0.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "small case 1 oblimin -1.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_1_varimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_1_quartimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_1_equamax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "small_case_1_oblimin_0.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "small_case_1_oblimin_-1.csv", package = "flipDimensionReduction"), header=FALSE))
     spss.varimax.objective <- get.objective.for.loadings(spss.varimax.loadings, method = "varimax")
     spss.quartimax.objective <- get.objective.for.loadings(spss.quartimax.loadings, method = "quartimax")
     spss.equamax.objective <- get.objective.for.loadings(spss.equamax.loadings, method = "equamax")
@@ -273,11 +273,11 @@ test_that("Rotations", {
 
     # Small Case 2
 
-    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 2 varimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 2 quartimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "small case 2 equamax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "small case 2 oblimin 0.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "small case 2 oblimin -1.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_2_varimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_2_quartimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "small_case_2_equamax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "small_case_2_oblimin_0.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "small_case_2_oblimin_-1.csv", package = "flipDimensionReduction"), header=FALSE))
     spss.varimax.objective <- get.objective.for.loadings(spss.varimax.loadings, method = "varimax")
     spss.quartimax.objective <- get.objective.for.loadings(spss.quartimax.loadings, method = "quartimax")
     spss.equamax.objective <- get.objective.for.loadings(spss.equamax.loadings, method = "equamax")
@@ -292,11 +292,11 @@ test_that("Rotations", {
 
     # Large Case 1
 
-    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "large case 1 varimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "large case 1 quartimax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "large case 1 equamax loadings.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "large case 1 oblimin 0.csv", package = "flipDimensionReduction"), header=FALSE))
-    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "large case 1 oblimin -1.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.varimax.loadings <- data.matrix(read.csv(system.file("extdata", "large_case_1_varimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.quartimax.loadings <- data.matrix(read.csv(system.file("extdata", "large_case_1_quartimax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.equamax.loadings <- data.matrix(read.csv(system.file("extdata", "large_case_1_equamax_loadings.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.0 <- data.matrix(read.csv(system.file("extdata", "large_case_1_oblimin_0.csv", package = "flipDimensionReduction"), header=FALSE))
+    spss.oblimin.loadings.1 <- data.matrix(read.csv(system.file("extdata", "large_case_1_oblimin_-1.csv", package = "flipDimensionReduction"), header=FALSE))
     spss.varimax.objective <- get.objective.for.loadings(spss.varimax.loadings, method = "varimax")
     spss.quartimax.objective <- get.objective.for.loadings(spss.quartimax.loadings, method = "quartimax")
     spss.equamax.objective <- get.objective.for.loadings(spss.equamax.loadings, method = "equamax")
