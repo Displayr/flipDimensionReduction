@@ -2,6 +2,8 @@ language: R
 dist: trusty  # ubuntu 14.04 has additional libraries available
 sudo: required
 cache: packages
+before_cache:
+  - rm -rf $HOME/R/Library/flip*
 warnings_are_errors: false
 
 # install debian libraries to match R-servers
@@ -32,4 +34,4 @@ notifications:
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
 after_success: >-
-  Rscript -e "require(devtools); install_github('NumbersInternational/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
+  Rscript -e "require(devtools); install_github('Displayr/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
