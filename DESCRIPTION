@@ -25,15 +25,15 @@ Imports:
 Depends:
     flipData
 Remotes:
-        NumbersInternational/flipU,
-        NumbersInternational/flipChartBasics,
-        NumbersInternational/flipTransformations,
-        NumbersInternational/flipImputation,
-        NumbersInternational/flipFormat,
-        NumbersInternational/flipData,
-        NumbersInternational/flipPlots,
-        NumbersInternational/flipStatistics,
-        NumbersInternational/flipTransformations,
-        NumbersInternational/rhtmlMoonPlot,
-        NumbersInternational/rhtmlLabeledScatter
+        Displayr/flipU,
+        Displayr/flipChartBasics,
+        Displayr/flipTransformations,
+        Displayr/flipImputation,
+        Displayr/flipFormat,
+        Displayr/flipData,
+        Displayr/flipPlots,
+        Displayr/flipStatistics,
+        Displayr/flipTransformations,
+        Displayr/rhtmlMoonPlot,
+        Displayr/rhtmlLabeledScatter
 RoxygenNote: 5.0.1
