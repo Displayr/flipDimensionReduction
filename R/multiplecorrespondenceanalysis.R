@@ -62,12 +62,14 @@ MultipleCorrespondenceAnalysis <- function(formula,
     }))
     cat("line 62\n")
     print(head(data))
+    cat("colnames(data)", colnames(data), "\n")
 
     if (!is.null(weights) && length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
     if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
         stop("length of subset does not match the number of observations in data\n")
 
+    print(formula)
     # MCA does not do prediction so no need to retain filtered data
     processed.data <- EstimationData(formula, data, subset, weights, missing)
     cat("line 72\n")
