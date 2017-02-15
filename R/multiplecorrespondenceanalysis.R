@@ -97,8 +97,9 @@ MultipleCorrespondenceAnalysis <- function(formula,
     # levelnames.ord always use colnames(data) and should match levelnames given by mjca
     # the only difference is that they keep the order of the original factor levels
     # variable names may use Label - they are for display only
+    cnames <- make.names(colnames(data))
     obj$levelnames.ord <- sprintf("%s:%s",
-                                  rep(colnames(data), lapply(data.used, nlevels)),
+                                  rep(cnames, lapply(data.used, nlevels)),
                                   unlist(lapply(data.used, levels)))
     cat("levelnames:", obj$levelnames.ord, "\n")
     obj$variablenames <- if(!show.labels) obj$levelnames.ord
@@ -107,6 +108,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
                                         unlist(lapply(data.used, levels)))
     cat("variablenames:", obj$variablename, "\n")
     empty.levels <- which(!obj$levelnames.ord %in% obj$levelnames)
+    cat("emptylevels:", obj$levelnames.ord[empty.levels], "\n")
     if (length(empty.levels) > 0)
     {
         obj$levelnames.ord <- obj$levelnames.ord[-empty.levels]
@@ -196,11 +198,11 @@ fitted.mcaObj <- function(object, ...)
     tab.newdata <- as.data.frame(lapply(newdata, FactorToIndicators))
 
     # Checking that data is compatible - may not be needed since we do not predict for new data
-    colnames(tab.newdata) <- sprintf("%s:%s", rep(colnames(newdata), unlist(lapply(newdata, nlevels))),
+    colnames(tab.newdata) <- sprintf("%s:%s", rep(make.names(colnames(newdata)), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
     extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
     if (length(extra.levels) > 0 && rowSums(tab.newdata[,extra.levels]) > 0)
-        stop("Factor levels of new data contains levels not in estimation data: ",
+        warning("Factor levels of new data contains levels not in estimation data: ",
              paste(extra.levels, collapse=", "), "\n")
     tab.newdata <- tab.newdata[,object$levelnames.ord]
 
