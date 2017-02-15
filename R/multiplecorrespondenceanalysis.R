@@ -59,7 +59,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
             x <- Factor(x, labels = x.lev)
         }
         return(x)
-    }))
+    }), check.names=F)
     cat("line 62\n")
     print(head(data))
     cat("colnames(data)", colnames(data), "\n")
