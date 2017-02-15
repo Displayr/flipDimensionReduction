@@ -12,6 +12,7 @@ Suggests:
 Imports:
         ca,
         flipImputation,
+        flipData,
         flipPlots,
         flipStatistics,
         flipFormat,
@@ -23,8 +24,6 @@ Imports:
         rhtmlLabeledScatter,
         stats,
         GPArotation
-Depends:
-    flipData
 Remotes:
         Displayr/flipU,
         Displayr/flipChartBasics,

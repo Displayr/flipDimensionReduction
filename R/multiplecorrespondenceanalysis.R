@@ -18,6 +18,7 @@
 #' @importFrom flipTransformations Factor
 #' @importFrom flipStatistics WeightedTable
 #' @importFrom ca mjca
+#' @importFrom utils str head
 #' @export
 
 MultipleCorrespondenceAnalysis <- function(formula,
@@ -46,6 +47,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     data <- GetData(.formula, data, auxiliary.data)
 
     # Turn binary variables into proper factors
+    cat("line 49\n")
     data <- as.data.frame(lapply(data, function(x){
         if (class(x) == "integer")
         {
@@ -58,6 +60,8 @@ MultipleCorrespondenceAnalysis <- function(formula,
         }
         return(x)
     }))
+    cat("line 62\n")
+    print(head(data))
 
     if (!is.null(weights) && length(weights) != nrow(data))
         stop("length of weights does not match the number of observations in data\n")
@@ -66,6 +70,8 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
     # MCA does not do prediction so no need to retain filtered data
     processed.data <- EstimationData(formula, data, subset, weights, missing)
+    cat("line 72\n")
+    print(str(processed.data))
     is.data.used <- processed.data$post.missing.data.estimation.sample
     data.used <- processed.data$estimation.data
     weights.used <- processed.data$weights
@@ -78,10 +84,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
     # MCA
     datfreq <- WeightedTable(data.used, weights=weights.used)
+    cat("line 86\n")
     dd <- dim(datfreq)
     if (length(dd) <= 2 && min(dd) <= 2)
         stop("Cannot perform SVD on data matrix. Try including more variables in the analysis\n")
     obj <- mjca(datfreq, nd=NA)
+    cat("line 91\n")
 
     # Label data output
     # levelnames.ord always use colnames(data) and should match levelnames given by mjca
@@ -90,10 +98,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
     obj$levelnames.ord <- sprintf("%s:%s",
                                   rep(colnames(data), lapply(data.used, nlevels)),
                                   unlist(lapply(data.used, levels)))
+    cat("levelnames:", obj$levelnames.ord, "\n")
     obj$variablenames <- if(!show.labels) obj$levelnames.ord
                          else sprintf("%s:%s",
                                         rep(Labels(data), lapply(data.used, nlevels)),
                                         unlist(lapply(data.used, levels)))
+    cat("variablenames:", obj$variablename, "\n")
     empty.levels <- which(!obj$levelnames.ord %in% obj$levelnames)
     if (length(empty.levels) > 0)
     {
