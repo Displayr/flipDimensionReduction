@@ -2,8 +2,9 @@ Package: flipDimensionReduction
 Type: Package
 Title: Algorithms for dimension reduction
 Version: 0.1.0
-Authors@R: person("Tim", "Bock", email = "tim.bock@numbers.net.au", role = c("aut", "cre"))
-Description: Dimension reduction algorithms, using the flip Project conventions.
+Author: Displayr
+Maintainer: Displayr <opensource@displayr.com>
+Description: Tools for dimension reduction (e.g. principal components analysis, correspondence analysis) using the flip Project conventions.
 License: GPL-3
 LazyData: TRUE
 Suggests:
