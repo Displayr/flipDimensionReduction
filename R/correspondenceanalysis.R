@@ -75,8 +75,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$output == "Scatterplot")
     {
         #tooltip.text <- c(CreateInteractiveScatterplotTooltips(x.data), CreateInteractiveScatterplotTooltips(t(x.data)))
+        k <- nrow(coords)
+        ycoords <- if(ncol(coords) == 1) rep(0, k) else coords[, 2]
+
         print(LabeledScatter(X = coords[, 1],
-                       Y = coords[, 2],
+                       Y = ycoords,
                        label = rownames(coords),
                        group = groups,
                        colors = c(x$row.color, x$col.color),
@@ -117,7 +120,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
 #' @export
 CANormalization <- function(ca.object, normalization = "Principal")
 {
-    .normalize = function(coords, power) sweep(coords[,1:2], 2, ca.object$sv[1:2]^power, "*")
+    .normalize = function(coords, power)
+        if (dim(coords)[2] == 1)
+            coords[,1, drop = FALSE] * ca.object$sv[1]^power
+        else
+            sweep(coords[,1:2], 2, ca.object$sv[1:2]^power, "*")
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
         "Principal" = 1, "Row principal" = 1, "Column principal" = 0, "Symmetrical (\u00BD)" = 0.5, "None" = 0))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
