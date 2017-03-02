@@ -4,37 +4,37 @@ Title: Algorithms for dimension reduction
 Version: 0.1.0
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
-Description: Tools for dimension reduction (e.g. principal components analysis, correspondence analysis) using the flip Project conventions.
+Description: Tools for dimension reduction (e.g. principal components analysis,
+    correspondence analysis) using the flip Project conventions.
 License: GPL-3
 LazyData: TRUE
 Suggests:
     testthat,
     flipExampleData
 Imports:
-        ca,
-        flipImputation,
-        flipData,
-        flipPlots,
-        flipStatistics,
-        flipFormat,
-        flipTransformations,
-        flipChartBasics,
-        plotly,
-        psych,
-        rhtmlMoonPlot,
-        rhtmlLabeledScatter,
-        stats,
-        GPArotation
-Remotes:
-        Displayr/flipU,
-        Displayr/flipChartBasics,
-        Displayr/flipTransformations,
-        Displayr/flipImputation,
-        Displayr/flipFormat,
-        Displayr/flipData,
-        Displayr/flipPlots,
-        Displayr/flipStatistics,
-        Displayr/flipTransformations,
-        Displayr/rhtmlMoonPlot,
-        Displayr/rhtmlLabeledScatter
-RoxygenNote: 6.0.1
+    ca,
+    flipImputation,
+    flipData,
+    flipPlots,
+    flipStatistics,
+    flipFormat,
+    flipTransformations,
+    flipChartBasics,
+    plotly,
+    psych,
+    rhtmlMoonPlot,
+    rhtmlLabeledScatter,
+    stats,
+    GPArotation
+Remotes: Displayr/flipU,
+    Displayr/flipChartBasics,
+    Displayr/flipTransformations,
+    Displayr/flipImputation,
+    Displayr/flipFormat,
+    Displayr/flipData,
+    Displayr/flipPlots,
+    Displayr/flipStatistics,
+    Displayr/flipTransformations,
+    Displayr/rhtmlMoonPlot,
+    Displayr/rhtmlLabeledScatter
+RoxygenNote: 5.0.1

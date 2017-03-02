@@ -80,7 +80,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     datfreq <- WeightedTable(data.used, weights=weights.used)
     dd <- dim(datfreq)
     if (length(dd) <= 2 && min(dd) <= 2)
-        stop("Cannot perform SVD on data matrix. Try including more variables in the analysis\n")
+        stop("Data matrix is too small. Try using CorrespondenceAnalysis or including more variables in the analysis\n")
     obj <- mjca(datfreq, nd=NA)
 
     # Label data output

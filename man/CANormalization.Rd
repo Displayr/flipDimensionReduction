@@ -22,3 +22,4 @@ coordinates multiplied by the square root of the singular values.
 \description{
 Normalizes the coordinates of a \code{\link[ca]{ca}} object.
 }
+
