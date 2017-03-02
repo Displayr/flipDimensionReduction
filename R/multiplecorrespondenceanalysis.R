@@ -80,7 +80,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     datfreq <- WeightedTable(data.used, weights=weights.used)
     dd <- dim(datfreq)
     if (length(dd) <= 2 && min(dd) <= 2)
-        stop("Data matrix is too small. Try using CorrespondenceAnalysis or including more variables in the analysis\n")
+        stop("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
     obj <- mjca(datfreq, nd=NA)
 
     # Label data output
