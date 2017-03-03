@@ -72,14 +72,22 @@ print.CorrespondenceAnalysis <- function(x, ...)
     row.column.names <- x$row.column.names
     groups <- rep(x$row.column.names, c(nrow(row.coordinates), nrow(column.coordinates)))
     x.data <- as.matrix(x$x)
+    if (ncol(coords) == 1) # dealing with 1 D case
+    {
+        if (x$output == "Text")
+            ca.obj$nd <- 1
+        else if(x$output == "Scatterplot")
+            coords <- cbind(coords, 0)
+        else
+        {
+            ca.obj$rowcoord <- cbind(ca.obj$rowcoord, 0)
+            ca.obj$colcoord <- cbind(ca.obj$colcoord, 0)
+        }
+    }
     if (x$output == "Scatterplot")
     {
-        #tooltip.text <- c(CreateInteractiveScatterplotTooltips(x.data), CreateInteractiveScatterplotTooltips(t(x.data)))
-        k <- nrow(coords)
-        ycoords <- if(ncol(coords) == 1) rep(0, k) else coords[, 2]
-
         print(LabeledScatter(X = coords[, 1],
-                       Y = ycoords,
+                       Y = coords[, 2],
                        label = rownames(coords),
                        group = groups,
                        colors = c(x$row.color, x$col.color),

@@ -1,13 +1,14 @@
 context("Correspondence Analysis")
 
-test_that("Bug DS-1075",
+for (output in c("Scatterplot", "Moonplot", "Text"))
+    test_that(paste0("Bug DS-1075", output),
           {
               data("colas", package = "flipExampleData")
               z = xtabs(~d1 + d2, data = colas)
               z = z[rowSums(z) > 0, colSums(z) > 0]
-              expect_error(print(CorrespondenceAnalysis(z)), NA)#, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")              z = xtabs(~d1 + d3, data = colas)
+              expect_error(capture.output(suppressWarnings(print(CorrespondenceAnalysis(z, output = output)))), NA)#, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")              z = xtabs(~d1 + d3, data = colas)
               z = xtabs(~d1 + d3, data = colas)
-              expect_error(print(CorrespondenceAnalysis(z)), NA)#, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")              z = xtabs(~d1 + d3, data = colas)
+              expect_error(capture.output(suppressWarnings(print(CorrespondenceAnalysis(z, output = output)))), NA)#, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")              z = xtabs(~d1 + d3, data = colas)
           })
 x <- matrix(c(0.3004, 0.6864, 0.4975, 0.2908, 0.2781, 0.2642, 0.1916, 0.284,  0.3514, 0.2534, 0.2089,
                            c(  0.0198, 0.4604, 0.2151, 0.5235, 0.1151, 0.12,   0.5457, 0.3041, 0.06312,    0.384,  0.06064),
