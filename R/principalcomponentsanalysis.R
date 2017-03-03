@@ -482,11 +482,13 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 
     # Check filtered rows for missing data
     subset.data <- data[subset, ]
+    imputation.label <- NULL
     if (missing == "Error if missing data")
     {
         ErrorIfMissingDataFound(subset.data)
     } else if (missing == "Imputation (replace missing values with estimates)") {
         imputed.data <- Imputation(data)[[1]]
+        imputation.label <- attr(imputed.data, "imputation.method")
         subset.data <- imputed.data[subset, ]
     } else if (missing == "Exclude cases with missing data") {
         # Ensure only complete responses remain
@@ -505,7 +507,9 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
         subset.weights <- weights[row.names %in% rownames(subset.data)]
     }
 
-    return(list(subset.data = subset.data, subset.weights = subset.weights))
+    return(list(subset.data = subset.data,
+                subset.weights = subset.weights,
+                imputation.label = imputation.label))
 }
 
 
@@ -548,14 +552,14 @@ BartlettTestOfSphericity <- function(data,
     {
         sample.size.matrix <- sampleSizeMatrix(data, weights)
         sample.size <- min(sample.size.matrix)
-    } else if (!is.null(weights))
-    {
-        sample.size <- sum(prepared.data$subset.weights)
-
-    } else {
-        sample.size <- nrow(prepared.data$subset.data)
     }
+    else if (!is.null(weights))
+        sample.size <- sum(prepared.data$subset.weights)
+    else
+        sample.size <- nrow(prepared.data$subset.data)
     test.results <- cortest.bartlett(correlation.matrix, n = sample.size)
+    test.results$n.estimation <- nrow(prepared.data$subset.data)
+    test.results$imputation.label <- prepared.data$imputation.label
     class(test.results) <- "flipBartlett"
 
     return(test.results)
