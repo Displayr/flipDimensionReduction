@@ -35,7 +35,7 @@ test_that("Show names", {
                        "Q12. How  often do you drink cola with alcohol:Every or nearly every day")
 })
 
-miss.res <- MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola)
+miss.res <- suppressWarnings(MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola))
 miss.coord <- fitted(miss.res)
 test_that("Missing data", {
           expect_equal(nrow(miss.res$data.used), 13)
@@ -45,8 +45,8 @@ test_that("Missing data", {
           expect_equal(sum(!is.na(miss.coord[,1])), 13)
 })
 
-impute.res <- MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola,
-                            missing = "Imputation (replace missing values with estimates)")
+impute.res <- suppressWarnings(MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola,
+                            missing = "Imputation (replace missing values with estimates)"))
 test_that("Impute missing data", {
           expect_equal(nrow(impute.res$colpcoord), 24)
 })

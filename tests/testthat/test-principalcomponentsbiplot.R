@@ -19,7 +19,7 @@ test_that("Row and column labels",
                 expect_equal(res0$row.column.names, c("Brand",  "Attribute"))
 
                 xd <- array(runif(9), dim = c(3, 3, 3), dimnames = list(A = c("a","a","a"), B = c("a","a","a"), C = c("a","a","a")))
-                res00 <- PrincipalComponentsBiplot(xd)
+                expect_warning(res00 <- PrincipalComponentsBiplot(xd), "first statistic")
                 expect_equal(res00$row.column.names, c("A",  "B"))
           })
 

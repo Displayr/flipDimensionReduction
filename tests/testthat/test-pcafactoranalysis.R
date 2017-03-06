@@ -482,11 +482,11 @@ test_that("Compare other measures with SPSS", {
 test_that("Imputation", {
 
 
-    test.pca <- PrincipalComponentsAnalysis(data = test.data.1,
+    test.pca <- suppressWarnings(PrincipalComponentsAnalysis(data = test.data.1,
                                               missing = "Imputation (replace missing values with estimates)",
                                               print.type = "loadings",
                                               n.factors = 5,
-                                              suppress.small.coefficients = TRUE)
+                                              suppress.small.coefficients = TRUE))
     expect_equal(test.pca$loadings[4,3], 0.172050972343564)
 
 })

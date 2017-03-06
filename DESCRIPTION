@@ -10,7 +10,8 @@ License: GPL-3
 LazyData: TRUE
 Suggests:
     testthat,
-    flipExampleData
+    flipExampleData,
+    flipU
 Imports:
     ca,
     flipImputation,
@@ -26,7 +27,7 @@ Imports:
     rhtmlLabeledScatter,
     stats,
     GPArotation
-Remotes: Displayr/flipU,
+Remotes: 
     Displayr/flipChartBasics,
     Displayr/flipTransformations,
     Displayr/flipImputation,
