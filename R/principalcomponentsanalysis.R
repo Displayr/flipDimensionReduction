@@ -565,22 +565,6 @@ BartlettTestOfSphericity <- function(data,
     return(test.results)
 }
 
-#' @export
-print.flipBartlett <- function(x, ...)
-{
-    v <- unlist(x)
-    tidied <- c("", "", "")
-    names(tidied) <- c("Chi-Square", "P Value", "Degrees of freedom")
-    tidied <- as.matrix(tidied, ncol = 1)
-    tidied[1,1] <- format(v[1], justify = "right")
-    tidied[2,1] <- format.pval(v[2], digits = 2, eps = 0.001, justify = "right")
-    tidied[3,1] <- format(v[3], justify = "right")
-    colnames(tidied) <- ""
-    cat("Bartlett Test of Sphericity\r\n")
-    print(tidied, quote = FALSE)
-}
-
-
 # Scale and center data using the weighted mean and standard deviation
 scaleDataUsingWeights <- function(data, weights)
 {
