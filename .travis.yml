@@ -3,7 +3,8 @@ dist: trusty  # ubuntu 14.04 has additional libraries available
 sudo: required
 cache: packages
 before_cache:
-  - rm -rf $HOME/R/Library/flip*
+  - sudo rm -rf $HOME/R/Library/flip*
+  - sudo rm -rf $HOME/R/Library/rhtml*
 warnings_are_errors: false
 
 # install debian libraries to match R-servers
@@ -11,16 +12,12 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
-
-# last stable version of devtools does not support private depositories
-r_github_packages: hadley/devtools#1263
-
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
   - sudo Rscript -e 'require(devtools); install_github("Displayr/flipExampleData")'
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
   - sudo Rscript -e 'install.packages("roxygen2")'
-  - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); quit(status=1-pass, save="no")'; fi
+  - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); write.csv(df, file='test_results.csv'); quit(status=1-pass, save="no")'; fi
 
 notifications:
   slack:
