@@ -42,4 +42,3 @@ as they will both slow down the data and are unlikely to be useful}
 \description{
 Calculate multiple correspondence analysis of categorical variables
 }
-

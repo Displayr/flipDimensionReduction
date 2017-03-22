@@ -88,4 +88,3 @@ rotation includes a Kaiser normalization and a method of Promax which matches wh
 Components with large negative loadings will have signs flipped to give positive components after rotation.
 Includes handling of missing data, weighting, and filtering.
 }
-

@@ -8,7 +8,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
-  col.color = "#ED7D31", ...)
+  col.color = "#ED7D31", bubble.sizes = NULL, ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -35,6 +35,8 @@ excluded from the final data file.}
 \item{col.color}{Color to display column-attributes in scatterplot.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
+
+\item{bubble.size}{A vector of magnitudes for each set of x,y coordinates (for bubble charts). This is optional.}
 }
 \description{
 Removes rows or columns from the table.
@@ -44,4 +46,3 @@ Where a matrix or array is passed in containing names for the dimensions, these 
 and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
 If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 }
-

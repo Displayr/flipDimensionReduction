@@ -36,4 +36,3 @@ Plot the eigenvalues from an existing principal component or
   factor analysis or plot the eigenvalues from the correlation or covariance
   matrix of a data frame.
 }
-

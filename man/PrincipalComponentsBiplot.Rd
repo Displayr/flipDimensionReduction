@@ -48,4 +48,3 @@ rownames(x2) <- c("SomePrimary","PrimaryCompleted","SomeSecondary",
 PrincipalComponentsBiplot(x2, output="Moonplot")
 
 }
-

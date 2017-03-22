@@ -37,4 +37,3 @@ This function wraps \code{\link[psych]{cortest.bartlett}}. In
   size of the smallest pairwise-complete set of cases among all pairs of
   variables. This is consistent with SPSS.
 }
-

@@ -30,4 +30,3 @@ the input weight is NULL).
 \description{
 Filter data, remove cases with missing values, and impute where requested.
 }
-

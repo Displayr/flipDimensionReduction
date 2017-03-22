@@ -40,4 +40,3 @@ The promax rotation, which is done algebraicly rather than by optimizing an obje
 \code{flipPromax}, as the promax functions from \code{\link{stats}} and \code{\link{psych}} do not match
 the SPSS outputs.
 }
-

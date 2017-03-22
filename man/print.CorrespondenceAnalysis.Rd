@@ -14,4 +14,3 @@
 \description{
 Creates a plot displaying the correspondence analysis results.
 }
-

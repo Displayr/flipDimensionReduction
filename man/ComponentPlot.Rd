@@ -15,4 +15,3 @@ ComponentPlot(x, show.labels = TRUE)
 Create a scatter plot showing the loadings of each variable on
   the first two principal components.
 }
-
