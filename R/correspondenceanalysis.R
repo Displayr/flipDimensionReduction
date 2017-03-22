@@ -19,6 +19,8 @@
 #' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 #' @param row.color Color to display row-attributes in scatterplot.
 #' @param col.color Color to display column-attributes in scatterplot.
+#' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
+#' @param bubble.title A label for the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -30,6 +32,8 @@ CorrespondenceAnalysis = function(x,
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   row.color = '#5B9BD5',
                                   col.color = '#ED7D31',
+                                  bubble.size = NULL,
+                                  bubble.title = "",
                                   ...)
 {
     row.column.names.attribute <- attr(x, "row.column.names")
@@ -39,13 +43,23 @@ CorrespondenceAnalysis = function(x,
         row.column.names <- row.column.names.attribute
     if (is.null(row.column.names))
         row.column.names <- c("Rows", "Columns")
+    if (output == "Bubble Chart")
+    {
+        if(is.null(bubble.size))
+            stop("Bubble Charts require 'bubble.size'.")
+        if (!all(names(bubble.size) == rownames(x)))
+            stop("The bubble sizes must contain the same names as in the rows of the input data table.")
+    }
+
     result <- list(x = x,
                    row.column.names = row.column.names,
                    normalization = normalization,
                    output = output,
                    row.color = row.color,
                    col.color = col.color,
-                   original = ca(x, ...))
+                   original = ca(x, ...),
+                   bubble.size = bubble.size,
+                   bubble.title = bubble.title)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -84,10 +98,15 @@ print.CorrespondenceAnalysis <- function(x, ...)
             ca.obj$colcoord <- cbind(ca.obj$colcoord, 0)
         }
     }
-    if (x$output == "Scatterplot")
+    if (x$output %in% c("Scatterplot", "Bubble Chart"))
     {
+        bubble.size <- if (x$output == "Bubble Chart")
+            c(x$bubble.sizes, rep(max(x$bubble.size) / 75, length(x$original$colnames)))
+        else
+            NULL
         print(LabeledScatter(X = coords[, 1],
                        Y = coords[, 2],
+                       Z = bubble.size,
                        label = rownames(coords),
                        group = groups,
                        colors = c(x$row.color, x$col.color),
@@ -95,9 +114,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        title = "Correspondence analysis",
                        x.title = column.labels[1],
                        y.title = column.labels[2],
-                       axis.font.size = 8,
-                       labels.font.size = 12,
+                       z.title = x$bubble.title,
+                       axis.font.size = 10,
+                       labels.font.size = 14,
                        title.font.size = 20,
+                       legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
         #print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))

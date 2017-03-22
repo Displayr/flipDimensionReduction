@@ -78,3 +78,15 @@ test_that("Row and column labels",
                 expect_equal(x$row.column.names, c("Alpha",  "Beta"))
 
           })
+
+
+
+test_that("Bubble charts",
+          {
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart"))
+                bsizes = x.with.labels[,1]
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), NA)
+                expect_error(print(suppressWarnings(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]))))
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels[,1] *10000, bubble.title = "Importance (%)")), NA)
+          })
+
