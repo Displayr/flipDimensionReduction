@@ -27,7 +27,7 @@
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
-                                  output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
+                                  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "ggplot2")[1],
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   row.color = '#5B9BD5',
@@ -101,7 +101,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$output %in% c("Scatterplot", "Bubble Chart"))
     {
         bubble.size <- if (x$output == "Bubble Chart")
-            c(x$bubble.sizes, rep(max(x$bubble.size) / 75, length(x$original$colnames)))
+            c(x$bubble.size, rep(max(x$bubble.size) / 75, length(x$original$colnames)))
         else
             NULL
         print(LabeledScatter(X = coords[, 1],
