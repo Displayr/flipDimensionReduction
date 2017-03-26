@@ -48,7 +48,8 @@ CorrespondenceAnalysis = function(x,
         if(is.null(bubble.size))
             stop("Bubble Charts require 'bubble.size'.")
         if (!all(names(bubble.size) == rownames(x)))
-            stop("The bubble sizes must contain the same names as in the rows of the input data table.")
+            if (!all(tolower(names(bubble.size)) == tolower(rownames(x))))
+                stop("The bubble sizes must contain the same names as in the rows of the input data table.")
     }
 
     result <- list(x = x,
