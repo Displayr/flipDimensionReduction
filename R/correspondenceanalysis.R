@@ -46,17 +46,26 @@ CorrespondenceAnalysis = function(x,
     if (output == "Bubble Chart")
     {
         if(is.null(bubble.size))
-            stop("Bubble Charts require 'bubble.size'.")
-        bubble.names <- names(bubble.size)
-        table.names <- rownames(x)
-        if (!all(bubble.names == table.names))
-            if (!all(tolower(bubble.names) == tolower(table.names)))
+            stop("Bubble Charts require bubble sizes.")
+        if (is.null(bubble.names <- names(bubble.size)))
+            stop("The bubble sizes need to be named.")
+        if (length(table.names <- rownames(x)) != length(bubble.names))
+            stop("The number of bubble sizes does not match the number of rows in the table.")
+        if (length(unique(bubble.names)) !=  length(bubble.names))
+            stop("There are duplicate bubble size names.")
+        if (!all(sort(bubble.names) == sort(table.names)))
+            if (!all(sort(tolower(bubble.names)) == sort(tolower(table.names))))
             {
                 stop("The bubble sizes must contain the same names as in the rows of the input data table: ",
                      paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
             }
+        # Sorting bubble sizes to match the row names of the table.
+        order = match(rownames(x), names(bubble.size))
+        if (sum(order, na.rm = TRUE) != sum(1:length(order)))
+            stop("The bubble sizes must contain the same names as in the rows of the input data table: ",
+                 paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
+        bubble.size = bubble.size[order]
     }
-
     result <- list(x = x,
                    row.column.names = row.column.names,
                    normalization = normalization,
@@ -127,7 +136,6 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
-        #print(InteractiveLabeledScatterPlot(coords, column.labels = column.labels, group = groups, fixed.aspect = TRUE, tooltip.text = tooltip.text))
     }
     else if (x$output == "Moonplot")
     {
