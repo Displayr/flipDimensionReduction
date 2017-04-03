@@ -465,9 +465,10 @@ ComponentPlot <- function(x, show.labels = TRUE)
 #' which is a nuneric vector containing the weight values that correspond to the remaining cases (or NULL when
 #' the input weight is NULL).
 #' @importFrom  flipImputation Imputation
-#' @importFrom  flipData ExcludeCasesWithCompletelyMissingData ExcludeCasesWithAnyMissingData ErrorIfMissingDataFound
+#' @importFrom  flipData ExcludeCasesWithCompletelyMissingData ExcludeCasesWithAnyMissingData ErrorIfMissingDataFound ProcessQVariables
 prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 {
+    data <- ProcessQVariables(data)
 
     row.names <- rownames(data)
 
