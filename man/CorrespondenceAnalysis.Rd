@@ -5,10 +5,10 @@
 \title{\code{CorrespondenceAnalysis}}
 \usage{
 CorrespondenceAnalysis(x, normalization = "Principal",
-  output = c("Scatterplot", "Moonplot", "Text", "ggplot2")[1],
+  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "ggplot2")[1],
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
-  col.color = "#ED7D31", bubble.sizes = NULL, ...)
+  col.color = "#ED7D31", bubble.size = NULL, bubble.title = "", ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -34,9 +34,11 @@ excluded from the final data file.}
 
 \item{col.color}{Color to display column-attributes in scatterplot.}
 
-\item{...}{Optional arguments for \code{\link[ca]{ca}}.}
+\item{bubble.size}{A vector of magnitudes for the row coordinate (for bubble charts). This is optional.}
 
-\item{bubble.size}{A vector of magnitudes for each set of x,y coordinates (for bubble charts). This is optional.}
+\item{bubble.title}{A label for the legend.}
+
+\item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
 \description{
 Removes rows or columns from the table.
