@@ -9,7 +9,7 @@
 #'   principal"} plot the standard coordinates of the columns (rows) against the
 #'   principal coordinates. Note that the plotting occurs via
 #'   \code{\link{print.CorrespondenceAnalysis}}.
-#' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, \code{"Text"}, or \code{"ggplot2"}.
+#' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
@@ -22,13 +22,14 @@
 #' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
 #' @param bubble.title A label for the legend.
 #' @param chart.title Title of chart.
+#' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
-                                  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "ggplot2")[1],
+                                  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text")[1],
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   row.color = '#5B9BD5',
@@ -36,10 +37,26 @@ CorrespondenceAnalysis = function(x,
                                   bubble.size = NULL,
                                   bubble.title = "",
                                   chart.title = "Correspondence analysis",
+                                  transpose = FALSE,
                                   ...)
 {
+    # Mask undefined arguments for R Gui control
+    if (!output %in% c("Scatterplot", "Bubble Chart"))
+    {
+        chart.title <- ""
+        row.color <- ""
+        col.color <- ""
+    }
+    if (output != "Bubble Chart")
+    {
+        bubble.size <- NULL
+        bubble.title <- NULL
+    }
+
     row.column.names.attribute <- attr(x, "row.column.names")
     x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
+    if (transpose)
+        x <- t(x)
     row.column.names <- names(dimnames(x))
     if (is.null(row.column.names))
         row.column.names <- row.column.names.attribute
@@ -47,18 +64,20 @@ CorrespondenceAnalysis = function(x,
         row.column.names <- c("Rows", "Columns")
     if (output == "Bubble Chart")
     {
+        table.maindim <- ifelse(transpose, "columns", "rows")
         if(is.null(bubble.size))
             stop("Bubble Charts require bubble sizes.")
         if (is.null(bubble.names <- names(bubble.size)))
             stop("The bubble sizes need to be named.")
         if (length(table.names <- rownames(x)) != length(bubble.names))
-            stop("The number of bubble sizes does not match the number of rows in the table.")
+            stop("The number of bubble sizes does not match the number of ", table.maindim, " in the table.")
         if (length(unique(bubble.names)) !=  length(bubble.names))
             stop("There are duplicate bubble size names.")
         if (!all(sort(bubble.names) == sort(table.names)))
             if (!all(sort(tolower(bubble.names)) == sort(tolower(table.names))))
             {
-                stop("The bubble sizes must contain the same names as in the rows of the input data table: ",
+                stop("The bubble sizes must contain the same names as in the ",
+                     table.maindim, " of the input data table: ",
                      paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
             }
         # Sorting bubble sizes to match the row names of the table.

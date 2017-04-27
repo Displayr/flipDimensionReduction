@@ -5,11 +5,11 @@
 \title{\code{CorrespondenceAnalysis}}
 \usage{
 CorrespondenceAnalysis(x, normalization = "Principal",
-  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "ggplot2")[1],
+  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text")[1],
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
-  chart.title = "Correspondence analysis", ...)
+  chart.title = "Correspondence analysis", transpose = FALSE, ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -23,7 +23,7 @@ principal"} plot the standard coordinates of the columns (rows) against the
 principal coordinates. Note that the plotting occurs via
 \code{\link{print.CorrespondenceAnalysis}}.}
 
-\item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, \code{"Text"}, or \code{"ggplot2"}.}
+\item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 
@@ -40,6 +40,8 @@ excluded from the final data file.}
 \item{bubble.title}{A label for the legend.}
 
 \item{chart.title}{Title of chart.}
+
+\item{transpose}{Boolean indicating whether the rows and columns of \code{x} should be swapped.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
