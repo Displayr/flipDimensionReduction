@@ -21,6 +21,7 @@
 #' @param col.color Color to display column-attributes in scatterplot.
 #' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
 #' @param bubble.title A label for the legend.
+#' @param chart.title Title of chart.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -34,6 +35,7 @@ CorrespondenceAnalysis = function(x,
                                   col.color = '#ED7D31',
                                   bubble.size = NULL,
                                   bubble.title = "",
+                                  chart.title = "Correspondence analysis",
                                   ...)
 {
     row.column.names.attribute <- attr(x, "row.column.names")
@@ -74,7 +76,8 @@ CorrespondenceAnalysis = function(x,
                    col.color = col.color,
                    original = ca(x, ...),
                    bubble.size = bubble.size,
-                   bubble.title = bubble.title)
+                   bubble.title = bubble.title,
+                   chart.title = chart.title)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -126,7 +129,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        group = groups,
                        colors = c(x$row.color, x$col.color),
                        fixed.aspect = TRUE,
-                       title = "Correspondence analysis",
+                       title = x$chart.title,
                        x.title = column.labels[1],
                        y.title = column.labels[2],
                        z.title = x$bubble.title,

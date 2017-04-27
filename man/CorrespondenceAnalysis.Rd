@@ -8,7 +8,8 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "ggplot2")[1],
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
-  col.color = "#ED7D31", bubble.size = NULL, bubble.title = "", ...)
+  col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
+  chart.title = "Correspondence analysis", ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -37,6 +38,8 @@ excluded from the final data file.}
 \item{bubble.size}{A vector of magnitudes for the row coordinate (for bubble charts). This is optional.}
 
 \item{bubble.title}{A label for the legend.}
+
+\item{chart.title}{Title of chart.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
