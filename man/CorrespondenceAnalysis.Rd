@@ -46,7 +46,7 @@ excluded from the final data file.}
 
 \item{logos}{Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.}
 
-\item{logo.size}{Number to control the size of the logos.}
+\item{logo.size}{Numeric controlling the size of the logos.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

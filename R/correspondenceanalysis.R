@@ -162,7 +162,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         if (!is.null(logo.urls) && !inherits(logo.urls, "try-error"))
         {
             if (length(logo.urls) != nrow(x.data))
-                stop(sprintf("Length of logo supplied must be equal to the number of %s in the table (%d)\n",
+                stop(sprintf("Number of URLs supplied in logos must be equal to the number of %s in the table (%d)\n",
                              ifelse(x$transpose, "columns", "rows"), nrow(x.data)))
             if (any(nchar(logo.urls) == 0))
                 stop("Logos cannot be an empty string\n")
