@@ -22,6 +22,8 @@
 #' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
 #' @param bubble.title A label for the legend.
 #' @param chart.title Title of chart.
+#' @param logos Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.
+#' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
@@ -38,6 +40,8 @@ CorrespondenceAnalysis = function(x,
                                   bubble.title = "",
                                   chart.title = "Correspondence analysis",
                                   transpose = FALSE,
+                                  logos = NULL,
+                                  logo.size = 0.5,
                                   ...)
 {
     # Mask undefined arguments for R Gui control
@@ -52,6 +56,12 @@ CorrespondenceAnalysis = function(x,
         bubble.size <- NULL
         bubble.title <- NULL
     }
+    if (output != "Scatterplot")
+        logos <- NULL
+    if (is.null(logos))
+        logo.size <- 0
+    if (!is.numeric(logo.size))
+        stop("Logo size must be a numeric")
 
     row.column.names.attribute <- attr(x, "row.column.names")
     x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
@@ -96,7 +106,10 @@ CorrespondenceAnalysis = function(x,
                    original = ca(x, ...),
                    bubble.size = bubble.size,
                    bubble.title = bubble.title,
-                   chart.title = chart.title)
+                   chart.title = chart.title,
+                   logos = logos,
+                   logo.size = logo.size,
+                   transpose = transpose)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -109,6 +122,7 @@ CorrespondenceAnalysis = function(x,
 #' @import ca
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom flipTransformations TextAsVector
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
@@ -141,10 +155,27 @@ print.CorrespondenceAnalysis <- function(x, ...)
             c(x$bubble.size, rep(max(x$bubble.size) / 75, length(x$original$colnames)))
         else
             NULL
+
+        lab <- rownames(coords)
+        logo.size <- NA
+        logo.urls <- try(TextAsVector(x$logos)) # This function gives warnings if it doesn't work
+        if (!is.null(logo.urls) && !inherits(logo.urls, "try-error"))
+        {
+            if (length(logo.urls) != nrow(x.data))
+                stop(sprintf("Length of logo supplied must be equal to the number of %s in the table (%d)\n",
+                             ifelse(x$transpose, "columns", "rows"), nrow(x.data)))
+            if (any(nchar(logo.urls) == 0))
+                stop("Logos cannot be an empty string\n")
+            lab[1:nrow(x.data)] <- logo.urls
+            logo.size <- rep(x$logo.size, length(lab))
+        }
+
         print(LabeledScatter(X = coords[, 1],
                        Y = coords[, 2],
                        Z = bubble.size,
-                       label = rownames(coords),
+                       label = lab,
+                       label.alt = rownames(coords),
+                       labels.logo.scale = logo.size,
                        group = groups,
                        colors = c(x$row.color, x$col.color),
                        fixed.aspect = TRUE,

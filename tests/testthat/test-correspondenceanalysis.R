@@ -104,3 +104,15 @@ test_that("Bubble charts",
                 names(sizes) = LETTERS[1:10]
                 expect_error(print(CorrespondenceAnalysis(x, output = "Bubble Chart", bubble.size = sizes)))
 })
+
+test_that("Logos",
+          {
+              urls <- sprintf("https://dl.dropboxusercontent.com/u/539177224/%s_grey.svg",
+                              c("apple","baby","car","stickman","stickwoman","chicken","cow","thumbsup","rocket","tools"))
+              data("colas", package = "flipExampleData")
+              z = xtabs(~d1 + d2, data = colas)
+              z = z[rowSums(z) > 0, colSums(z) > 0]
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9]))), NA)
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T))))
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:4]))))
+          })

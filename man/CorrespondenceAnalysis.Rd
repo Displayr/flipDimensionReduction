@@ -9,7 +9,8 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
-  chart.title = "Correspondence analysis", transpose = FALSE, ...)
+  chart.title = "Correspondence analysis", transpose = FALSE,
+  logos = NULL, logo.size = 0.5, ...)
 }
 \arguments{
 \item{x}{A table.}
@@ -42,6 +43,10 @@ excluded from the final data file.}
 \item{chart.title}{Title of chart.}
 
 \item{transpose}{Boolean indicating whether the rows and columns of \code{x} should be swapped.}
+
+\item{logos}{Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.}
+
+\item{logo.size}{Number to control the size of the logos.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
