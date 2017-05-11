@@ -73,6 +73,8 @@ CorrespondenceAnalysis = function(x,
     {
         if (!output %in% c("Scatterplot", "Input Table"))
             stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
+        row.color <- '#5B9BD5'
+        col.color <- '#ED7D31'
 
         # Get table names
         num.tables <- length(x)
@@ -88,7 +90,7 @@ CorrespondenceAnalysis = function(x,
             x.names[i] <- attr(x[[i]], "questions")
         }
         if (unnamed.tables)
-                warning("You can name tables using R code: 'attr(table.name, \"questions\") <- \"Description\"")
+                warning("You can name tables using R code: 'attr(table.name, \"questions\") <- \"Description\"'")
 
         # Check tables match - order of rows will match first table
         x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
@@ -103,16 +105,16 @@ CorrespondenceAnalysis = function(x,
             c.tmp <- match(c.names, colnames(x[[i]]))
 
             if (any(is.na(r.tmp)))
-                stop(sprintf("Tables do no match. Table '%s' does not contain row '%s'.",
-                             x.names[i], r.names[which(is.na(r.tmp))]))
+                stop(sprintf("Tables do not match. Table '%s' missing row '%s'.",
+                             x.names[i], r.names[which(is.na(r.tmp))[1]]))
             if (any(is.na(c.tmp)))
-                stop(sprintf("Tables do no match. Table '%s' does not contain column '%s'.",
-                             x.names[i], c.names[which(is.na(c.tmp))]))
+                stop(sprintf("Tables do not match. Table '%s' missing column '%s'.",
+                             x.names[i], c.names[which(is.na(c.tmp))[1]]))
 
             x[[i]] <- x[[i]][r.names,c.names]
         }
         x <- do.call(rbind, x)
-        rownames(x) <- sprintf("%s - %s", rep(x.names, each=length(r.names)), rownames(x))
+        rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
         row.column.names <- r.names
 
     } else
@@ -122,6 +124,8 @@ CorrespondenceAnalysis = function(x,
             x <- x[[1]]
 
         num.tables <- 1
+        color.palette <- "Default colors"
+        trend.lines <- FALSE
         row.column.names.attribute <- attr(x, "row.column.names")
         x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
         if (transpose)
