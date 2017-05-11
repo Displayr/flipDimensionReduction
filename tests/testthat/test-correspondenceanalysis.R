@@ -115,4 +115,13 @@ test_that("Logos",
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9]))), NA)
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T))))
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:4]))))
+
+              z2 <- z + rnorm(72)
+              zz <- list(z, z2)
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))), NA)
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9], transpose=T))))
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:4]))))
+
+              rownames(zz[[2]])[1] <- "Error"
+              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))))
           })

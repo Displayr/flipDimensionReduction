@@ -5,15 +5,16 @@
 \title{\code{CorrespondenceAnalysis}}
 \usage{
 CorrespondenceAnalysis(x, normalization = "Principal",
-  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text")[1],
-  row.names.to.remove = c("NET", "Total", "SUM"),
-  column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
+  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text",
+  "Input Table")[1], row.names.to.remove = c("NET", "Total", "SUM"),
+  column.names.to.remove = c("NET", "Total", "SUM"),
+  color.palette = "Default colors", row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
-  logos = NULL, logo.size = 0.5, ...)
+  logos = NULL, logo.size = 0.5, trend.lines = FALSE, ...)
 }
 \arguments{
-\item{x}{A table.}
+\item{x}{A table or a list of tables.}
 
 \item{normalization}{The method used to normalize the coordinates of the
 correspondence analysis plot (this changes the plot, but not the outputs of
@@ -32,9 +33,11 @@ principal coordinates. Note that the plotting occurs via
 variable is provided, any cases with missing values on this variable are
 excluded from the final data file.}
 
-\item{row.color}{Color to display row-attributes in scatterplot.}
+\item{color.palette}{Palette used to color scatterplot when multiple tables are used.}
 
-\item{col.color}{Color to display column-attributes in scatterplot.}
+\item{row.color}{Color to display row-attributes in scatterplot with one table.}
+
+\item{col.color}{Color to display column-attributes in scatterplot with one table.}
 
 \item{bubble.size}{A vector of magnitudes for the row coordinate (for bubble charts). This is optional.}
 
@@ -47,6 +50,8 @@ excluded from the final data file.}
 \item{logos}{Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.}
 
 \item{logo.size}{Numeric controlling the size of the logos.}
+
+\item{trend.lines}{Boolean indicating whether to draw trend lines when multiple tables are supplied.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
