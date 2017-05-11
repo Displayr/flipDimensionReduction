@@ -151,7 +151,9 @@ print.mcaObj <- function(x, digits = 3, ...)
         print(round(x$colpcoord, digits=digits))
     } else
     {
-        #if (x$output == "Scatterplot")
+        max.length <- max(nchar(x$variablenames))
+        if (max.length > 20)
+            warning("The labels of the variables and/or values are long. Edit the labels in the input variables to improve the look of this map.")
         groups <- rep(x$colnames, x$levels.n)
         gcolors <- ChartColors(length(x$colnames), x$scatter.palette, trim.light.colors=TRUE)
         print(LabeledScatter(X = x$colpcoord[,1],
