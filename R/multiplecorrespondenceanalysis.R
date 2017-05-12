@@ -12,6 +12,7 @@
 #'  the quality of the imputation, it will dramatically slow down the time to estimate.
 #'  Factors and Character variables with a large number of categories should not be included,
 #'  as they will both slow down the data and are unlikely to be useful
+#' @param chart.title String used as the title of the Scatterplot.
 #' @param show.labels A logical indicating whether \code{"Label"} attribute should be used for reporting results
 #' @importFrom flipData EstimationData GetData
 #' @importFrom flipFormat Labels
@@ -28,6 +29,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
                                            subset = NULL,
                                            missing = "Exclude cases with missing data",
                                            auxiliary.data = NULL,
+                                           chart.title = "Multiple correspondence analysis",
                                            show.labels = FALSE)
 {
     # Data cleaning
@@ -119,6 +121,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     obj$data.used <- data.used
     obj$is.data.used <- is.data.used
     obj$data.description <- processed.data$description
+    obj$chart.title <- chart.title
     class(obj) <- "mcaObj"
     return(obj)
 }
@@ -162,9 +165,9 @@ print.mcaObj <- function(x, digits = 3, ...)
                        group = groups,
                        colors = gcolors,
                        fixed.aspect = TRUE,
-                       title = "Multiple correspondence analysis",
-                       x.title = "Dimension 1",
-                       y.title = "Dimension 2",
+                       title = x$chart.title,
+                       x.title = sprintf("Dimension 1 (%.1f%%)", x$inertia.e[1] * 100),
+                       y.title = sprintf("Dimension 2 (%.1f%%)", x$inertia.e[2] * 100),
                        axis.font.size = 8,
                        labels.font.size = 12,
                        title.font.size = 20,

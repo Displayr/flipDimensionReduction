@@ -8,7 +8,8 @@
 MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
   "Scatterplot")[1], scatter.palette = "Default colors", weights = NULL,
   subset = NULL, missing = "Exclude cases with missing data",
-  auxiliary.data = NULL, show.labels = FALSE)
+  auxiliary.data = NULL, chart.title = "Multiple correspondence analysis",
+  show.labels = FALSE)
 
 \method{fitted}{mcaObj}(object, ...)
 }
@@ -32,6 +33,8 @@ to be used in imputation (if required). While adding more variables will improve
 the quality of the imputation, it will dramatically slow down the time to estimate.
 Factors and Character variables with a large number of categories should not be included,
 as they will both slow down the data and are unlikely to be useful}
+
+\item{chart.title}{String used as the title of the Scatterplot.}
 
 \item{show.labels}{A logical indicating whether \code{"Label"} attribute should be used for reporting results}
 
