@@ -13,6 +13,7 @@
 #'  Factors and Character variables with a large number of categories should not be included,
 #'  as they will both slow down the data and are unlikely to be useful
 #' @param chart.title String used as the title of the Scatterplot.
+#' @param max.labels.plot A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.
 #' @param show.labels A logical indicating whether \code{"Label"} attribute should be used for reporting results
 #' @importFrom flipData EstimationData GetData
 #' @importFrom flipFormat Labels
@@ -30,11 +31,13 @@ MultipleCorrespondenceAnalysis <- function(formula,
                                            missing = "Exclude cases with missing data",
                                            auxiliary.data = NULL,
                                            chart.title = "Multiple correspondence analysis",
+                                           max.labels.plot = 200,
                                            show.labels = FALSE)
 {
     if (output != "Scatterplot")
     {
         scatter.palette <- NA
+        max.labels.plot <- 0
         chart.title <- ""
     }
 
@@ -128,6 +131,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     obj$is.data.used <- is.data.used
     obj$data.description <- processed.data$description
     obj$chart.title <- chart.title
+    obj$max.labels.plot <- max.labels.plot
     class(obj) <- "mcaObj"
     return(obj)
 }
@@ -165,9 +169,14 @@ print.mcaObj <- function(x, digits = 3, ...)
             warning("The labels of the variables and/or values are long. Edit the labels in the input variables to improve the look of this map.")
         groups <- rep(x$colnames, x$levels.n)
         gcolors <- ChartColors(length(x$colnames), x$scatter.palette, trim.light.colors=TRUE)
+
+        lab <- x$variablenames
+        if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
+            lab[-(1:x$max.labels.plot)] <- ""
         print(LabeledScatter(X = x$colpcoord[,1],
                        Y = x$colpcoord[,2],
-                       label = x$variablenames,
+                       label = lab,
+                       label.alt = x$variablenames,
                        group = groups,
                        colors = gcolors,
                        fixed.aspect = TRUE,

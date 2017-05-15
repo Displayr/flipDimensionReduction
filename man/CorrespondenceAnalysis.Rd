@@ -12,7 +12,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
   logos = NULL, logo.size = 0.5, trend.lines = FALSE,
-  multiple.tables = NA, square = FALSE, ...)
+  multiple.tables = NA, square = FALSE, max.labels.plot = 200, ...)
 }
 \arguments{
 \item{x}{A table or a list of tables.}
@@ -58,6 +58,8 @@ excluded from the final data file.}
 If no value is given, it will be guessed from the structure of \code{x}.}
 
 \item{square}{Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.}
+
+\item{max.labels.plot}{A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

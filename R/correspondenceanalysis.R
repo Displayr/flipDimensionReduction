@@ -23,6 +23,7 @@
 #' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
 #' @param bubble.title A label for the legend.
 #' @param chart.title Title of chart.
+#' @param max.labels.plot A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.
 #' @param logos Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.
 #' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
@@ -51,6 +52,7 @@ CorrespondenceAnalysis = function(x,
                                   trend.lines = FALSE,
                                   multiple.tables = NA,
                                   square = FALSE,
+                                  max.labels.plot = 200,
                                   ...)
 {
     # Mask undefined arguments for R Gui control
@@ -59,6 +61,7 @@ CorrespondenceAnalysis = function(x,
         chart.title <- ""
         row.color <- ""
         col.color <- ""
+        max.label.plot <- 0
     }
     if (output != "Bubble Chart")
     {
@@ -167,7 +170,7 @@ CorrespondenceAnalysis = function(x,
             {
                 if (transpose)
                     empty.dim <- "Column"
-                empty.name <- rownames(x)[which(rSum == 0)[1]] 
+                empty.name <- rownames(x)[which(rSum == 0)[1]]
             } else if (any(cSum == 0))
             {
                 if (!transpose)
@@ -223,6 +226,7 @@ CorrespondenceAnalysis = function(x,
                    transpose = transpose,
                    trend.lines = trend.lines,
                    num.tables = num.tables,
+                   max.labels.plot = max.labels.plot,
                    square = square)
     class(result) <- c("CorrespondenceAnalysis")
     result
@@ -325,6 +329,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
             logo.size <- rep(x$logo.size, length(lab))
         }
 
+        if (is.null(logo.urls) && x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
+            lab[-(1:x$max.labels.plot)] <- ""
         print(LabeledScatter(X = coords[,1],
                        Y = coords[,2],
                        Z = bubble.size,

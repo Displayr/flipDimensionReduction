@@ -9,7 +9,7 @@ MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
   "Scatterplot")[1], scatter.palette = "Default colors", weights = NULL,
   subset = NULL, missing = "Exclude cases with missing data",
   auxiliary.data = NULL, chart.title = "Multiple correspondence analysis",
-  show.labels = FALSE)
+  max.labels.plot = 200, show.labels = FALSE)
 
 \method{fitted}{mcaObj}(object, ...)
 }
@@ -35,6 +35,8 @@ Factors and Character variables with a large number of categories should not be 
 as they will both slow down the data and are unlikely to be useful}
 
 \item{chart.title}{String used as the title of the Scatterplot.}
+
+\item{max.labels.plot}{A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.}
 
 \item{show.labels}{A logical indicating whether \code{"Label"} attribute should be used for reporting results}
 
