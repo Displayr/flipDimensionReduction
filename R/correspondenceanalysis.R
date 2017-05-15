@@ -365,7 +365,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     }
     else if (x$output == "Input Table")
     {
-        print(x.data)
+        return(x.data)
     }
     else if (x$square)
     {
