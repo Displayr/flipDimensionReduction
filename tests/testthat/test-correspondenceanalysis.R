@@ -126,3 +126,18 @@ test_that("Logos",
               rownames(zz[[2]])[1] <- "Error"
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))))
           })
+
+test_that("Empty rows/columns",
+          {
+              data("colas", package = "flipExampleData")
+              z = xtabs(~d1 + d2, data = colas)
+              z = z[rowSums(z) > 0, colSums(z) > 0]
+
+              ze <- z
+              ze[,3] <- 0
+              expect_error(CorrespondenceAnalysis(ze), "Column")
+              expect_error(CorrespondenceAnalysis(ze, transpose = T), "Column")
+              ze[1,] <- NA
+              expect_error(CorrespondenceAnalysis(ze), "Row '18 to 24' contains only zeros or NAs.")
+          })
+

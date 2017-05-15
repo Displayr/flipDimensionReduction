@@ -156,6 +156,27 @@ CorrespondenceAnalysis = function(x,
                 stop("Output 'Moonplot' is not valid with square matrixes.")
         }
 
+        # Check for empty rows/columns
+        rSum <- rowSums(abs(x), na.rm=T)
+        cSum <- colSums(abs(x), na.rm=T)
+        if (any(rSum == 0) || any(cSum == 0))
+        {
+            empty.dim <- "Row"
+            empty.name <- ""
+            if (any(rSum == 0))
+            {
+                if (transpose)
+                    empty.dim <- "Column"
+                empty.name <- rownames(x)[which(rSum == 0)[1]] 
+            } else if (any(cSum == 0))
+            {
+                if (!transpose)
+                    empty.dim <- "Column"
+                empty.name <- colnames(x)[which(cSum == 0)[1]]
+            }
+            stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
+        }
+
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
