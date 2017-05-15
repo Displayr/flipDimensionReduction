@@ -61,7 +61,7 @@ CorrespondenceAnalysis = function(x,
         chart.title <- ""
         row.color <- ""
         col.color <- ""
-        max.label.plot <- 0
+        max.labels.plot <- 0
     }
     if (output != "Bubble Chart")
     {
@@ -92,17 +92,19 @@ CorrespondenceAnalysis = function(x,
         num.tables <- length(x)
         x.names <- rep("", num.tables)
         unnamed.tables <- FALSE
+        used.names <- c()
         for (i in 1:num.tables)
         {
             if (is.null(attr(x[[i]], "questions")))
             {
                 unnamed.tables <- TRUE
                 attr(x[[i]], "questions") <- as.character(i)
+                used.names <- c(used.names, i)
             }
             x.names[i] <- attr(x[[i]], "questions")
         }
-        if (unnamed.tables)
-                warning("You can name tables using R code: 'attr(table.name, \"questions\") <- \"Description\"'")
+        if (unnamed.tables & !trend.lines)
+                warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"questions\") <- \"Description\"'", paste(used.names, collapse="', '")))
 
         # Check tables match - order of rows will match first table
         x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
@@ -111,8 +113,8 @@ CorrespondenceAnalysis = function(x,
         c.names <- colnames(x[[1]])
         for (i in 2:num.tables)
         {
-            if (transpose)
-                x[[i]] <- t(x[[i]])
+            x[[i]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[i]]))
+                      else GetTidyTwoDimensionalArray(x[[i]])
             r.tmp <- match(r.names, rownames(x[[i]]))
             c.tmp <- match(c.names, colnames(x[[i]]))
 
