@@ -356,18 +356,17 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
-    }
-    else if (x$output == "Moonplot")
+
+    } else if (x$output == "Moonplot")
     {
         if (x$normalization != "Row principal")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
-    }
-    else if (x$output == "Input Table")
+    } else if (x$output == "Input Table")
     {
         x.data
-    }
-    else if (x$square)
+
+    } else if (x$square)
     {
         # Text output
         # No description of the data
@@ -392,9 +391,10 @@ print.CorrespondenceAnalysis <- function(x, ...)
         cat(sprintf("\n%.1f%% symmetrical\n", prop.sym))
         cat("\nScores of symmetric dimensions:\n")
         print(coords[,ind.sym])
-    }
-    else
+    } else
+    {
         print(ca.obj, ...)
+    }
 }
 
 
