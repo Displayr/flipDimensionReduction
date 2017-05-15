@@ -77,7 +77,7 @@ CorrespondenceAnalysis = function(x,
     if (!is.null(dim(x[[1]])) && length(x) > 1)
     {
         if (!is.na(multiple.tables) && !multiple.tables)
-            stop("Input data 'x' contains multiple tables. Select checkbox for 'multiple table'\n")
+            stop("Input data 'x' contains multiple tables. Select checkbox for 'multiple tables'\n")
 
         if (!output %in% c("Scatterplot", "Input Table"))
             stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
@@ -133,7 +133,7 @@ CorrespondenceAnalysis = function(x,
             x <- x[[1]]
 
         if (!is.na(multiple.tables) && multiple.tables)
-            stop("Input data 'x' contains only one table. Unselect checkbox for 'multiple table'\n")
+            stop("Input data 'x' contains only one table. Unselect checkbox for 'multiple tables'\n")
 
         num.tables <- 1
         color.palette <- "Default colors"
@@ -262,6 +262,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     } else if (x$num.tables == 1)
     {
+        if (sum(nchar(x$row.column.names)) > 0 && x$row.column.names[1] == x$row.column.names[2])
+            warning("Row and column titles should not be the same.")
         groups <- rep(x$row.column.names, c(nrow(row.coordinates), nrow(column.coordinates)))
         colors <- c(x$row.color, x$col.color)
 
@@ -321,7 +323,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        axis.font.size = 10,
                        labels.font.size = 14,
                        title.font.size = 20,
-                       legend.show = (x$num.tables==1 && !x$square),
+                       legend.show = (x$num.tables==1 && !x$square && all(nchar(groups) > 0)),
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
