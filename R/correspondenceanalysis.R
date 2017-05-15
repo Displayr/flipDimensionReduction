@@ -27,6 +27,9 @@
 #' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
 #' @param trend.lines Boolean indicating whether to draw trend lines when multiple tables are supplied.
+#' @param multiple.tables Optional boolean indicating whether or not multiple tables have been supplied.
+#'   If no value is given, it will be guessed from the structure of \code{x}.
+#' @param square Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -46,6 +49,8 @@ CorrespondenceAnalysis = function(x,
                                   logos = NULL,
                                   logo.size = 0.5,
                                   trend.lines = FALSE,
+                                  multiple.tables = NA,
+                                  square = FALSE,
                                   ...)
 {
     # Mask undefined arguments for R Gui control
@@ -71,10 +76,14 @@ CorrespondenceAnalysis = function(x,
     # note that a dataframe is actually a list
     if (!is.null(dim(x[[1]])) && length(x) > 1)
     {
+        if (!is.na(multiple.tables) && !multiple.tables)
+            stop("Input data 'x' contains multiple tables. Select checkbox for 'multiple table'\n")
+
         if (!output %in% c("Scatterplot", "Input Table"))
             stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
         row.color <- '#5B9BD5'
         col.color <- '#ED7D31'
+        square <- FALSE
 
         # Get table names
         num.tables <- length(x)
@@ -123,6 +132,9 @@ CorrespondenceAnalysis = function(x,
         if (!is.null(dim(x[[1]])))
             x <- x[[1]]
 
+        if (!is.na(multiple.tables) && multiple.tables)
+            stop("Input data 'x' contains only one table. Unselect checkbox for 'multiple table'\n")
+
         num.tables <- 1
         color.palette <- "Default colors"
         trend.lines <- FALSE
@@ -135,6 +147,15 @@ CorrespondenceAnalysis = function(x,
             row.column.names <- row.column.names.attribute
         if (is.null(row.column.names))
             row.column.names <- c("Rows", "Columns")
+
+        if (square)
+        {
+            if (nrow(x) != ncol(x) || any(rownames(x) != colnames(x)))
+                stop("Input Table is not a square matrix.")
+            if (output == "Moonplot")
+                stop("Output 'Moonplot' is not valid with square matrixes.")
+        }
+
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
@@ -160,6 +181,10 @@ CorrespondenceAnalysis = function(x,
                      paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
             bubble.size = bubble.size[order]
         }
+
+        # Expand square matrix after checking against bubble names
+        if (square)
+            x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
     result <- list(x = x,
                    row.column.names = row.column.names,
@@ -176,7 +201,8 @@ CorrespondenceAnalysis = function(x,
                    logo.size = logo.size,
                    transpose = transpose,
                    trend.lines = trend.lines,
-                   num.tables = num.tables)
+                   num.tables = num.tables,
+                   square = square)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -195,15 +221,27 @@ CorrespondenceAnalysis = function(x,
 print.CorrespondenceAnalysis <- function(x, ...)
 {
     ca.obj <- x$original
-    normed <- CANormalization(ca.obj, x$normalization)
     singular.values <- round(ca.obj$sv^2, 6)
     variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[1:2]
     column.labels <- paste("Dimension", 1:2, paste0("(", variance.explained, ")"))
-    row.coordinates <- normed$row.coordinates
-    column.coordinates <- normed$column.coordinates
-    coords <- rbind(row.coordinates, column.coordinates)
-    row.column.names <- x$row.column.names
-    x.data <- as.matrix(x$x)
+
+    if (x$square)
+    {
+        n2 <- nrow(x$x)/2
+        colnames(ca.obj$rowcoord) <- sprintf("Dimension %d", 1:ncol(ca.obj$rowcoord))
+        coords <- sweep(ca.obj$rowcoord[1:n2,], 2, ca.obj$sv, "*")
+        x.data <- x$x[1:n2, 1:n2]
+
+    } else
+    {
+        normed <- CANormalization(ca.obj, x$normalization)
+        row.coordinates <- normed$row.coordinates
+        column.coordinates <- normed$column.coordinates
+        coords <- rbind(row.coordinates, column.coordinates)
+        row.column.names <- x$row.column.names
+        x.data <- as.matrix(x$x)
+    }
+
     if (ncol(coords) == 1) # dealing with 1D case
     {
         if (x$output == "Text")
@@ -217,7 +255,12 @@ print.CorrespondenceAnalysis <- function(x, ...)
         }
     }
 
-    if (x$num.tables == 1)
+    if (x$square)
+    {
+        groups <- rep(1, n2)
+        colors <- c(x$row.color, n2)
+
+    } else if (x$num.tables == 1)
     {
         groups <- rep(x$row.column.names, c(nrow(row.coordinates), nrow(column.coordinates)))
         colors <- c(x$row.color, x$col.color)
@@ -259,7 +302,6 @@ print.CorrespondenceAnalysis <- function(x, ...)
             logo.size <- rep(x$logo.size, length(lab))
         }
 
-        n <- nrow(x.data)
         print(LabeledScatter(X = coords[,1],
                        Y = coords[,2],
                        Z = bubble.size,
@@ -279,7 +321,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        axis.font.size = 10,
                        labels.font.size = 14,
                        title.font.size = 20,
-                       legend.show = (x$num.tables==1),
+                       legend.show = (x$num.tables==1 && !x$square),
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
@@ -292,7 +334,33 @@ print.CorrespondenceAnalysis <- function(x, ...)
     }
     else if (x$output == "Input Table")
     {
-        print(x$x)
+        print(x.data)
+    }
+    else if (x$square)
+    {
+        # Text output
+        # No description of the data
+        inertia <- ca.obj$sv^2
+        cat("Correspondence analysis of a square table\n")
+        cat("\nInertia(s):\n")
+        res.summary <- cbind('Canonical Correlation' = ca.obj$sv,
+                             'Inertia' = inertia,
+                             'Proportion explained' = inertia/sum(inertia))
+        rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
+        print(res.summary)
+        cat("\nStandard coordinates:\n")
+        print(ca.obj$rowcoord[1:n2,])
+        cat("\nPrincipal coordinates:\n")
+        print(coords)
+
+        # Find asymmetric factors
+        tmp.sv <- round(ca.obj$sv, 6)
+        ind.sym <- which(!duplicated(tmp.sv) & !duplicated(tmp.sv, fromLast=T))
+
+        prop.sym <- sum(inertia[ind.sym]/sum(inertia)) * 100
+        cat(sprintf("\n%.1f%% symmetrical\n", prop.sym))
+        cat("\nScores of symmetric dimensions:\n")
+        print(coords[,ind.sym])
     }
     else
         print(ca.obj, ...)

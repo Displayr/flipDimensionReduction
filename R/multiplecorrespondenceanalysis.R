@@ -32,6 +32,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
                                            chart.title = "Multiple correspondence analysis",
                                            show.labels = FALSE)
 {
+    if (output != "Scatterplot")
+    {
+        scatter.palette <- NA
+        chart.title <- ""
+    }
+
     # Data cleaning
     cl <- match.call()
     .formula <- formula # Hack to work past scoping issues in car package: https://cran.r-project.org/web/packages/car/vignettes/embedding.pdf.

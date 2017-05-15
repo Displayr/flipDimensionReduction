@@ -112,6 +112,7 @@ test_that("Logos",
               data("colas", package = "flipExampleData")
               z = xtabs(~d1 + d2, data = colas)
               z = z[rowSums(z) > 0, colSums(z) > 0]
+              colnames(z) <- LETTERS[1:8]
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9]))), NA)
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T))))
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:4]))))

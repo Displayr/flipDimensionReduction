@@ -11,7 +11,8 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   color.palette = "Default colors", row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
-  logos = NULL, logo.size = 0.5, trend.lines = FALSE, ...)
+  logos = NULL, logo.size = 0.5, trend.lines = FALSE,
+  multiple.tables = NA, square = FALSE, ...)
 }
 \arguments{
 \item{x}{A table or a list of tables.}
@@ -52,6 +53,11 @@ excluded from the final data file.}
 \item{logo.size}{Numeric controlling the size of the logos.}
 
 \item{trend.lines}{Boolean indicating whether to draw trend lines when multiple tables are supplied.}
+
+\item{multiple.tables}{Optional boolean indicating whether or not multiple tables have been supplied.
+If no value is given, it will be guessed from the structure of \code{x}.}
+
+\item{square}{Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
