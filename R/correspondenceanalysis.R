@@ -95,16 +95,16 @@ CorrespondenceAnalysis = function(x,
         used.names <- c()
         for (i in 1:num.tables)
         {
-            if (is.null(attr(x[[i]], "questions")))
+            if (is.null(attr(x[[i]], "name")))
             {
                 unnamed.tables <- TRUE
-                attr(x[[i]], "questions") <- as.character(i)
+                attr(x[[i]], "name") <- as.character(i)
                 used.names <- c(used.names, i)
             }
-            x.names[i] <- attr(x[[i]], "questions")
+            x.names[i] <- attr(x[[i]], "name")[1]
         }
         if (unnamed.tables & !trend.lines)
-                warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"questions\") <- \"Description\"'", paste(used.names, collapse="', '")))
+                warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"name\") <- \"Description\"'", paste(used.names, collapse="', '")))
 
         # Check tables match - order of rows will match first table
         x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
@@ -364,7 +364,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     } else if (x$output == "Input Table")
     {
-        x.data
+        print(x$x)
 
     } else if (x$square)
     {
