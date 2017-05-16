@@ -85,14 +85,16 @@ MultipleCorrespondenceAnalysis <- function(formula,
         # Rescale weights as mjca gives rounding errors when weights are small
         w.min <- min(1, min(weights.used[weights.used > 0]))
         weights.used <- weights.used/w.min
+        datfreq <- WeightedTable(data.used, weights=weights.used)
+        dd <- dim(datfreq)
+        if (length(dd) <= 2 && min(dd) <= 2)
+            stop("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
+        obj <- mjca(datfreq, nd=NA)
     }
-
-    # MCA
-    datfreq <- WeightedTable(data.used, weights=weights.used)
-    dd <- dim(datfreq)
-    if (length(dd) <= 2 && min(dd) <= 2)
-        stop("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
-    obj <- mjca(datfreq, nd=NA)
+    else
+    {
+        obj <- mjca(data.used, nd=NA)
+    }
 
     # Label data output
     # levelnames.ord always use colnames(data) and should match levelnames given by mjca

@@ -14,8 +14,8 @@ test_that("MCA canonical correlation with no weighting", {
           expect_equal(round(default.res$inertia.e[1:6], 3),
                        c(0.424,0.123,0.055,0.026,0.011,0.004))
           coord <- fitted(default.res)
-          expect_equal(round(coord[1:10,1], 3),
-                       c(-0.193,-0.077,0.189,-0.009,-0.077,0.098,0.039,0.128,0.161,-0.180))
+          expect_equal(abs(round(coord[1:10,1], 3)),
+                       abs(c(-0.193,-0.077,0.189,-0.009,-0.077,0.098,0.039,0.128,0.161,-0.180)))
 })
 
 test_that("MCA canonical correlation with weighting", {
