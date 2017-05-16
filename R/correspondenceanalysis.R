@@ -331,7 +331,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             logo.size <- rep(x$logo.size, length(lab))
         }
 
-        if (is.null(logo.urls) && x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
+        if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
             lab[-(1:x$max.labels.plot)] <- ""
         print(LabeledScatter(X = coords[,1],
                        Y = coords[,2],
