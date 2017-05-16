@@ -364,7 +364,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     } else if (x$output == "Input Table")
     {
-        print(x$x)
+        return(print(x$x))
 
     } else if (x$square)
     {
