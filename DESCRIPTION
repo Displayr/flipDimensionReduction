@@ -14,19 +14,19 @@ Suggests:
     flipU
 Imports:
     ca,
-    flipImputation,
+    flipChartBasics,
     flipData,
+    flipFormat,
+    flipImputation,
     flipPlots,
     flipStatistics,
-    flipFormat,
     flipTransformations,
-    flipChartBasics,
+    GPArotation,
     plotly,
     psych,
-    rhtmlMoonPlot,
     rhtmlLabeledScatter,
-    stats,
-    GPArotation
+    rhtmlMoonPlot,
+    stats
 Remotes: 
     Displayr/flipChartBasics,
     Displayr/flipTransformations,
