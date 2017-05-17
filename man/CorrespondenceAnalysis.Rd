@@ -13,7 +13,8 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   chart.title = "Correspondence analysis", transpose = FALSE,
   logos = NULL, logo.size = 0.5, trend.lines = FALSE,
   multiple.tables = NA, square = FALSE, max.row.labels.plot = 200,
-  max.col.labels.plot = 200, max.labels.plot = NA, ...)
+  max.col.labels.plot = 200, max.labels.plot = NA, dim1.plot = 1,
+  dim2.plot = 2, ...)
 }
 \arguments{
 \item{x}{A table or a list of tables.}
@@ -65,6 +66,10 @@ If no value is given, it will be guessed from the structure of \code{x}.}
 \item{max.col.labels.plot}{A number specifying the maximum number column labels shown.}
 
 \item{max.labels.plot}{Deprecated. Use max.row.labels.plot instead.}
+
+\item{dim1.plot}{Dimension to show in X-axis of bubble or scatterplot.}
+
+\item{dim2.plot}{Dimension to show in Y-axis of bubble or scatterplot.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

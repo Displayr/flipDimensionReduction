@@ -33,6 +33,8 @@
 #' @param multiple.tables Optional boolean indicating whether or not multiple tables have been supplied.
 #'   If no value is given, it will be guessed from the structure of \code{x}.
 #' @param square Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.
+#' @param dim1.plot Dimension to show in X-axis of bubble or scatterplot.
+#' @param dim2.plot Dimension to show in Y-axis of bubble or scatterplot.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom ca ca
@@ -57,6 +59,8 @@ CorrespondenceAnalysis = function(x,
                                   max.row.labels.plot = 200,
                                   max.col.labels.plot = 200,
                                   max.labels.plot = NA,
+                                  dim1.plot = 1,
+                                  dim2.plot = 2,
                                   ...)
 {
     # Backwards compatibility
@@ -76,6 +80,8 @@ CorrespondenceAnalysis = function(x,
         col.color <- ""
         max.row.labels.plot <- 0
         max.col.labels.plot <- 0
+        dim1.plot <- 1
+        dim2.plot <- 2
     }
     if (output != "Bubble Chart")
     {
@@ -244,7 +250,9 @@ CorrespondenceAnalysis = function(x,
                    num.tables = num.tables,
                    max.row.labels.plot = max.row.labels.plot,
                    max.col.labels.plot = max.col.labels.plot,
-                   square = square)
+                   square = square,
+                   dim1.plot = dim1.plot,
+                   dim2.plot = dim2.plot)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }
@@ -264,8 +272,13 @@ print.CorrespondenceAnalysis <- function(x, ...)
 {
     ca.obj <- x$original
     singular.values <- round(ca.obj$sv^2, 6)
-    variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[1:2]
-    column.labels <- paste("Dimension", 1:2, paste0("(", variance.explained, ")"))
+    variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[c(x$dim1.plot, x$dim2.plot)]
+    column.labels <- paste("Dimension", c(x$dim1.plot, x$dim2.plot), paste0("(", variance.explained, ")"))
+
+    #if (x$dim1.plot > ncol(ca.obj$rowcoord))
+    #    stop(sprintf("'First dimension to plot' must be an non-negative integer no greater than %d", ncol(ca.obj$rowcoord)))
+    #if (x$dim2.plot > ncol(ca.obj$rowcoord))
+    #    stop(sprintf("'Second dimension to plot' must be an non-negative integer no greater than %d", ncol(ca.obj$rowcoord)))
 
     if (x$square)
     {
@@ -302,6 +315,15 @@ print.CorrespondenceAnalysis <- function(x, ...)
         groups <- rep(1, n1)
         colors <- c(x$row.color, n1)
         n2 <- 0
+
+        # Find asymmetric factors
+        tmp.sv <- round(ca.obj$sv, 6)
+        ind.sym <- which(!duplicated(tmp.sv) & !duplicated(tmp.sv, fromLast=T))
+        if (!x$dim1.plot %in% ind.sym)
+            warning("Dimension ", x$dim1.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
+        if (!x$dim2.plot %in% ind.sym)
+            warning("Dimension ", x$dim2.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
+
 
     } else if (x$num.tables == 1)
     {
@@ -360,8 +382,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("Some column labels have been hidden. Adjust 'Maximum column labels to plot' to show more labels.")
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
-        print(LabeledScatter(X = coords[,1],
-                       Y = coords[,2],
+        print(LabeledScatter(X = coords[,x$dim1.plot],
+                       Y = coords[,x$dim2.plot],
                        Z = bubble.size,
                        label = lab,
                        label.alt = rownames(coords),
@@ -391,7 +413,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
     } else if (x$output == "Input Table")
     {
-        return(print(x$x))
+        return(print(x.data))
 
     } else if (x$square)
     {
@@ -410,9 +432,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
-        # Find asymmetric factors
-        tmp.sv <- round(ca.obj$sv, 6)
-        ind.sym <- which(!duplicated(tmp.sv) & !duplicated(tmp.sv, fromLast=T))
+
 
         prop.sym <- sum(inertia[ind.sym]/sum(inertia)) * 100
         cat(sprintf("\n%.1f%% symmetrical\n", prop.sym))
