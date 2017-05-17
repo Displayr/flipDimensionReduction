@@ -23,7 +23,9 @@
 #' @param bubble.size A vector of magnitudes for the row coordinate (for bubble charts). This is optional.
 #' @param bubble.title A label for the legend.
 #' @param chart.title Title of chart.
-#' @param max.labels.plot A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.
+#' @param max.row.labels.plot A number specifying the maximum of row labels shown in bubble or scatterplots. The remaining rows will be shown with labels hidden.
+#' @param max.col.labels.plot A number specifying the maximum number column labels shown.
+#' @param max.labels.plot Deprecated. Use max.row.labels.plot instead.
 #' @param logos Optional list of images to be used to label scatterplot instead of the row names. It should be inputted as a comma-seperated list of URLs.
 #' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
@@ -52,16 +54,28 @@ CorrespondenceAnalysis = function(x,
                                   trend.lines = FALSE,
                                   multiple.tables = NA,
                                   square = FALSE,
-                                  max.labels.plot = 200,
+                                  max.row.labels.plot = 200,
+                                  max.col.labels.plot = 200,
+                                  max.labels.plot = NA,
                                   ...)
 {
+    # Backwards compatibility
+    if (!is.na(max.labels.plot) && max.row.labels.plot == 200)
+        max.row.labels.plot <- max.labels.plot
+
+    if (max.row.labels.plot != round(max.row.labels.plot))
+        stop("Parameter 'Maximum row labels to plot' must be an integer.")
+    if (max.col.labels.plot != round(max.col.labels.plot))
+        stop("Parameter 'Maximum column labels to plot' must be an integer.")
+
     # Mask undefined arguments for R Gui control
     if (!output %in% c("Scatterplot", "Bubble Chart"))
     {
         chart.title <- ""
         row.color <- ""
         col.color <- ""
-        max.labels.plot <- 0
+        max.row.labels.plot <- 0
+        max.col.labels.plot <- 0
     }
     if (output != "Bubble Chart")
     {
@@ -228,7 +242,8 @@ CorrespondenceAnalysis = function(x,
                    transpose = transpose,
                    trend.lines = trend.lines,
                    num.tables = num.tables,
-                   max.labels.plot = max.labels.plot,
+                   max.row.labels.plot = max.row.labels.plot,
+                   max.col.labels.plot = max.col.labels.plot,
                    square = square)
     class(result) <- c("CorrespondenceAnalysis")
     result
@@ -254,10 +269,10 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     if (x$square)
     {
-        n2 <- nrow(x$x)/2
+        n1 <- nrow(x$x)/2
         colnames(ca.obj$rowcoord) <- sprintf("Dimension %d", 1:ncol(ca.obj$rowcoord))
-        coords <- sweep(ca.obj$rowcoord[1:n2,], 2, ca.obj$sv, "*")
-        x.data <- x$x[1:n2, 1:n2]
+        coords <- sweep(ca.obj$rowcoord[1:n1,], 2, ca.obj$sv, "*")
+        x.data <- x$x[1:n1, 1:n1]
 
     } else
     {
@@ -284,24 +299,26 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     if (x$square)
     {
-        groups <- rep(1, n2)
-        colors <- c(x$row.color, n2)
+        groups <- rep(1, n1)
+        colors <- c(x$row.color, n1)
+        n2 <- 0
 
     } else if (x$num.tables == 1)
     {
         if (sum(nchar(x$row.column.names)) > 0 && x$row.column.names[1] == x$row.column.names[2])
             warning("Row and column titles should not be the same.")
-        groups <- rep(x$row.column.names, c(nrow(row.coordinates), nrow(column.coordinates)))
+        n1 <- nrow(row.coordinates)
+        n2 <- nrow(column.coordinates)
+        groups <- rep(x$row.column.names, c(n1, n2))
         colors <- c(x$row.color, x$col.color)
 
     } else
     {
-        n2 <- nrow(x$x)/x$num.tables
-        ncol <- nrow(column.coordinates)
-        #groups <- c(rep(x$row.column.names, x$num.tables), rep("Columns", nrow(column.coordinates)))
-        groups <- c(rep(paste0("R", 1:n2), x$num.tables), paste0("C", 1:ncol))
-        colors <- ChartColors(n2+1, x$color.palette, trim.light.colors=TRUE)
-        colors <- colors[c((1:n2)+1, rep(1,ncol))]
+        n1 <- nrow(x$x)/x$num.tables
+        n2 <- nrow(column.coordinates)
+        groups <- c(rep(paste0("R", 1:n1), x$num.tables), paste0("C", 1:n2)) # legend hidden so names are arbitary
+        colors <- ChartColors(n1+1, x$color.palette, trim.light.colors=TRUE)
+        colors <- colors[c((1:n1)+1, rep(1,n2))]
     }
 
     if (x$output %in% c("Scatterplot", "Bubble Chart"))
@@ -313,12 +330,12 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
         lab <- rownames(coords)
         if (x$num.tables > 1 && x$trend.lines)
-            lab[1:n2] <- x$row.column.names[1:n2]
+            lab[1:n1] <- x$row.column.names[1:n1]
         logo.size <- NA
         logo.urls <- try(TextAsVector(x$logos)) # This function gives warnings if it doesn't work
         if (!is.null(logo.urls) && !inherits(logo.urls, "try-error"))
         {
-            logo.required.length <- if (x$num.tables > 1) n2
+            logo.required.length <- if (x$num.tables > 1) n1
                                     else                  nrow(x.data)
             if (length(logo.urls) != logo.required.length)
                 stop(sprintf("Number of URLs supplied in logos must be equal to the number of %s in the table (%d)\n",
@@ -331,8 +348,18 @@ print.CorrespondenceAnalysis <- function(x, ...)
             logo.size <- rep(x$logo.size, length(lab))
         }
 
-        if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
-            lab[-(1:x$max.labels.plot)] <- ""
+        n1.tot <- n1 * x$num.tables
+        if (x$max.row.labels.plot >= 0 && (x$trend.lines && x$max.row.labels.plot < n1 ||
+                                          !x$trend.lines && x$max.row.labels.plot < n1.tot))
+        {
+            warning("Some row labels have been hidden. Adjust 'Maximum row labels to plot' to show more labels.")
+            lab[(x$max.row.labels.plot+1):n1.tot] <- ""
+        }
+        if (x$max.col.labels.plot >= 0 && x$max.col.labels.plot < n2)
+        {
+            warning("Some column labels have been hidden. Adjust 'Maximum column labels to plot' to show more labels.")
+            lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
+        }
         print(LabeledScatter(X = coords[,1],
                        Y = coords[,2],
                        Z = bubble.size,
@@ -352,7 +379,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        axis.font.size = 10,
                        labels.font.size = 14,
                        title.font.size = 20,
-                       legend.show = (x$num.tables==1 && !x$square && all(nchar(groups) > 0)),
+                       legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16))
@@ -379,7 +406,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
         print(res.summary)
         cat("\nStandard coordinates:\n")
-        print(ca.obj$rowcoord[1:n2,])
+        print(ca.obj$rowcoord[1:n1,])
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
