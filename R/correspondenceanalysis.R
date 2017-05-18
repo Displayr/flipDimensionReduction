@@ -319,9 +319,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
         # Find asymmetric factors
         tmp.sv <- round(ca.obj$sv, 6)
         ind.sym <- which(!duplicated(tmp.sv) & !duplicated(tmp.sv, fromLast=T))
-        if (!x$dim1.plot %in% ind.sym)
+        if (x$output == "Scatterplot" && !x$dim1.plot %in% ind.sym)
             warning("Dimension ", x$dim1.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
-        if (!x$dim2.plot %in% ind.sym)
+        if (x$output == "Scatterplot" && !x$dim2.plot %in% ind.sym)
             warning("Dimension ", x$dim2.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
 
 
@@ -432,8 +432,6 @@ print.CorrespondenceAnalysis <- function(x, ...)
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
-
-
         prop.sym <- sum(inertia[ind.sym]/sum(inertia)) * 100
         cat(sprintf("\n%.1f%% symmetrical\n", prop.sym))
         cat("\nScores of symmetric dimensions:\n")
@@ -461,10 +459,13 @@ print.CorrespondenceAnalysis <- function(x, ...)
 CANormalization <- function(ca.object, normalization = "Principal")
 {
     .normalize = function(coords, power)
+    {
+        m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
             coords[,1, drop = FALSE] * ca.object$sv[1]^power
         else
-            sweep(coords[,1:2], 2, ca.object$sv[1:2]^power, "*")
+            sweep(coords[,1:m], 2, ca.object$sv[1:m]^power, "*")
+    }
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
         "Principal" = 1, "Row principal" = 1, "Column principal" = 0, "Symmetrical (\u00BD)" = 0.5, "None" = 0))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
