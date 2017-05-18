@@ -25,12 +25,22 @@ dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet.
 output = "Scatterplot"
 CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
 
+test_that("Row/column names",
+        {
+            res0 <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+            expect_equal(res0$row.column.names, c("Brand", "Attribute"))
+            res1 <- CorrespondenceAnalysis(x)
+            expect_equal(res1$row.column.names, c("Rows", "Columns"))
+            attr(x, "row.column.names") <- c("ABC", "DEF")
+            res2 <- CorrespondenceAnalysis(x)
+            expect_equal(res2$row.column.names, c("ABC", "DEF"))
+        })
 
 for (output in c("Scatterplot", "Moonplot", "Text"))
     test_that(paste0("CorrespondenceAnalysis is OK (mainly GetTidyTwoDimensionalArray) with ", output),
               {
         expect_error(CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-        expect_error(CorrespondenceAnalysis(x), NA)
+        expect_error(CorrespondenceAnalysis(x, output=output), NA)
         # 3D array with no names
         z <- array(NA, c(8,11,2))
         z[,,1] <- x

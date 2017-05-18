@@ -164,10 +164,13 @@ CorrespondenceAnalysis = function(x,
         color.palette <- "Default colors"
         trend.lines <- FALSE
         row.column.names.attribute <- attr(x, "row.column.names")
+        row.column.names <- names(dimnames(x))[1:2] # This needs to go above GetTidyTwoDimensionalArray which assigns dimnames
         x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
         if (transpose)
+        {
             x <- t(x)
-        row.column.names <- names(dimnames(x))
+            row.column.names <- rev(row.column.names)
+        }
         if (is.null(row.column.names))
             row.column.names <- row.column.names.attribute
         if (is.null(row.column.names))
