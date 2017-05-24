@@ -178,10 +178,25 @@ CorrespondenceAnalysis = function(x,
 
         if (square)
         {
-            if (nrow(x) != ncol(x) || any(rownames(x) != colnames(x)))
-                stop("Input Table is not a square matrix.")
             if (output == "Moonplot")
                 stop("Output 'Moonplot' is not valid with square matrixes.")
+            if (nrow(x) != ncol(x))
+                stop("Input Table is not a square matrix.")
+
+            r.names <- gsub("^\\s+", "", gsub("\\s+$", "", rownames(x)))
+            c.names <- gsub("^\\s+", "", gsub("\\s+$", "", colnames(x)))
+            dimnames(x) <- list(r.names, c.names)
+
+            if (any(duplicated(r.names)))
+                stop("Row labels are not unique.")
+            if (any(duplicated(c.names)))
+                stop("Column labels are not unique.")
+
+            c.ind <- match(r.names, c.names)
+            if (any(is.na(c.ind)))
+                stop(sprintf("Row and column labels in square matrix do not match. Missing '%s' in column labels",
+                             paste(r.names[which(is.na(c.ind))], collapse="', '")))
+            x <- x[,c.ind]
         }
 
         # Check for empty rows/columns

@@ -29,7 +29,7 @@ res2 <- CorrespondenceAnalysis(x2, square=T, output="Text")
 test_that("High symmetry",
           {
               expect_equal(round(res1$original$sv, 3), c(0.582,0.410,0.170,0.170,0.153,0.060,0.060,0.043,0.0))
-              # only eigenvectors of symmetric dimensions are unique determined
+              # only eigenvectors of symmetric dimensions are uniquely determined
               expect_equal(round(abs(unname(res1$original$rowcoord[1:5,2])),2), c(0.21,1.06,0.98,0.18, 1.46))
               expect_equal(round(abs(unname(res1$original$rowcoord[1:5,8])),2), c(2.32,0.67,3.35,0.06,0.14))
           })
@@ -39,4 +39,24 @@ test_that("Low symmetry",
               expect_equal(round(res2$original$sv, 3), c(0.316,0.271,0.271,0.227,0.079,0.065,0.028,0.028,0.0))
               expect_equal(round(abs(unname(res2$original$rowcoord[1:5,4])),2), c(0.37,1.25,0.58,1.00,0.88))
               expect_equal(round(abs(unname(res2$original$rowcoord[1:5,6])),2), c(2.61,0.68,1.61,0.23,0.29))
+          })
+
+test_that("Check row/column names",
+          {
+              expect_error(CorrespondenceAnalysis(x1[,-1], square = T), "Input Table is not a square matrix")
+
+              r1 <- colnames(x1)
+              r2 <- sprintf("  %s    ", r1)
+              x1b <- matrix(x1, 5, 5, dimnames=list(r1,r2))
+              res1b <- CorrespondenceAnalysis(x1b, square=T, output="Input Table")
+              expect_equal(colnames(res1b$x)[1:5], r1)
+
+              x1c <- matrix(x1, 5, 5, dimnames=list(LETTERS[1:5], r1))
+              expect_error(CorrespondenceAnalysis(x1c, square = T), "Row and column labels in square matrix do not match. Missing 'A', 'B', 'C', 'D', 'E' in column labels")
+
+              x1d <- matrix(x1, 5, 5, dimnames=list(c(LETTERS[1], r1[-1]), r1))
+              expect_error(CorrespondenceAnalysis(x1d, square = T), "Row and column labels in square matrix do not match. Missing 'A' in column labels")
+
+              expect_error(res1d <- CorrespondenceAnalysis(x1[,c(1,5,3,2,4)], square=T), NA)
+              expect_equal(rownames(res1d$x), colnames(res1d$x))
           })
