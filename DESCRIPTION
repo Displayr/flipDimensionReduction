@@ -20,13 +20,16 @@ Imports:
     flipImputation,
     flipPlots,
     flipStatistics,
+    flipStandardCharts,
     flipTransformations,
     GPArotation,
     plotly,
     psych,
     rhtmlLabeledScatter,
     rhtmlMoonPlot,
-    stats
+    Rtsne,
+    stats,
+    tsne
 Remotes: 
     Displayr/flipChartBasics,
     Displayr/flipTransformations,
@@ -35,6 +38,7 @@ Remotes:
     Displayr/flipData,
     Displayr/flipPlots,
     Displayr/flipStatistics,
+    Displayr/flipStandardCharts,
     Displayr/flipTransformations,
     Displayr/rhtmlMoonPlot,
     Displayr/rhtmlLabeledScatter
