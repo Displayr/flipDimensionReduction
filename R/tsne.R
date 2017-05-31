@@ -57,6 +57,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Unrecognized algorithm.")
 
     output$data.labels <- data.labels
+    output$title <- ifelse(is.null(data.labels), "t-SNE", paste("t-SNE ", Labels(data.labels)))
     class(output) <- "tSNE"
     return(output)
 
@@ -71,12 +72,10 @@ print.tSNE <- function(x, ...) {
 
     scatter.group.indices <- ""
     scatter.group.labels <- ""
-    title <- "t-SNE"
     legend <- TRUE
     colors <- "Default colors"
 
     if (!is.null(x$data.labels)) {
-        title <- paste(title, Labels(x$data.labels))
 
         if (is.factor(x$data.labels)) {
             scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
@@ -84,12 +83,12 @@ print.tSNE <- function(x, ...) {
         }
         else if (IsCount(x$data.labels)) {
             unique.labels <- sort(unique(x$data.labels))
-            indices <- match(x$data.labels, scatter.group.labels)
+            indices <- match(x$data.labels, unique.labels)
             scatter.group.labels <- paste(unique.labels, collapse = ", ")
             scatter.group.indices <- paste(indices, collapse = ", ")
             colors <- "Reds, light to dark"
         }
-        else {  # numeric
+        else {       # numeric: create 20 buckets and treat as factors
             x$data.labels <- cut(x$data.labels, 20)
             scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
             levels(x$data.labels) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(x$data.labels))
@@ -100,9 +99,9 @@ print.tSNE <- function(x, ...) {
     }
 
     chart <- Chart(y = x$embedding,
-                   type = "Labeled Scatterplot",
+                   type = "Scatterplot",
                    transpose = FALSE,
-                   title = title,
+                   title = x$title,
                    title.font.family = NULL,
                    title.font.color = NULL,
                    title.font.size = 16,
@@ -204,11 +203,11 @@ print.tSNE <- function(x, ...) {
                    rows.to.ignore = "",
                    cols.to.ignore = "",
                    bar.gap = 0.15,
-                   data.label.show = NULL,
+                   data.label.show = FALSE,  # was NULL for Labeled Scatterplot
                    data.label.font.family = NULL,
                    data.label.font.size = 10,
                    data.label.font.color = NULL,
-                   data.label.decimals = NULL,
+                   data.label.decimals = 0,
                    data.label.prefix = "",
                    data.label.suffix = "",
                    data.label.threshold = NULL,
