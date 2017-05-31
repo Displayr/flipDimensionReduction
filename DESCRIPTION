@@ -11,7 +11,6 @@ LazyData: TRUE
 Suggests:
     testthat,
     flipExampleData,
-    flipU
 Imports:
     ca,
     flipChartBasics,
@@ -22,6 +21,7 @@ Imports:
     flipStatistics,
     flipStandardCharts,
     flipTransformations,
+    flipU,
     GPArotation,
     plotly,
     psych,
@@ -40,6 +40,7 @@ Remotes:
     Displayr/flipStatistics,
     Displayr/flipStandardCharts,
     Displayr/flipTransformations,
+    Displayr/flipU,
     Displayr/rhtmlMoonPlot,
     Displayr/rhtmlLabeledScatter
 RoxygenNote: 6.0.1

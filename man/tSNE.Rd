@@ -5,7 +5,7 @@
 \title{\code{tSNE}}
 \usage{
 tSNE(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
-  binary = TRUE)
+  binary = TRUE, perplexity = 10)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} which contains the data to be analyzed.}
@@ -18,6 +18,9 @@ tSNE(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 they are treated as sequential integers.}
+
+\item{perplexity}{The perplexity coefficient which defines the extent of the locality
+of the dimension reduction.}
 }
 \description{
 Produce a t-Distributed Stochastic Neighbour Embedding

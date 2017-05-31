@@ -4,6 +4,8 @@
 #' @param data.labels A \code{\link{vector}} of labels for each case.
 #' @param subset A logical vector which describes the subset of \code{data} to be analyzed.
 #' @param algorithm Which package to use. Valid options are \code{"Rtsne"} and \code{"tsne"}.
+#' @param perplexity The perplexity coefficient which defines the extent of the locality
+#' of the dimension reduction.
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers.
 #'
@@ -13,7 +15,8 @@
 #' @importFrom flipTransformations AsNumeric
 #' @importFrom stats complete.cases
 #' @export
-tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne", binary = TRUE) {
+tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
+                 binary = TRUE, perplexity = 10) {
 
     if (!is.null(data.labels) && nrow(data) != length(data.labels))
         stop("Input data and data.labels must be same length.")
@@ -44,11 +47,11 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne", b
 
     if (algorithm == "Rtsne")
     {
-        output <- list(embedding = Rtsne(data)$Y)
+        output <- list(embedding = Rtsne(data, perplexity = perplexity)$Y)
     }
     else if (algorithm == "tsne")
     {
-        output <- list(embedding = tsne(data))
+        output <- list(embedding = tsne(data, perplexity = perplexity))
     }
     else
         stop("Unrecognized algorithm.")
@@ -62,31 +65,54 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne", b
 #' @export
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
+#' @importFrom flipU IsCount
 print.tSNE <- function(x, ...) {
-    #print(head(x$embedding))
 
-    # set title with Labels
-    # set scatter.group.indices and labels
-    # handle no labels
-    # handle lables are numeric
-    scatter.group.indices <- as.numeric(x$data.labels)
-    scatter.group.indices <- levels(x$data.labels)
+    scatter.group.indices <- ""
+    scatter.group.labels <- ""
+    title <- "t-SNE"
+    legend <- TRUE
+
+    if (!is.null(x$data.labels)) {
+        title <- paste(title, Labels(x$data.labels))
+
+        if (is.factor(x$data.labels)) {
+            scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
+            scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
+            colors <- "Default colors"
+        }
+        else if (IsCount(x$data.labels)) {
+            unique.labels <- sort(unique(x$data.labels))
+            indices <- match(x$data.labels, scatter.group.labels)
+            scatter.group.labels <- paste(unique.labels, collapse = ", ")
+            scatter.group.indices <- paste(indices, collapse = ", ")
+            colors <- "Reds, light to dark"
+        }
+        else {  # numeric
+            x$data.labels <- cut(x$data.labels, 20)
+            scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
+            levels(x$data.labels) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(x$data.labels))
+            scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
+            colors <- "Reds, light to dark"
+            legend <- FALSE
+        }
+    }
 
     chart <- Chart(y = x$embedding,
                    type = "Labeled Scatterplot",
                    transpose = FALSE,
-                   title = "TODO TITLE",
+                   title = title,
                    title.font.family = NULL,
                    title.font.color = NULL,
                    title.font.size = 16,
-                   colors = "Default colors",
+                   colors = colors,
                    colors.reverse = FALSE,
                    opacity = NULL,
                    background.fill.color = rgb(255, 255, 255, maxColorValue = 255),
                    background.fill.opacity = 1,
                    charting.area.fill.color = rgb(255, 255, 255, maxColorValue = 255),
                    charting.area.fill.opacity = 1,
-                   legend.show = TRUE,
+                   legend.show = legend,
                    legend.fill = rgb(255, 255, 255, maxColorValue = 255),
                    legend.border.color = rgb(44, 44, 44, maxColorValue = 255),
                    legend.border.line.width = 0,
@@ -100,7 +126,7 @@ print.tSNE <- function(x, ...) {
                    margin.left = NULL,
                    margin.right = NULL,
                    margin.inner.pad = NULL,
-                   y.title = "TODO PUT SOMETHING HERE",
+                   y.title = "",
                    y.title.font.color = NULL,
                    y.title.font.family = NULL,
                    y.title.font.size = 12,
@@ -128,7 +154,7 @@ print.tSNE <- function(x, ...) {
                    y.tick.font.color = NULL,
                    y.tick.font.family = NULL,
                    y.tick.font.size = 10,
-                   x.title = "TODO PUT SOMETHING HERE",
+                   x.title = "",
                    x.title.font.color = NULL,
                    x.title.font.family = NULL,
                    x.title.font.size = 12,
@@ -195,10 +221,9 @@ print.tSNE <- function(x, ...) {
                    pie.inner.radius = NULL,
                    pie.show.percentages = FALSE,
                    z.title = "",
-                   scatter.group.indices = "",
-                   scatter.group.labels = "",
+                   scatter.group.indices = scatter.group.indices,
+                   scatter.group.labels = scatter.group.labels,
                    us.date.format = NULL)
-    print("hello")
     print(chart)
 }
 
