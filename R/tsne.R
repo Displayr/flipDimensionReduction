@@ -8,6 +8,7 @@
 #' of the dimension reduction.
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers.
+#' @param seed Random seed.
 #'
 #' @details Any case with missing data or a missing lable is ignored.
 #' @importFrom Rtsne Rtsne
@@ -16,7 +17,7 @@
 #' @importFrom stats complete.cases
 #' @export
 tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
-                 binary = TRUE, perplexity = 10) {
+                 binary = TRUE, perplexity = 10, seed = 1066) {
 
     if (!is.null(data.labels) && nrow(data) != length(data.labels))
         stop("Input data and data.labels must be same length.")
@@ -25,6 +26,8 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
     data <- ProcessQVariables(data)
     data.labels <- ProcessQVariables(data.labels)
     if (!is.null(subset)) {
+        if (length(subset == 1 && subset == TRUE))
+            subset <- rep(TRUE, nrow(data))
         if (length(subset) != nrow(data))
             stop("Input data and subset must be same length.")
         data <- data[subset]
@@ -44,6 +47,8 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
     duplicates <- duplicated(data)
     data <- data[!duplicates, ]
     data.labels <- data.labels[!duplicates]
+
+    set.seed(seed)
 
     if (algorithm == "Rtsne")
     {

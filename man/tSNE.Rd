@@ -5,7 +5,7 @@
 \title{\code{tSNE}}
 \usage{
 tSNE(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
-  binary = TRUE, perplexity = 10)
+  binary = TRUE, perplexity = 10, seed = 1066)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} which contains the data to be analyzed.}
@@ -21,6 +21,8 @@ they are treated as sequential integers.}
 
 \item{perplexity}{The perplexity coefficient which defines the extent of the locality
 of the dimension reduction.}
+
+\item{seed}{Random seed.}
 }
 \description{
 Produce a t-Distributed Stochastic Neighbour Embedding
