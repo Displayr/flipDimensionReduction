@@ -65,6 +65,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 #' @export
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
+#' @importFrom flipFormat Labels
 #' @importFrom flipU IsCount
 print.tSNE <- function(x, ...) {
 
@@ -126,7 +127,7 @@ print.tSNE <- function(x, ...) {
                    margin.left = NULL,
                    margin.right = NULL,
                    margin.inner.pad = NULL,
-                   y.title = "",
+                   y.title = "Dimension 2",
                    y.title.font.color = NULL,
                    y.title.font.family = NULL,
                    y.title.font.size = 12,
@@ -154,7 +155,7 @@ print.tSNE <- function(x, ...) {
                    y.tick.font.color = NULL,
                    y.tick.font.family = NULL,
                    y.tick.font.size = 10,
-                   x.title = "",
+                   x.title = "Dimension 1",
                    x.title.font.color = NULL,
                    x.title.font.family = NULL,
                    x.title.font.size = 12,
