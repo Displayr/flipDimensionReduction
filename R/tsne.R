@@ -72,6 +72,7 @@ print.tSNE <- function(x, ...) {
     scatter.group.labels <- ""
     title <- "t-SNE"
     legend <- TRUE
+    colors <- "Default colors"
 
     if (!is.null(x$data.labels)) {
         title <- paste(title, Labels(x$data.labels))
@@ -79,7 +80,6 @@ print.tSNE <- function(x, ...) {
         if (is.factor(x$data.labels)) {
             scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
             scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
-            colors <- "Default colors"
         }
         else if (IsCount(x$data.labels)) {
             unique.labels <- sort(unique(x$data.labels))
