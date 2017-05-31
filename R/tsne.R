@@ -30,7 +30,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
             subset <- rep(TRUE, nrow(data))
         if (length(subset) != nrow(data))
             stop("Input data and subset must be same length.")
-        data <- data[subset]
+        data <- data[subset, ]
         data.labels <- data.labels[subset]
     }
 
