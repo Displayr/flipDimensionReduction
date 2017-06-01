@@ -24,7 +24,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Input data and data.labels must be same length.")
 
     # Convert dates to factors, retain subset only
-    output <- list(title = ifelse(is.null(data.labels), "t-SNE", paste("t-SNE ", Labels(data.labels))))
+    output <- list(title = ifelse(is.null(data.labels), "t-SNE", paste("t-SNE Categories: ", Labels(data.labels))))
     data <- ProcessQVariables(data)
     data.labels <- ProcessQVariables(data.labels)
     if (!is.null(subset)) {
@@ -99,7 +99,7 @@ print.tSNE <- function(x, ...) {
             levels(x$data.labels) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(x$data.labels))
             scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
             colors <- "Reds, light to dark"
-            legend <- FALSE
+            #legend <- FALSE
         }
     }
 
