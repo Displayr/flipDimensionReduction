@@ -99,7 +99,6 @@ print.tSNE <- function(x, ...) {
             levels(x$data.labels) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(x$data.labels))
             scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
             colors <- "Reds, light to dark"
-            #legend <- FALSE
         }
     }
 
@@ -197,7 +196,7 @@ print.tSNE <- function(x, ...) {
                    series.marker.border.colors = NULL,
                    series.marker.border.colors.reverse = FALSE,
                    series.marker.border.opacity = 1,
-                   series.line.width = 3,
+                   series.line.width = 0,
                    series.line.colors = NULL,
                    series.line.colors.reverse = FALSE,
                    series.line.opacity = 1,
