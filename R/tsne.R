@@ -14,6 +14,7 @@
 #' @importFrom Rtsne Rtsne
 #' @importFrom tsne tsne
 #' @importFrom flipTransformations AsNumeric
+#' @importFrom flipFormat Labels
 #' @importFrom stats complete.cases
 #' @export
 tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
@@ -23,10 +24,11 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Input data and data.labels must be same length.")
 
     # Convert dates to factors, retain subset only
+    output <- list(title = ifelse(is.null(data.labels), "t-SNE", paste("t-SNE ", Labels(data.labels))))
     data <- ProcessQVariables(data)
     data.labels <- ProcessQVariables(data.labels)
     if (!is.null(subset)) {
-        if (length(subset == 1 && subset == TRUE))
+        if (length(subset) == 1 && subset == TRUE)
             subset <- rep(TRUE, nrow(data))
         if (length(subset) != nrow(data))
             stop("Input data and subset must be same length.")
@@ -52,17 +54,16 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 
     if (algorithm == "Rtsne")
     {
-        output <- list(embedding = Rtsne(data, perplexity = perplexity)$Y)
+        output$embedding <- Rtsne(data, perplexity = perplexity)$Y
     }
     else if (algorithm == "tsne")
     {
-        output <- list(embedding = tsne(data, perplexity = perplexity))
+        output$embedding <- tsne(data, perplexity = perplexity)
     }
     else
         stop("Unrecognized algorithm.")
 
     output$data.labels <- data.labels
-    output$title <- ifelse(is.null(data.labels), "t-SNE", paste("t-SNE ", Labels(data.labels)))
     class(output) <- "tSNE"
     return(output)
 
@@ -71,7 +72,6 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 #' @export
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
-#' @importFrom flipFormat Labels
 #' @importFrom flipU IsCount
 print.tSNE <- function(x, ...) {
 
@@ -86,7 +86,7 @@ print.tSNE <- function(x, ...) {
             scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
             scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
         }
-        else if (IsCount(x$data.labels)) {
+        else if (all(x$data.labels == floor(x$data.labels))) {
             unique.labels <- sort(unique(x$data.labels))
             indices <- match(x$data.labels, unique.labels)
             scatter.group.labels <- paste(unique.labels, collapse = ", ")
