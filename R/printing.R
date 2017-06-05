@@ -15,7 +15,7 @@ sortLoadings <- function(x) {
 
 
 #' @importFrom stats lm.fit setNames
-#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent ExtractCommonPrefix
+#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent ExtractCommonPrefix Labels
 #' @export
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
@@ -257,7 +257,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
             plot.2d <- list(embedding = x$scores[complete, 1:2],
                             data.labels = x$groups[complete],
-                            title = "PCA")
+                            title = ifelse(is.null(x$groups), "PCA", paste("PCA", "categories:", Labels(x$groups))))
             class(plot.2d) <- "2D"
             print(plot.2d)
 

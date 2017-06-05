@@ -15,6 +15,7 @@
 #' @importFrom tsne tsne
 #' @importFrom flipTransformations AsNumeric
 #' @importFrom stats complete.cases
+#' @importFrom flipFormat Labels
 #' @export
 tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
                  binary = TRUE, perplexity = 10, seed = 1066) {
@@ -23,7 +24,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Input data and data.labels must be same length.")
 
     # Convert dates to factors, retain subset only
-    output <- list(title = "t-SNE")
+    output <- list(title = ifelse(is.null(data.labels), "t-SNE", paste("t-SNE", "categories:", Labels(data.labels))))
     data <- ProcessQVariables(data)
     data.labels <- ProcessQVariables(data.labels)
     if (!is.null(subset)) {
@@ -73,14 +74,13 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
-#' @importFrom flipFormat Labels
 print.2D <- function(x, ...) {
 
     scatter.group.indices <- ""
     scatter.group.labels <- ""
     legend <- TRUE
     colors <- "Default colors"
-    title <- ifelse(is.null(x$data.labels), x$title, paste(x$title, "categories:", Labels(x$data.labels)))
+    title <- x$title
 
     if (!is.null(x$data.labels)) {
 
