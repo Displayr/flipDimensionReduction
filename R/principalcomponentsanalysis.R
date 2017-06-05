@@ -34,13 +34,16 @@
 #'   output containing more details from the analysis, \code{"variance"} to display a
 #'   table showing the original eigenvalues of the input, and the corresponding variance
 #'   explained,
-#'   \code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
-#'   plot of the first two dimensions of the final loadings. The latter two
-#'   options make use of HTML widgets.
+#'   \code{"scree"} to display a Scree Plot, \code{"scatter"} to display a
+#'   plot of the first two dimensions of the final loadings, and \code{"2d"} to plot the
+#'   first two dimensions of the data, grouped by a categorical variable.
+#'   The latter three options make use of HTML widgets.
 #' @param show.labels If \code{TRUE}, labels are shown rather than name in outputs.
 #' @param plot.labels A logical value which determines whether or not the
 #'   scatter plot will show the labels of the input data, or just integers
 #'   specifying the column number of each variable.
+#' @param groups A \code{\link{vector}} of labels used to group the cases
+#' when \code{"print.type"} is \code{"2d"}.
 #'
 #' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
@@ -67,12 +70,13 @@ PrincipalComponentsAnalysis <- function(data,
                                min.display.loading.value = 0.1,
                                print.type = "loadings",
                                show.labels = TRUE,
-                               plot.labels = TRUE)
+                               plot.labels = TRUE,
+                               groups = NULL)
 {
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels)
-        colnames(data) <- Labels(data)#variable.labels
+        colnames(data) <- Labels(data) #variable.labels
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
     }
@@ -81,7 +85,7 @@ PrincipalComponentsAnalysis <- function(data,
         oblimin.delta = NULL
     }
 
-    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained")) {
+    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained", "2D Scatterplot")) {
         sort.coefficients.by.size = FALSE
         suppress.small.coefficients = FALSE
         min.display.loading.value = 0.1
@@ -302,7 +306,7 @@ PrincipalComponentsAnalysis <- function(data,
     results$rotation <- rotation
     results$missing <- missing
     results$component.correlations <- component.correlations
-
+    results$groups <- groups
 
 
     results$initial.communalities <- initial.communalities

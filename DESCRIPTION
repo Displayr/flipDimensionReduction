@@ -13,6 +13,7 @@ Suggests:
     flipExampleData,
 Imports:
     ca,
+    class,
     flipChartBasics,
     flipData,
     flipFormat,

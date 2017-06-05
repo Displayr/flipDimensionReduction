@@ -54,7 +54,11 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     } else if (print.type == "Variance Explained")
     {
         print.type <- "variance"
+    } else if (print.type == "2D Scatterplot")
+    {
+        print.type <- "2d"
     }
+
 
     # Work out caption information. This is shared between a number of print types
     caption.info <- list()
@@ -164,6 +168,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                                     title = title, subtitle = subtitle, footer = footer,
                                     eigenvalue.label = eigenvalue.label)
             print(tbl)
+
         } else if (print.type == "structure") {
 
             footer <- if (!oblique.rotation)
@@ -182,7 +187,9 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             tbl <- PCALoadingsTable(loadings, NULL, ss.loadings, min.display.loading.value, title = title,
                                     footer = footer, eigenvalue.label = eigenvalue.label)
             print(tbl)
+
         } else if (print.type == "details") {
+
             # Table printing
             tidied.loadings.matrix <- .create.printed.loadings(x, input.matrix = x$loadings, digits = digits)
             tidied.structure.matrix <- .create.printed.loadings(x, input.matrix = x$structure.matrix, digits = digits)
@@ -199,8 +206,6 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             # Loading table
             cat(paste0(loadings.caption, ":\r\n\r\n"))
             print(tidied.loadings.matrix, quote = FALSE)
-
-
 
             # Structure table and sum of squares loadings
             # If there is an oblique rotation then
@@ -239,6 +244,23 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             # Score weights
             cat("\r\nScore Coefficient Matrix:\r\n\r\n")
             print(round(x$score.weights, digits))
+
+        } else if (print.type == "2d") {
+
+            if (ncol(x$loadings) < 2)
+                stop("There aren't enough components to plot.")
+
+            # Remove cases with no mapping or missing labels
+            complete <- complete.cases(x$scores[, 1:2])
+            if (!is.null(x$groups))
+                complete <- complete & complete.cases(x$groups)
+
+            plot.2d <- list(embedding = x$scores[complete, 1:2],
+                            data.labels = x$groups[complete],
+                            title = "PCA")
+            class(plot.2d) <- "2D"
+            print(plot.2d)
+
         } else {
             warning(paste0("Unknown print type for principal components analysis: ", print.type, ". Printing a component plot instead."))
             print(ComponentPlot(x, show.labels = x$plot.labels))

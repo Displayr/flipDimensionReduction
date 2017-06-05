@@ -11,7 +11,7 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   select.n.rule = "Number of factors", eigen.min = 1, n.factors = 1,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
-  show.labels = TRUE, plot.labels = TRUE)
+  show.labels = TRUE, plot.labels = TRUE, groups = NULL)
 
 \method{fitted}{flipFactorAnalysis}(object, ...)
 }
@@ -64,15 +64,19 @@ multiplied by the component correlations), \code{"details"} to display a plain-t
 output containing more details from the analysis, \code{"variance"} to display a
 table showing the original eigenvalues of the input, and the corresponding variance
 explained,
-\code{"scree"} to display a Scree Plot, and \code{"scatter"} to display a
-plot of the first two dimensions of the final loadings. The latter two
-options make use of HTML widgets.}
+\code{"scree"} to display a Scree Plot, \code{"scatter"} to display a
+plot of the first two dimensions of the final loadings, and \code{"2d"} to plot the
+first two dimensions of the data, grouped by a categorical variable.
+The latter three options make use of HTML widgets.}
 
 \item{show.labels}{If \code{TRUE}, labels are shown rather than name in outputs.}
 
 \item{plot.labels}{A logical value which determines whether or not the
 scatter plot will show the labels of the input data, or just integers
 specifying the column number of each variable.}
+
+\item{groups}{A \code{\link{vector}} of labels used to group the cases
+when \code{"print.type"} is \code{"2d"}.}
 
 \item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
 

@@ -14,7 +14,6 @@
 #' @importFrom Rtsne Rtsne
 #' @importFrom tsne tsne
 #' @importFrom flipTransformations AsNumeric
-#' @importFrom flipFormat Labels
 #' @importFrom stats complete.cases
 #' @export
 tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
@@ -24,7 +23,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Input data and data.labels must be same length.")
 
     # Convert dates to factors, retain subset only
-    output <- list(title = ifelse(is.null(data.labels), "t-SNE", paste("t-SNE Categories: ", Labels(data.labels))))
+    output <- list(title = "t-SNE")
     data <- ProcessQVariables(data)
     data.labels <- ProcessQVariables(data.labels)
     if (!is.null(subset)) {
@@ -42,7 +41,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         complete <- complete & complete.cases(data.labels)
     data.labels <- data.labels[complete]
 
-    # Convert factors to dummy variables
+    # Convert unordered factors to binary variables
     data <- AsNumeric(data[complete, ], binary = binary, remove.first = TRUE)
 
     # Remove duplicates
@@ -64,7 +63,7 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
         stop("Unrecognized algorithm.")
 
     output$data.labels <- data.labels
-    class(output) <- "tSNE"
+    class(output) <- "2D"
     return(output)
 
 }
@@ -72,19 +71,25 @@ tSNE <- function(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
 #' @export
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
+#' @importFrom class knn.cv
 #' @importFrom flipU IsCount
-print.tSNE <- function(x, ...) {
+#' @importFrom flipFormat Labels
+print.2D <- function(x, ...) {
 
     scatter.group.indices <- ""
     scatter.group.labels <- ""
     legend <- TRUE
     colors <- "Default colors"
+    title <- ifelse(is.null(x$data.labels), x$title, paste(x$title, "categories:", Labels(x$data.labels)))
 
     if (!is.null(x$data.labels)) {
 
         if (is.factor(x$data.labels)) {
             scatter.group.indices <- paste(as.numeric(x$data.labels), collapse = ", ")
             scatter.group.labels <- paste(levels(x$data.labels), collapse = ", ")
+            nearest <- knn.cv(train = x$embedding, cl = x$data.labels, k = 1)
+            same.category <- sum(nearest == x$data.labels) / length(x$data.labels)
+            title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
         }
         else if (all(x$data.labels == floor(x$data.labels))) {
             unique.labels <- sort(unique(x$data.labels))
@@ -92,6 +97,9 @@ print.tSNE <- function(x, ...) {
             scatter.group.labels <- paste(unique.labels, collapse = ", ")
             scatter.group.indices <- paste(indices, collapse = ", ")
             colors <- "Reds, light to dark"
+            nearest <- knn.cv(train = x$embedding, cl = x$data.labels, k = 1)
+            same.category <- sum(nearest == x$data.labels) / length(x$data.labels)
+            title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
         }
         else {       # numeric: create 20 buckets and treat as factors
             x$data.labels <- cut(x$data.labels, 20)
@@ -105,7 +113,7 @@ print.tSNE <- function(x, ...) {
     chart <- Chart(y = x$embedding,
                    type = "Scatterplot",
                    transpose = FALSE,
-                   title = x$title,
+                   title = title,
                    title.font.family = NULL,
                    title.font.color = NULL,
                    title.font.size = 16,
