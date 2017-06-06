@@ -258,7 +258,8 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             plot.2d <- list(embedding = x$scores[complete, 1:2],
                             data.labels = x$groups[complete],
                             title = ifelse(is.null(x$groups), "PCA", paste("PCA", "categories:", Labels(x$groups))))
-            class(plot.2d) <- "2D"
+            plot.2d$is.distance <- FALSE
+            class(plot.2d) <- "2Dreduction"
             print(plot.2d)
 
         } else {

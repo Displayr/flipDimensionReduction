@@ -24,6 +24,7 @@ Imports:
     flipTransformations,
     flipU,
     GPArotation,
+    MASS,
     plotly,
     psych,
     rhtmlLabeledScatter,

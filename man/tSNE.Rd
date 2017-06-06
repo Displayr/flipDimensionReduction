@@ -4,20 +4,22 @@
 \alias{tSNE}
 \title{\code{tSNE}}
 \usage{
-tSNE(data, subset = NULL, data.labels = NULL, algorithm = "Rtsne",
+tSNE(data, subset = NULL, data.groups = NULL, is.distance = FALSE,
   binary = TRUE, perplexity = 10, seed = 1066)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} which contains the data to be analyzed.}
+\item{data}{A \code{\link{data.frame}} or \code{\link{matrix}} containing the data to be analyzed.}
 
-\item{subset}{A logical vector which describes the subset of \code{data} to be analyzed.}
+\item{subset}{A logical vector which describes the subset of \code{data} to be analyzed.
+Ignored if \code{is.distance} is TRUE.}
 
-\item{data.labels}{A \code{\link{vector}} of labels for each case.}
+\item{data.groups}{A \code{\link{factor}} used to group cases. Ignored if \code{is.distance} is TRUE.}
 
-\item{algorithm}{Which package to use. Valid options are \code{"Rtsne"} and \code{"tsne"}.}
+\item{is.distance}{Whether \code{data} are a distance \code{\link{matrix}} between points or a
+\code{\link{data.frame}} of cases by row and features by column.}
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
-they are treated as sequential integers.}
+they are treated as sequential integers. Ignored if \code{is.distance} is FALSE.}
 
 \item{perplexity}{The perplexity coefficient which defines the extent of the locality
 of the dimension reduction.}
@@ -25,8 +27,8 @@ of the dimension reduction.}
 \item{seed}{Random seed.}
 }
 \description{
-Produce a t-Distributed Stochastic Neighbour Embedding
+Produce a t-Distributed Stochastic Neighbour Embedding.
 }
 \details{
-Any case with missing data or a missing lable is ignored.
+If input is not a distance matrix, any case with missing data or a missing label is ignored.
 }
