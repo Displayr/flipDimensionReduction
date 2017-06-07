@@ -43,7 +43,7 @@ DimensionReductionScatterplot <- function(algorithm,
         cls <- class(distance.matrix)
         if (cls != "dist" && cls != "Distance" && (cls != "matrix" || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix)))
             stop("An invalid distance matrix was supplied.")
-        if (!is.null(subset))
+        if (!is.null(subset) || !all(subset))
             warning("Subset is ignored for distance matrix input.")
         if (algorithm == "PCA")
             stop("PCA requires variables as input but a distance matrix was supplied.")
@@ -51,7 +51,8 @@ DimensionReductionScatterplot <- function(algorithm,
 
     if (algorithm == "t-SNE")
     {
-        result <- tSNE(data = data, data.groups = data.groups, subset = subset, is.distance = distance,
+        result <- tSNE(data = if (distance) distance.matrix else data, data.groups = data.groups,
+                       subset = subset, is.distance = distance,
                        binary = binary, perplexity = perplexity)
     }
     else if (algorithm == "PCA")
