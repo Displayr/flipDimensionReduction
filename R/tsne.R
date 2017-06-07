@@ -1,7 +1,6 @@
 #' \code{tSNE}
 #' @description Produce a t-Distributed Stochastic Neighbour Embedding.
 #' @param data A \code{\link{data.frame}} or \code{\link{matrix}} containing the data to be analyzed.
-#' @param data.groups A \code{\link{factor}} used to group cases. Ignored if \code{is.distance} is TRUE.
 #' @param is.distance Whether \code{data} are a distance \code{\link{matrix}} between points or a
 #' \code{\link{data.frame}} of cases by row and features by column.
 #' @param subset A logical vector which describes the subset of \code{data} to be analyzed.
@@ -12,54 +11,34 @@
 #' they are treated as sequential integers. Ignored if \code{is.distance} is FALSE.
 #' @param seed Random seed.
 #'
-#' @details If input is not a distance matrix, any case with missing data or a missing label is ignored.
+#' @details If input is not a distance matrix, cases with missing data and duplicates are ignored.
 #' @importFrom Rtsne Rtsne
 #' @importFrom flipTransformations AsNumeric
 #' @importFrom stats complete.cases
 #' @importFrom flipFormat Labels
 #' @export
 
-tSNE <- function(data, subset = NULL, data.groups = NULL, is.distance = FALSE,
+tSNE <- function(data, subset = NULL, is.distance = FALSE,
                  binary = TRUE, perplexity = 10, seed = 1066) {
 
-    if (is.distance && !is.null(data.groups))
-        warning("Labels will be taken from distance matrix columns. Separate data.groups will be ignored.")
-    if (is.distance && !is.null(subset))
+    if (is.distance && !is.null(subset) && !all(subset))
         warning("Subset will be ignored for distance matrix.")
-    if (!is.distance && !is.null(data.groups) && nrow(data) != length(data.groups))
-        stop("Input data and data.groups must be same length.")
 
-    output <- list(title = ifelse(is.distance || is.null(data.groups),
-                                  "t-SNE",
-                                  paste("t-SNE", "categories:", Labels(data.groups))))
+    output <- list(title = "t-SNE")
 
     if (!is.distance)
     {
-        # Convert dates to factors, retain subset only
-        data <- ProcessQVariables(data)
-        data.groups <- ProcessQVariables(data.groups)
-        if (!is.null(subset)) {
-            if (length(subset) == 1 && subset == TRUE)
-                subset <- rep(TRUE, nrow(data))
-            if (length(subset) != nrow(data))
-                stop("Input data and subset must be same length.")
-            data <- data[subset, ]
-            data.groups <- data.groups[subset]
-        }
+        # Convert unordered factors to binary variables and dates to factors
+        data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
 
-        # Remove cases with incomplete data or missing labels
-        complete <- complete.cases(data)
-        if (!is.null(data.groups))
-            complete <- complete & complete.cases(data.groups)
-        data.groups <- data.groups[complete]
+        # Identify subset, complete cases, not duplicates
+        if (is.null(subset) || (length(subset) == 1 && subset == TRUE))
+            subset <- rep(TRUE, nrow(data))
+        if (length(subset) != nrow(data))
+            stop("Input data and subset must be same length.")
 
-        # Convert unordered factors to binary variables
-        data <- AsNumeric(data[complete, ], binary = binary, remove.first = TRUE)
-
-        # Remove duplicates
-        duplicates <- duplicated(data)
-        data <- data[!duplicates, ]
-        data.groups <- data.groups[!duplicates]
+        subset <- subset & complete.cases(data) & !duplicated(data)
+        data <- data[subset, ]
     }
 
     set.seed(seed)
@@ -76,15 +55,35 @@ tSNE <- function(data, subset = NULL, data.groups = NULL, is.distance = FALSE,
         }
     }
 
-    output$data.groups <- data.groups
+    if (!is.distance) {
+        # Expand the output to be same size as data, filling with NA by default
+        expanded <- matrix(nrow = length(subset), ncol = 2)
+        expanded[subset] <- output$embedding
+        output$embedding <- expanded
+    }
+
     output$is.distance <- is.distance
     class(output) <- "tSNE"
     return(output)
-
 }
 
+
+#' \code{print.tSNE}
+#' @param x Object of class \code{"tSNE"}.
+#' @param ... Not used.
 #' @export
 print.tSNE <- function(x, ...) {
     class(x) <- c("2Dreduction", "tSNE")
     print(x)
 }
+
+
+#' \code{fitted.tSNE}
+#' @param object Object of class \code{"tSNE"}.
+#' @param ... Not used.
+#' @export
+fitted.tSNE <- function(object, ...)
+{
+    return(object$embedding)
+}
+

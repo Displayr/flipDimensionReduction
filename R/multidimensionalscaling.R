@@ -12,7 +12,7 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
     mds <- if (metric) {
         cmdscale(distance.matrix)
     } else {
-        isoMDS(distance.matrix)
+        isoMDS(distance.matrix)$points
     }
 
     output <- list(embedding = mds[, 1:2])
@@ -26,14 +26,26 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
     }
 
     output$is.distance <- TRUE
-    class(output) <- "MDS"
+    output$title <- class(output) <- "MDS"
     return(output)
 }
 
-
+#' \code{print.MDS}
+#' @param x Object of class \code{"MDS"}.
+#' @param ... Not used.
 #' @export
 print.MDS <- function(x, ...) {
     class(x) <- c("2Dreduction", "MDS")
     print(x)
+}
+
+
+#' \code{fitted.MDS}
+#' @param object Object of class \code{"MDS"}.
+#' @param ... Not used.
+#' @export
+fitted.MDS <- function(object, ...)
+{
+    return(object$embedding)
 }
 

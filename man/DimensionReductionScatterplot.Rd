@@ -31,3 +31,6 @@ Reduces input to 2 dimensions. Takes either data.frame of variables and
 another variable of data.groups, to produce a Scatterplot.  Or takes a distance matrix
 to produce a labelled scatterplot.
 }
+\details{
+For data input, tSNE and MDS filter out duplicated data. Any case with NA is also ignored by all algorithms.
+}

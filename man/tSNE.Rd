@@ -4,16 +4,14 @@
 \alias{tSNE}
 \title{\code{tSNE}}
 \usage{
-tSNE(data, subset = NULL, data.groups = NULL, is.distance = FALSE,
-  binary = TRUE, perplexity = 10, seed = 1066)
+tSNE(data, subset = NULL, is.distance = FALSE, binary = TRUE,
+  perplexity = 10, seed = 1066)
 }
 \arguments{
 \item{data}{A \code{\link{data.frame}} or \code{\link{matrix}} containing the data to be analyzed.}
 
 \item{subset}{A logical vector which describes the subset of \code{data} to be analyzed.
 Ignored if \code{is.distance} is TRUE.}
-
-\item{data.groups}{A \code{\link{factor}} used to group cases. Ignored if \code{is.distance} is TRUE.}
 
 \item{is.distance}{Whether \code{data} are a distance \code{\link{matrix}} between points or a
 \code{\link{data.frame}} of cases by row and features by column.}
@@ -30,5 +28,5 @@ of the dimension reduction.}
 Produce a t-Distributed Stochastic Neighbour Embedding.
 }
 \details{
-If input is not a distance matrix, any case with missing data or a missing label is ignored.
+If input is not a distance matrix, cases with missing data and duplicates are ignored.
 }

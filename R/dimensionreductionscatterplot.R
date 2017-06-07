@@ -11,7 +11,11 @@
 #'   be analyzed. Not used for \code{table} input.
 #' @param perplexity TODO
 #' @param binary TODO
+#'
+#' @details For data input, tSNE and MDS filter out duplicated data. Any case with NA is also ignored by all algorithms.
+#'
 #' @importFrom flipTransformations ParseEnteredData AsNumeric
+#' @importFrom stats dist
 #' @export
 
 DimensionReductionScatterplot <- function(algorithm,
@@ -26,6 +30,25 @@ DimensionReductionScatterplot <- function(algorithm,
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
 
+    mds.from.data <- FALSE
+    if ((algorithm == "MDS - Metric" || algorithm == "MDS - Non-metric") && is.null(table)) {
+
+        mds.from.data <- TRUE
+        # Convert unordered factors to binary variables and dates to factors
+        data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
+
+        # Identify subset and complete cases
+        if (is.null(subset) || (length(subset) == 1 && subset == TRUE))
+            subset <- rep(TRUE, nrow(data))
+        if (length(subset) != nrow(data))
+            stop("Input data and subset must be same length.")
+
+        subset <- subset & complete.cases(data) & !duplicated(data)
+
+        # Convert data to distance matrix
+        table <- dist(data[subset, ])
+        raw.table <- FALSE
+    }
 
     if (is.null(table))
     {
@@ -43,15 +66,13 @@ DimensionReductionScatterplot <- function(algorithm,
         cls <- class(distance.matrix)
         if (cls != "dist" && cls != "Distance" && (cls != "matrix" || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix)))
             stop("An invalid distance matrix was supplied.")
-        if (!is.null(subset) || !all(subset))
-            warning("Subset is ignored for distance matrix input.")
         if (algorithm == "PCA")
             stop("PCA requires variables as input but a distance matrix was supplied.")
     }
 
     if (algorithm == "t-SNE")
     {
-        result <- tSNE(data = if (distance) distance.matrix else data, data.groups = data.groups,
+        result <- tSNE(data = if (distance) distance.matrix else data,
                        subset = subset, is.distance = distance,
                        binary = binary, perplexity = perplexity)
     }
@@ -64,19 +85,11 @@ DimensionReductionScatterplot <- function(algorithm,
                                                 use.correlation = TRUE,
                                                 rotation = "none",
                                                 select.n.rule = "Number of factors",
-                                                n.factors = 2,
-                                                groups = data.groups)
+                                                n.factors = 2)
 
-        complete <- complete.cases(pca$scores[, 1:2])
-        if (!is.null(pca$groups))
-            complete <- complete & complete.cases(pca$groups)
-
-        result <- list(embedding = pca$scores[complete, 1:2],
-                        data.groups = pca$groups[complete],
-                        title = ifelse(is.null(pca$groups), "PCA", paste("PCA", "categories:", Labels(pca$groups))))
+        result <- list(embedding = pca$scores[, 1:2], title = "PCA")
         result$is.distance <- FALSE
         class(result) <- c("2Dreduction", "flipFactorAnalysis")
-        result
     }
     else if (algorithm == "MDS - Metric")
     {
@@ -89,6 +102,16 @@ DimensionReductionScatterplot <- function(algorithm,
     else
         stop("Algorithm not recognized.")
 
+    if (mds.from.data) {
+        result$is.distance <- FALSE
+        # Expand the output to be same size as data, filling with NA by default
+        expanded <- matrix(nrow = length(subset), ncol = 2)
+        expanded[subset] <- result$embedding
+        result$embedding <- expanded
+    }
+
+    result$data.groups <- data.groups
+    return(result)
 }
 
 #' @export
@@ -117,35 +140,41 @@ print.2Dreduction <- function(x, ...) {
         colors <- "Default colors"
         title <- x$title
 
-        if (!is.null(x$data.groups)) {
+        # Remove NAs due to subset, missing data and duplicates (tSNE only)
+        # since they cannot be plotted nor nearest-neighbor calculated.
+        complete <- complete.cases(x$embedding)
+        embedding <- x$embedding[complete, ]
+        groups <- x$data.groups[complete]
 
-            if (is.factor(x$data.groups)) {
-                scatter.group.indices <- paste(as.numeric(x$data.groups), collapse = ", ")
-                scatter.group.labels <- paste(levels(x$data.groups), collapse = ", ")
-                nearest <- knn.cv(train = x$embedding, cl = x$data.groups, k = 1)
-                same.category <- sum(nearest == x$data.groups) / length(x$data.groups)
+        if (!is.null(groups)) {
+
+            if (is.factor(groups)) {
+                scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
+                scatter.group.labels <- paste(levels(groups), collapse = ", ")
+                nearest <- knn.cv(train = embedding, cl = groups, k = 1)
+                same.category <- sum(nearest == groups) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
-            else if (all(x$data.groups == floor(x$data.groups))) {
-                unique.labels <- sort(unique(x$data.groups))
-                indices <- match(x$data.groups, unique.labels)
+            else if (all(groups == floor(groups))) {
+                unique.labels <- sort(unique(groups))
+                indices <- match(groups, unique.labels)
                 scatter.group.labels <- paste(unique.labels, collapse = ", ")
                 scatter.group.indices <- paste(indices, collapse = ", ")
                 colors <- "Reds, light to dark"
-                nearest <- knn.cv(train = x$embedding, cl = x$data.groups, k = 1)
-                same.category <- sum(nearest == x$data.groups) / length(x$data.groups)
+                nearest <- knn.cv(train = embedding, cl = groups, k = 1)
+                same.category <- sum(nearest == groups) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else {       # numeric: create 20 buckets and treat as factors
-                x$data.groups <- cut(x$data.groups, 20)
-                scatter.group.indices <- paste(as.numeric(x$data.groups), collapse = ", ")
-                levels(x$data.groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(x$data.groups))
-                scatter.group.labels <- paste(levels(x$data.groups), collapse = ", ")
+                groups <- cut(groups, 20)
+                scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
+                levels(groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(groups))
+                scatter.group.labels <- paste(levels(groups), collapse = ", ")
                 colors <- "Reds, light to dark"
             }
         }
 
-        chart <- Chart(y = x$embedding,
+        chart <- Chart(y = embedding,
                        type = "Scatterplot",
                        transpose = FALSE,
                        title = title,
