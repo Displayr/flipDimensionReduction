@@ -11,7 +11,7 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   select.n.rule = "Number of factors", eigen.min = 1, n.factors = 1,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
-  show.labels = TRUE, plot.labels = TRUE, groups = NULL)
+  show.labels = TRUE, plot.labels = TRUE, data.groups = NULL)
 
 \method{fitted}{flipFactorAnalysis}(object, ...)
 }
@@ -75,7 +75,7 @@ The latter three options make use of HTML widgets.}
 scatter plot will show the labels of the input data, or just integers
 specifying the column number of each variable.}
 
-\item{groups}{A \code{\link{vector}} of labels used to group the cases
+\item{data.groups}{A \code{\link{vector}} of labels used to group the cases
 when \code{"print.type"} is \code{"2d"}.}
 
 \item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}

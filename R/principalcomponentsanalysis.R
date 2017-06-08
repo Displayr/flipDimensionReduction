@@ -42,7 +42,7 @@
 #' @param plot.labels A logical value which determines whether or not the
 #'   scatter plot will show the labels of the input data, or just integers
 #'   specifying the column number of each variable.
-#' @param groups A \code{\link{vector}} of labels used to group the cases
+#' @param data.groups A \code{\link{vector}} of labels used to group the cases
 #' when \code{"print.type"} is \code{"2d"}.
 #'
 #' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
@@ -71,7 +71,7 @@ PrincipalComponentsAnalysis <- function(data,
                                print.type = "loadings",
                                show.labels = TRUE,
                                plot.labels = TRUE,
-                               groups = NULL)
+                               data.groups = NULL)
 {
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
@@ -306,7 +306,7 @@ PrincipalComponentsAnalysis <- function(data,
     results$rotation <- rotation
     results$missing <- missing
     results$component.correlations <- component.correlations
-    results$groups <- groups
+    results$data.groups <- data.groups
 
 
     results$initial.communalities <- initial.communalities

@@ -249,11 +249,11 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
             if (ncol(x$loadings) < 2)
                 stop("There aren't enough components to plot.")
-            if (!is.null(x$groups) && length(x$groups) != nrow(x$scores))
-                stop("Lengths of data and groups must the the same.")
+            if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
+                stop("Lengths of data and data.groups must the the same.")
 
             plot.2d <- list(embedding = x$scores[, 1:2],
-                            data.groups = x$groups,
+                            data.groups = x$data.groups,
                             title = "PCA")
             plot.2d$is.distance <- FALSE
             class(plot.2d) <- c("2Dreduction", "flipFactorAnalysis")

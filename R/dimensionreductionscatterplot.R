@@ -75,13 +75,7 @@ DimensionReductionScatterplot <- function(algorithm,
             stop("PCA requires variables as input but a distance matrix was supplied.")
     }
 
-    if (algorithm == "t-SNE")
-    {
-        result <- tSNE(data = if (distance) distance.matrix else data,
-                       subset = subset, is.distance = distance,
-                       binary = binary, perplexity = perplexity)
-    }
-    else if (algorithm == "PCA")
+    if (algorithm == "PCA")
     {
         # missing, use.correaltion and rotation are fixed
         dat <- AsNumeric(data, binary = binary, remove.first = TRUE)
@@ -90,11 +84,16 @@ DimensionReductionScatterplot <- function(algorithm,
                                                 use.correlation = TRUE,
                                                 rotation = "none",
                                                 select.n.rule = "Number of factors",
-                                                n.factors = 2)
-
-        result <- list(embedding = pca$scores[, 1:2], title = "PCA")
-        result$is.distance <- FALSE
-        class(result) <- c("2Dreduction", "flipFactorAnalysis")
+                                                n.factors = 2,
+                                                print.type = "2d",
+                                                data.groups = data.groups)
+        return(pca)
+    }
+    else if (algorithm == "t-SNE")
+    {
+        result <- tSNE(data = if (distance) distance.matrix else data,
+                       subset = subset, is.distance = distance,
+                       binary = binary, perplexity = perplexity)
     }
     else if (algorithm == "MDS - Metric")
     {
@@ -165,6 +164,8 @@ print.2Dreduction <- function(x, ...) {
         # Remove NAs due to subset, missing data (all algorithms) and duplicates (tSNE only)
         # since they cannot be plotted nor nearest-neighbor calculated.
         complete <- complete.cases(x$embedding)
+        if (!is.null(x$data.groups))
+            complete <- complete & !is.na(x$data.groups)
         embedding <- x$embedding[complete, ]
         groups <- x$data.groups[complete]
 
