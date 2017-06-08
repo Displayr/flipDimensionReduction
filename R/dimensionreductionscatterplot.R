@@ -1,18 +1,21 @@
 #' \code{DimensionReductionScatterplot}
-#' @description Reduces input to 2 dimensions. Takes either data.frame of variables and
-#' another variable of data.groups, to produce a Scatterplot.  Or takes a distance matrix
-#' to produce a labelled scatterplot.
-#' @param algorithm TODO
-#' @param data TODO
-#' @param data.groups TODO
-#' @param table TODO
-#' @param raw.table TODO So we know whether to parse user input table. Cols contain labels.
-#' @param subset A logical vector which describes the subset of \code{data} to
-#'   be analyzed. Not used for \code{table} input.
-#' @param perplexity TODO
-#' @param binary TODO
+#' @description Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally
+#' another \code{\link{vector}} to be used as a grouping variable, or takes a distance \code{\link{matrix}}.
+#' @param algorithm Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
+#' where the latter does not accept a distance matrix as input.
+#' @param data A \code{\link{data.frame}} with cases by row and variables by column.
+#' @param data.groups A \code{\link{vector}} to be used as a grouping variable for the embedded \code{data}.
+#' @param table A symmetrical distance \code{\link{matrix}}.
+#' @param raw.table If \code{TRUE}, \code{\link{ParseEnteredData}} is called on \code{table} to create a numeric matrix from text.
+#' @param subset A logical vector which describes the subset of \code{data} to be analyzed.
+#' Not used for \code{table} input.
+#' @param perplexity The perplexity coefficient which defines the extent of the locality
+#' of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.
+#' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
+#' they are treated as sequential integers. Ignored if input is provided by \code{table}.
 #'
-#' @details For data input, tSNE and MDS filter out duplicated data. Any case with NA is also ignored by all algorithms.
+#' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
+#' any case with \code{NA} is ignored by all algorithms.
 #'
 #' @importFrom flipTransformations ParseEnteredData AsNumeric
 #' @importFrom stats dist
@@ -127,11 +130,16 @@ fitted.2Dreduction <- function(object, ...)
 }
 
 
-#' @export
+#' \code{print.2Dreduction}
+#' @description If 2Dreduction object is created from distance matrix, then print as labelled scatterplot.
+#' If created from a \code{\link{data.frame}} of variables, print as a scatterplot of grouped cases.
+#' @param x Object of class \code{"2Dreduction"}.
+#' @param ... Not used.
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
+#' @export
 print.2Dreduction <- function(x, ...) {
 
     if (x$is.distance) {

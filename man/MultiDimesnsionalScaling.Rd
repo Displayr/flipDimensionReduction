@@ -9,7 +9,7 @@ MultiDimesnsionalScaling(distance.matrix, metric = TRUE)
 \arguments{
 \item{distance.matrix}{A \code{\link{matrix}} of distances between points.}
 
-\item{metric}{A \code{\link{factor}} used to group cases. Ignored if \code{is.distance} is TRUE.}
+\item{metric}{Whether to use metric or non-metric scaling.}
 }
 \description{
 Perform Multidimesnsional Scaling to produce a 2-dimensional embedding of

@@ -53,6 +53,7 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
         {
             colnames(data)
         }
+        rownames(output$embedding) <- output$label
     }
 
     if (!is.distance) {
@@ -63,18 +64,10 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
     }
 
     output$is.distance <- is.distance
-    class(output) <- "tSNE"
+    class(output) <- c("2Dreduction", "tSNE")
     return(output)
 }
 
 
-#' \code{print.tSNE}
-#' @param x Object of class \code{"tSNE"}.
-#' @param ... Not used.
-#' @export
-print.tSNE <- function(x, ...) {
-    class(x) <- c("2Dreduction", "tSNE")
-    print(x)
-}
 
 

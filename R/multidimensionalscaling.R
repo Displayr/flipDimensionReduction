@@ -2,7 +2,7 @@
 #' @description Perform Multidimesnsional Scaling to produce a 2-dimensional embedding of
 #' a distance matrix.
 #' @param distance.matrix A \code{\link{matrix}} of distances between points.
-#' @param metric A \code{\link{factor}} used to group cases. Ignored if \code{is.distance} is TRUE.
+#' @param metric Whether to use metric or non-metric scaling.
 #' @importFrom stats cmdscale
 #' @importFrom MASS isoMDS
 #' @export
@@ -27,15 +27,7 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
 
     output$is.distance <- TRUE
     output$title <- ifelse(metric, "MDS - Metric", "MDS - Non-metric")
-    class(output) <- "MDS"
+    class(output) <- c("2Dreduction", "MDS")
     return(output)
 }
 
-#' \code{print.MDS}
-#' @param x Object of class \code{"MDS"}.
-#' @param ... Not used.
-#' @export
-print.MDS <- function(x, ...) {
-    class(x) <- c("2Dreduction", "MDS")
-    print(x)
-}

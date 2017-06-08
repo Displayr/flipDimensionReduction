@@ -9,28 +9,31 @@ DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
   binary = TRUE)
 }
 \arguments{
-\item{algorithm}{TODO}
+\item{algorithm}{Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
+where the latter does not accept a distance matrix as input.}
 
-\item{data}{TODO}
+\item{data}{A \code{\link{data.frame}} with cases by row and variables by column.}
 
-\item{data.groups}{TODO}
+\item{data.groups}{A \code{\link{vector}} to be used as a grouping variable for the embedded \code{data}.}
 
-\item{table}{TODO}
+\item{table}{A symmetrical distance \code{\link{matrix}}.}
 
-\item{raw.table}{TODO So we know whether to parse user input table. Cols contain labels.}
+\item{raw.table}{If \code{TRUE}, \code{\link{ParseEnteredData}} is called on \code{table} to create a numeric matrix from text.}
 
-\item{subset}{A logical vector which describes the subset of \code{data} to
-be analyzed. Not used for \code{table} input.}
+\item{subset}{A logical vector which describes the subset of \code{data} to be analyzed.
+Not used for \code{table} input.}
 
-\item{perplexity}{TODO}
+\item{perplexity}{The perplexity coefficient which defines the extent of the locality
+of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.}
 
-\item{binary}{TODO}
+\item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
+they are treated as sequential integers. Ignored if input is provided by \code{table}.}
 }
 \description{
-Reduces input to 2 dimensions. Takes either data.frame of variables and
-another variable of data.groups, to produce a Scatterplot.  Or takes a distance matrix
-to produce a labelled scatterplot.
+Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally
+another \code{\link{vector}} to be used as a grouping variable, or takes a distance \code{\link{matrix}}.
 }
 \details{
-For data input, tSNE and MDS filter out duplicated data. Any case with NA is also ignored by all algorithms.
+For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
+any case with \code{NA} is ignored by all algorithms.
 }
