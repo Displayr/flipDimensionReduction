@@ -26,7 +26,8 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
     }
 
     output$is.distance <- TRUE
-    output$title <- class(output) <- "MDS"
+    output$title <- ifelse(metric, "MDS - Metric", "MDS - Non-metric")
+    class(output) <- "MDS"
     return(output)
 }
 
@@ -38,14 +39,3 @@ print.MDS <- function(x, ...) {
     class(x) <- c("2Dreduction", "MDS")
     print(x)
 }
-
-
-#' \code{fitted.MDS}
-#' @param object Object of class \code{"MDS"}.
-#' @param ... Not used.
-#' @export
-fitted.MDS <- function(object, ...)
-{
-    return(object$embedding)
-}
-

@@ -78,12 +78,3 @@ print.tSNE <- function(x, ...) {
 }
 
 
-#' \code{fitted.tSNE}
-#' @param object Object of class \code{"tSNE"}.
-#' @param ... Not used.
-#' @export
-fitted.tSNE <- function(object, ...)
-{
-    return(object$embedding)
-}
-

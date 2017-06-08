@@ -249,17 +249,14 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
             if (ncol(x$loadings) < 2)
                 stop("There aren't enough components to plot.")
+            if (!is.null(x$groups) && length(x$groups) != nrow(x$scores))
+                stop("Lengths of data and groups must the the same.")
 
-            # Remove cases with no mapping or missing labels
-            complete <- complete.cases(x$scores[, 1:2])
-            if (!is.null(x$groups))
-                complete <- complete & complete.cases(x$groups)
-
-            plot.2d <- list(embedding = x$scores[complete, 1:2],
-                            data.labels = x$groups[complete],
-                            title = ifelse(is.null(x$groups), "PCA", paste("PCA", "categories:", Labels(x$groups))))
+            plot.2d <- list(embedding = x$scores[, 1:2],
+                            data.labels = x$groups,
+                            title = "PCA")
             plot.2d$is.distance <- FALSE
-            class(plot.2d) <- "2Dreduction"
+            class(plot.2d) <- c("2Dreduction", "flipFactorAnalysis")
             print(plot.2d)
 
         } else {

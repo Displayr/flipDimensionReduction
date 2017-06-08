@@ -29,6 +29,8 @@ DimensionReductionScatterplot <- function(algorithm,
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
+    if (!is.null(data.groups) && length(data.groups) != nrow(data))
+        stop("Lengths of data and data.groups must the the same.")
 
     mds.from.data <- FALSE
     if ((algorithm == "MDS - Metric" || algorithm == "MDS - Non-metric") && is.null(table)) {
@@ -78,7 +80,7 @@ DimensionReductionScatterplot <- function(algorithm,
     }
     else if (algorithm == "PCA")
     {
-        # TO DO check these defaults .....
+        # missing, use.correaltion and rotation are fixed
         dat <- AsNumeric(data, binary = binary, remove.first = TRUE)
         pca <- PrincipalComponentsAnalysis(data = dat, subset = subset,
                                                 missing = "Exclude cases with missing data",
@@ -114,6 +116,17 @@ DimensionReductionScatterplot <- function(algorithm,
     return(result)
 }
 
+
+#' \code{fitted.2Dreduction}
+#' @param object Object of class \code{"2Dreduction"}.
+#' @param ... Not used.
+#' @export
+fitted.2Dreduction <- function(object, ...)
+{
+    return(object$embedding)
+}
+
+
 #' @export
 #' @importFrom flipStandardCharts Chart
 #' @importFrom grDevices rgb
@@ -124,6 +137,7 @@ print.2Dreduction <- function(x, ...) {
     if (x$is.distance) {
         chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
                        label = x$label,
+                       title = x$title,
                        x.title = "Dimension 1",
                        y.title = "Dimension 2",
                        point.radius = 4,
@@ -140,7 +154,7 @@ print.2Dreduction <- function(x, ...) {
         colors <- "Default colors"
         title <- x$title
 
-        # Remove NAs due to subset, missing data and duplicates (tSNE only)
+        # Remove NAs due to subset, missing data (all algorithms) and duplicates (tSNE only)
         # since they cannot be plotted nor nearest-neighbor calculated.
         complete <- complete.cases(x$embedding)
         embedding <- x$embedding[complete, ]
