@@ -1,4 +1,4 @@
-context("Multiple correspondence Analysis")
+context("Multiple Correspondence Analysis")
 
 data("cola", package="flipExampleData")
 output = "Scatterplot"

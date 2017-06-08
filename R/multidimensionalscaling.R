@@ -12,7 +12,7 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
     mds <- if (metric) {
         cmdscale(distance.matrix)
     } else {
-        isoMDS(distance.matrix)$points
+        isoMDS(distance.matrix, trace = FALSE)$points
     }
 
     output <- list(embedding = mds[, 1:2])

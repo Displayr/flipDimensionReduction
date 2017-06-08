@@ -253,7 +253,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                 stop("Lengths of data and groups must the the same.")
 
             plot.2d <- list(embedding = x$scores[, 1:2],
-                            data.labels = x$groups,
+                            data.groups = x$groups,
                             title = "PCA")
             plot.2d$is.distance <- FALSE
             class(plot.2d) <- c("2Dreduction", "flipFactorAnalysis")
