@@ -81,7 +81,7 @@ DimensionReductionScatterplot <- function(algorithm,
         dat <- AsNumeric(data, binary = binary, remove.first = TRUE)
         pca <- PrincipalComponentsAnalysis(data = dat, subset = subset,
                                                 missing = "Exclude cases with missing data",
-                                                use.correlation = TRUE,
+                                                use.correlation = FALSE,
                                                 rotation = "none",
                                                 select.n.rule = "Number of factors",
                                                 n.factors = 2,
@@ -176,7 +176,7 @@ print.2Dreduction <- function(x, ...) {
                 scatter.group.labels <- paste(levels(groups), collapse = ", ")
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- sum(nearest == groups) / length(groups)
-                title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
+                title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
                 unique.labels <- sort(unique(groups))
