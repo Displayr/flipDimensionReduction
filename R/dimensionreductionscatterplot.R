@@ -97,11 +97,11 @@ DimensionReductionScatterplot <- function(algorithm,
     }
     else if (algorithm == "MDS - Metric")
     {
-        result <- MultiDimesnsionalScaling(distance.matrix = table, metric = TRUE)
+        result <- MultiDimesnsionalScaling(distance.matrix = distance.matrix, metric = TRUE)
     }
     else if (algorithm == "MDS - Non-metric")
     {
-        result <- MultiDimesnsionalScaling(distance.matrix = table, metric = FALSE)
+        result <- MultiDimesnsionalScaling(distance.matrix = distance.matrix, metric = FALSE)
     }
     else
         stop("Algorithm not recognized.")
