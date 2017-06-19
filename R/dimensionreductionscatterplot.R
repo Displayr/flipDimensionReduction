@@ -73,13 +73,13 @@ DimensionReductionScatterplot <- function(algorithm,
         cls <- class(distance.matrix)
         if (cls != "dist" && cls != "Distance") {
             if (cls != "matrix" || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix))
-                stop("An invalid distance matrix was supplied.")
+                stop("Distance matrix must be symmetrical and numeric.")
             diag(distance.matrix)[is.na(diag(distance.matrix))] <- 0
-            if (any(distance.matrix < 0))
-                stop("Distance matrix must not contain negative values.")
             if (any(diag(distance.matrix) != 0))
                 warning("Non-zero values along diagonal of distance matrix will be ignored.")
             diag(distance.matrix) <- 0
+            if (any(distance.matrix < 0))
+                stop("Distance matrix must not contain negative values.")
         }
     }
 
