@@ -56,6 +56,10 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
         rownames(output$embedding) <- output$label
     }
 
+    # Ensure first dimension has largest range
+    if (range(output$embedding)[2] > range(output$embedding)[1])
+        output$embedding[, c(1, 2)] <- output$embedding[, c(2, 1)]
+
     if (!is.distance) {
         # Expand the output to be same size as data, filling with NA by default
         expanded <- matrix(nrow = length(subset), ncol = 2)

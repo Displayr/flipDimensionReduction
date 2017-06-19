@@ -5,7 +5,7 @@
 \title{\code{DimensionReductionScatterplot}}
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
-  table = NULL, raw.table = FALSE, subset = NULL, perplexity = TRUE,
+  table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
   binary = TRUE)
 }
 \arguments{
