@@ -247,17 +247,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
         } else if (print.type == "2d") {
 
-            if (ncol(x$loadings) < 2)
-                stop("There aren't enough components to plot.")
-            if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
-                stop("Lengths of data and data.groups must the the same.")
-
-            plot.2d <- list(embedding = x$scores[, 1:2],
-                            data.groups = x$data.groups,
-                            title = "PCA")
-            plot.2d$is.distance <- FALSE
-            class(plot.2d) <- c("2Dreduction", "flipFactorAnalysis")
-            print(plot.2d)
+            print(convertFactorAnalysisTo2D(x))
 
         } else {
             warning(paste0("Unknown print type for principal components analysis: ", print.type, ". Printing a component plot instead."))
@@ -265,3 +255,4 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         }
     }
 }
+

@@ -6,7 +6,7 @@
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE)
+  binary = TRUE, output = "Scatterplot")
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
@@ -28,6 +28,9 @@ of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.}
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 they are treated as sequential integers. Ignored if input is provided by \code{table}.}
+
+\item{output}{Either \code{"Scatterplot"} to plot the 2-dimensional embedding, or \code{"Shepard"} to plot
+distances in original space versus distances in 2-dimensional space.}
 }
 \description{
 Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally

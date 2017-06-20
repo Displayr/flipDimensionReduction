@@ -67,7 +67,8 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
         output$embedding <- expanded
     }
 
-    output$is.distance <- is.distance
+    output$input.data <- data
+    output$print.as.distance <- is.distance
     class(output) <- c("2Dreduction", "tSNE")
     return(output)
 }

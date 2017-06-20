@@ -333,8 +333,6 @@ fitted.flipFactorAnalysis <- function(object, ...)
 }
 
 
-
-
 #' \code{ScreePlot}
 #' @description Plot the eigenvalues from an existing principal component or
 #'   factor analysis or plot the eigenvalues from the correlation or covariance

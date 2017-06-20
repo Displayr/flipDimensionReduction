@@ -13,6 +13,8 @@
 #' of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers. Ignored if input is provided by \code{table}.
+#' @param output Either \code{"Scatterplot"} to plot the 2-dimensional embedding, or \code{"Shepard"} to plot
+#' distances in original space versus distances in 2-dimensional space.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
@@ -28,7 +30,8 @@ DimensionReductionScatterplot <- function(algorithm,
                                         raw.table = FALSE,
                                         subset = NULL,
                                         perplexity = 10,
-                                        binary = TRUE) {
+                                        binary = TRUE,
+                                        output = "Scatterplot") {
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
@@ -115,7 +118,7 @@ DimensionReductionScatterplot <- function(algorithm,
         stop("Algorithm not recognized.")
 
     if (mds.from.data) {
-        result$is.distance <- FALSE
+        result$print.as.distance <- FALSE
         # Expand the output to be same size as data, filling with NA by default
         expanded <- matrix(nrow = length(subset), ncol = 2)
         expanded[subset] <- result$embedding
@@ -123,6 +126,7 @@ DimensionReductionScatterplot <- function(algorithm,
     }
 
     result$data.groups <- data.groups
+    result$output <- output
     return(result)
 }
 
@@ -134,6 +138,24 @@ DimensionReductionScatterplot <- function(algorithm,
 fitted.2Dreduction <- function(object, ...)
 {
     return(object$embedding)
+}
+
+
+# Converts a PCA output of class flipFactorAnalysis to an object of class 2Dreduction
+convertFactorAnalysisTo2D <- function(x) {
+
+    if (ncol(x$loadings) < 2)
+        stop("There must be at least 2 components to produce 2-D output.")
+    if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
+        stop("Lengths of data and data.groups must the the same.")
+
+    output <- list(embedding = x$scores[, 1:2],
+                   data.groups = x$data.groups,
+                   input.data = x$original.data,
+                   title = "PCA")
+    output$print.as.distance <- FALSE
+    class(output) <- c("2Dreduction", "flipFactorAnalysis")
+    return(output)
 }
 
 
@@ -149,7 +171,7 @@ fitted.2Dreduction <- function(object, ...)
 #' @export
 print.2Dreduction <- function(x, ...) {
 
-    if (x$is.distance) {
+    if (x$print.as.distance) {
         chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
                        label = x$label,
                        title = x$title,
@@ -160,8 +182,8 @@ print.2Dreduction <- function(x, ...) {
                        x.title.font.size = 14,
                        y.title.font.size = 14)
     }
-    else
-    {
+
+    else {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""
