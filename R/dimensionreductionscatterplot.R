@@ -11,6 +11,8 @@
 #' Not used for \code{table} input.
 #' @param perplexity The perplexity coefficient which defines the extent of the locality
 #' of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.
+#' @param use.correlation A logical value used for \code{"PCA"} only, specifying whether to use the
+#' correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers. Ignored if input is provided by \code{table}.
 #' @param output Either \code{"Scatterplot"} to plot the 2-dimensional embedding, or \code{"Shepard"} to plot
@@ -30,6 +32,7 @@ DimensionReductionScatterplot <- function(algorithm,
                                         raw.table = FALSE,
                                         subset = NULL,
                                         perplexity = 10,
+                                        use.correlation = TRUE,
                                         binary = TRUE,
                                         output = "Scatterplot") {
 
@@ -92,7 +95,7 @@ DimensionReductionScatterplot <- function(algorithm,
         dat <- AsNumeric(data, binary = binary, remove.first = TRUE)
         pca <- PrincipalComponentsAnalysis(data = dat, subset = subset,
                                                 missing = "Exclude cases with missing data",
-                                                use.correlation = FALSE,
+                                                use.correlation = use.correlation,
                                                 rotation = "none",
                                                 select.n.rule = "Number of factors",
                                                 n.factors = 2,
