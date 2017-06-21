@@ -64,6 +64,7 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     correlation <- cor(y, method = "spearman")
 
     # Sample randomly if too many rows
+    set.seed(1066)
     if (nrow(y) > max.points)
         y <- y[sample(nrow(y), max.points), ]
 

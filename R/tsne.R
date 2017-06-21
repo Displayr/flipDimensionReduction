@@ -24,7 +24,7 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
     if (is.distance && !is.null(subset) && !all(subset))
         warning("Subset will be ignored for distance matrix.")
 
-    output <- list(title = "t-SNE")
+    output <- list(title = "t-SNE", input.data = data)
 
     if (!is.distance)
     {
@@ -67,7 +67,6 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
         output$embedding <- expanded
     }
 
-    output$input.data <- data
     output$print.as.distance <- is.distance
     class(output) <- c("2Dreduction", "tSNE")
     return(output)
