@@ -30,6 +30,7 @@ tSNE <- function(data, subset = NULL, is.distance = FALSE,
     {
         # Convert unordered factors to binary variables and dates to factors
         data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
+        output$input.data <- data
 
         # Identify subset, complete cases, not duplicates
         if (is.null(subset) || (length(subset) == 1 && subset == TRUE))

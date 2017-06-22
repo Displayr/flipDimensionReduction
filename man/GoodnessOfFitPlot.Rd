@@ -3,7 +3,7 @@
 \name{GoodnessOfFitPlot}
 \alias{GoodnessOfFitPlot}
 \alias{GoodnessOfFitPlot.default}
-\alias{GoodnessOfFitPlot.lm}
+\alias{GoodnessOfFitPlot.Regression}
 \alias{GoodnessOfFitPlot.flipFactorAnalysis}
 \alias{GoodnessOfFitPlot.2Dreduction}
 \title{\code{GoodnessOfFitPlot}}
@@ -13,8 +13,8 @@ GoodnessOfFitPlot(object, ...)
 \method{GoodnessOfFitPlot}{default}(object, digits = max(3L,
   getOption("digits") - 3L), max.points = 1000, ...)
 
-\method{GoodnessOfFitPlot}{lm}(object, digits = max(3L, getOption("digits") -
-  3L), max.points = 1000, ...)
+\method{GoodnessOfFitPlot}{Regression}(object, digits = max(3L,
+  getOption("digits") - 3L), max.points = 1000, ...)
 
 \method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000, ...)
 
@@ -40,7 +40,7 @@ Reports the goodness-of-fit of an object.
 \itemize{
 \item \code{default}: Default goodness-of-fit plot
 
-\item \code{lm}: Goodness-of-fit plot for a linear model
+\item \code{Regression}: Goodness-of-fit plot for a Regression object
 
 \item \code{flipFactorAnalysis}: Goodness-of-fit plot for a flipFactorAnalysis object
 

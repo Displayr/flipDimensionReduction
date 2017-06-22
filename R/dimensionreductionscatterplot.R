@@ -193,6 +193,7 @@ print.2Dreduction <- function(x, ...) {
         legend <- TRUE
         colors <- "Default colors"
         title <- x$title
+        set.seed(1066)
 
         # Remove NAs due to subset, missing data (all algorithms) and duplicates (tSNE only)
         # since they cannot be plotted nor nearest-neighbor calculated.

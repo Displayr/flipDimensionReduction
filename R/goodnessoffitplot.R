@@ -25,18 +25,33 @@ GoodnessOfFitPlot.default = function(object, digits = max(3L, getOption("digits"
         fitted <- predict(object)
     observed <- fitted + resid(object)
     linear.regression = lm(fitted ~ observed)
-    GoodnessOfFitPlot.lm(linear.regression, digits, max.points, ...)
+    GoodnessOfFitPlot.Regression(linear.regression, digits, max.points, ...)
 }
 
 
-#' @describeIn GoodnessOfFitPlot  Goodness-of-fit plot for a linear model
+#' @describeIn GoodnessOfFitPlot  Goodness-of-fit plot for a Regression object
 #' @importFrom graphics plot abline
+#' @importFrom flipData Observed
+#' @importFrom stats complete.cases fitted
 #' @export
-GoodnessOfFitPlot.lm = function(object, digits = max(3L, getOption("digits") - 3L), max.points = 1000, ...) {
+GoodnessOfFitPlot.Regression = function(object, digits = max(3L, getOption("digits") - 3L), max.points = 1000, ...) {
 
-    r2 =  paste0(formatC(100 * summary(object)$r.squared, digits = digits), "%")
-    plot(fitted(object)~object$model[,1], xlab = "Observed", ylab = "Fitted", main = paste0("Adjusted R-squared: ", r2), asp = 1)
-    abline(object, lty = 2, col = "red")
+    y <- cbind(Observed(object), fitted(object))
+    y <- y[object$subset & complete.cases(y), ]
+
+    correlation <- cor(y, method = "pearson")
+
+    # Sample randomly if too many rows
+    set.seed(1066)
+    if (nrow(y) > max.points)
+        y <- y[sample(nrow(y), max.points), ]
+
+    title <- paste0(object$type, " Regression - Shepard Diagram - Correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
+    chart <- Chart(y = y,
+                   type = "Scatterplot",
+                   title = title,
+                   x.title = "Observed",
+                   y.title = "Fitted")
 }
 
 
@@ -49,11 +64,13 @@ GoodnessOfFitPlot.flipFactorAnalysis = function(object, max.points = 1000, ...) 
 #' @describeIn GoodnessOfFitPlot  Goodness-of-fit plot for a 2Dreduction object
 #' @importFrom flipStandardCharts Chart
 #' @importFrom stats cor
+#' @importFrom utils combn
 #' @export
 GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
 
     if (object$print.as.distance || "MDS" %in% class(object)) {
         y <- cbind(as.vector(object$input.data), as.vector(dist(object$embedding)))
+        rownames(y) <- apply(combn(attr(object$input.data, "Labels"), 2), 2, function(x) {paste(x[1], x[2])})
     }
     else
     {
@@ -67,8 +84,6 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     set.seed(1066)
     if (nrow(y) > max.points)
         y <- y[sample(nrow(y), max.points), ]
-
-    # TODO TOOLTIP LABELS
 
     title <- paste0(object$title, " - Shepard Diagram - Correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
     chart <- Chart(y = y,
