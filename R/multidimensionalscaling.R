@@ -25,7 +25,7 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
         colnames(distance.matrix)
     }
 
-    output$print.as.distance <- TRUE
+    output$input.is.distance <- TRUE
     output$input.data <- distance.matrix
     output$title <- ifelse(metric, "MDS (Metric)", "MDS (Non-metric)")
     class(output) <- c("2Dreduction", "MDS")

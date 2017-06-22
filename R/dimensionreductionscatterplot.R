@@ -121,7 +121,7 @@ DimensionReductionScatterplot <- function(algorithm,
         stop("Algorithm not recognized.")
 
     if (mds.from.data) {
-        result$print.as.distance <- FALSE
+        result$input.is.distance <- FALSE
         # Expand the output to be same size as data, filling with NA by default
         expanded <- matrix(nrow = length(subset), ncol = 2)
         expanded[subset] <- result$embedding
@@ -156,7 +156,7 @@ convertFactorAnalysisTo2D <- function(x) {
                    data.groups = x$data.groups,
                    input.data = x$original.data,
                    title = "PCA")
-    output$print.as.distance <- FALSE
+    output$input.is.distance <- FALSE
     class(output) <- c("2Dreduction", "flipFactorAnalysis")
     return(output)
 }
@@ -174,7 +174,7 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @export
 print.2Dreduction <- function(x, ...) {
 
-    if (x$print.as.distance) {
+    if (x$input.is.distance) {
         chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
                        label = x$label,
                        title = x$title,
