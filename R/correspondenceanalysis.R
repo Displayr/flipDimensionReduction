@@ -349,6 +349,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("Row and column titles should not be the same.")
         n1 <- nrow(row.coordinates)
         n2 <- nrow(column.coordinates)
+        x.groups <- if(length(x$row.color) == 1) rep(x$row.column.names[1], n1) else paste("Row", 1:n1)
+        y.groups <- if(length(x$col.color) == 1) rep(x$row.column.names[2], n2) else paste("Column", 1:n2)
         groups <- rep(x$row.column.names, c(n1, n2))
         colors <- c(x$row.color, x$col.color)
 
