@@ -15,8 +15,6 @@
 #' correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers. Ignored if input is provided by \code{table}.
-#' @param output Either \code{"Scatterplot"} to plot the 2-dimensional embedding, or \code{"Shepard"} to plot
-#' distances in original space versus distances in 2-dimensional space.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
@@ -33,8 +31,7 @@ DimensionReductionScatterplot <- function(algorithm,
                                         subset = NULL,
                                         perplexity = 10,
                                         use.correlation = TRUE,
-                                        binary = TRUE,
-                                        output = "Scatterplot") {
+                                        binary = TRUE) {
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
@@ -129,7 +126,6 @@ DimensionReductionScatterplot <- function(algorithm,
     }
 
     result$data.groups <- data.groups
-    result$output <- output
     return(result)
 }
 
