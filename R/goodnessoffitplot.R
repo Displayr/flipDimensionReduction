@@ -39,7 +39,7 @@ GoodnessOfFitPlot.Regression = function(object, digits = max(3L, getOption("digi
     y <- cbind(Observed(object), fitted(object))
     y <- y[object$subset & complete.cases(y), ]
 
-    correlation <- cor(y, method = "pearson")
+    correlation <- cor(y, method = "spearman")
 
     # Sample randomly if too many rows
     set.seed(1066)
