@@ -31,7 +31,7 @@ DimensionReductionScatterplot <- function(algorithm,
                                         subset = NULL,
                                         perplexity = 10,
                                         binary = TRUE,
-                                        normalization = TRUE) {
+                                        normalization = FALSE) {
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
