@@ -6,7 +6,7 @@
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = TRUE)
+  binary = TRUE, normalization = FALSE)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
