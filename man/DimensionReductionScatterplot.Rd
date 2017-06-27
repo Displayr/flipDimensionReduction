@@ -6,7 +6,7 @@
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  use.correlation = TRUE, binary = TRUE)
+  binary = TRUE, normalization = TRUE)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
@@ -26,11 +26,11 @@ Not used for \code{table} input.}
 \item{perplexity}{The perplexity coefficient which defines the extent of the locality
 of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.}
 
-\item{use.correlation}{A logical value used for \code{"PCA"} only, specifying whether to use the
-correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).}
-
 \item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 they are treated as sequential integers. Ignored if input is provided by \code{table}.}
+
+\item{normalization}{If \code{data} is supplied, whether to normalize the data so each variable
+has a mean of 0 and standard deviation of 1.}
 }
 \description{
 Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally

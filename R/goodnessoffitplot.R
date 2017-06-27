@@ -46,7 +46,7 @@ GoodnessOfFitPlot.Regression = function(object, digits = max(3L, getOption("digi
     if (nrow(y) > max.points)
         y <- y[sample(nrow(y), max.points), ]
 
-    title <- paste0(object$type, " Regression - Shepard Diagram - Correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
+    title <- paste0(object$type, " Regression - Shepard Diagram - Rank correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
     chart <- Chart(y = y,
                    type = "Scatterplot",
                    title = title,
@@ -92,11 +92,14 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     if (nrow(y) > max.points)
         y <- y[sample(nrow(y), max.points), ]
 
+    x.title <- "Input distance"
+    if (object$normalized)
+        x.title <- paste0(x.title, " (normalized)")
     title <- paste0(object$title, " - Shepard Diagram - Correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
     chart <- Chart(y = y,
                    type = "Scatterplot",
                    title = title,
-                   x.title = "Input distance",
+                   x.title = x.title,
                    y.title = "Output distance")
 }
 

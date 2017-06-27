@@ -2,26 +2,16 @@ context("t-SNE")
 
 data(hbatwithsplits, package = "flipExampleData")
 
-# numerical and factor inputs
 input.data <- hbatwithsplits[, c("x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12")]
-
+input.data <- AsNumeric(input.data)
 subset <- hbatwithsplits$x3 == "Large (500+)"
 
-test_that("tSNE: perplexity, subset with binary = TRUE", {
+test_that("tSNE: perplexity", {
     for (perplexity in c(2, 5, 10, 20)) {
-        for (subset in list(subset, NULL)) {
-            expect_error(tSNE(input.data, perplexity = perplexity, is.distance = FALSE, binary = TRUE, subset = subset), NA)
-        }
+        expect_error(tSNE(input.data, perplexity = perplexity, is.distance = FALSE), NA)
     }
 })
 
-test_that("tSNE: perplexity, subset with binary = FALSE", {
-    for (perplexity in c(2, 5, 10, 20)) {
-        for (subset in list(subset, NULL)) {
-            expect_warning(tSNE(input.data, perplexity = perplexity, is.distance = FALSE, binary = FALSE, subset = subset))
-        }
-    }
-})
 
 
 data(breakfast.dissimilarities, package = "flipExampleData")

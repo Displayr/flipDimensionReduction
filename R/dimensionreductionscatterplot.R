@@ -11,15 +11,15 @@
 #' Not used for \code{table} input.
 #' @param perplexity The perplexity coefficient which defines the extent of the locality
 #' of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.
-#' @param use.correlation A logical value used for \code{"PCA"} only, specifying whether to use the
-#' correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers. Ignored if input is provided by \code{table}.
+#' @param normalization If \code{data} is supplied, whether to normalize the data so each variable
+#' has a mean of 0 and standard deviation of 1.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
 #'
-#' @importFrom flipTransformations ParseEnteredData AsNumeric
+#' @importFrom flipTransformations ParseEnteredData AsNumeric StandardizeData
 #' @importFrom stats dist
 #' @export
 
@@ -30,47 +30,58 @@ DimensionReductionScatterplot <- function(algorithm,
                                         raw.table = FALSE,
                                         subset = NULL,
                                         perplexity = 10,
-                                        use.correlation = TRUE,
-                                        binary = TRUE) {
+                                        binary = TRUE,
+                                        normalization = TRUE) {
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
     if (!is.null(data.groups) && length(data.groups) != nrow(data))
         stop("Lengths of data and data.groups must the the same.")
-
-    mds.from.data <- FALSE
-    if ((algorithm == "MDS - Metric" || algorithm == "MDS - Non-metric") && is.null(table)) {
-
-        mds.from.data <- TRUE
-        # Convert unordered factors to binary variables and dates to factors
+    if (!is.null(data))
         data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
 
-        # Identify subset and complete cases
-        if (is.null(subset) || (length(subset) == 1 && subset == TRUE))
-            subset <- rep(TRUE, nrow(data))
-        if (length(subset) != nrow(data))
-            stop("Input data and subset must be same length.")
-
-        subset <- subset & complete.cases(data) & !duplicated(data)
-
-        # Convert data to distance matrix
-        table <- dist(data[subset, ])
-        raw.table <- FALSE
+    if (algorithm == "PCA")
+    {
+        if (is.null(data))
+            stop("PCA requires variables as input but a distance matrix was supplied.")
+        pca <- PrincipalComponentsAnalysis(data = data, subset = subset,
+                                           missing = "Exclude cases with missing data",
+                                           use.correlation = normalization,
+                                           rotation = "none",
+                                           select.n.rule = "Number of factors",
+                                           n.factors = 2,
+                                           print.type = "2d",
+                                           data.groups = data.groups)
+        return(pca)
     }
 
-    if (is.null(table))
-    {
-        distance <- FALSE
+
+    if (!is.null(data)) {
+        input.distance <- FALSE
+
+        if (is.null(subset) || (length(subset) == 1 && subset == TRUE))
+            subset <- rep(TRUE, nrow(data))
+        else if (length(subset) != nrow(data))
+            stop("Input data and subset must be same length.")
+
+        # Remove cases with missing data and duplicates
+        used.subset <- subset & complete.cases(data) & !duplicated(data)
+        processed.data <- data[used.subset, , drop = FALSE]
+        if (normalization)
+            processed.data <- data.frame(StandardizeData(processed.data, method = "Range [0,1]"))
+        if (algorithm != "t-SNE" && is.null(table))
+            distance.matrix <- dist(processed.data)
     }
     else
     {
-        if (algorithm == "PCA")
-            stop("PCA requires variables as input but a distance matrix was supplied.")
-        distance <- TRUE
-        distance.matrix <- if (!raw.table) {
-            table
-        } else {
+        input.distance <- TRUE
+        if (!is.null(subset) && !all(subset))
+            warning("Subset will be ignored for distance matrix input.")
+
+        distance.matrix <- if (raw.table) {
             ParseEnteredData(table)
+        } else {
+            table
         }
 
         cls <- class(distance.matrix)
@@ -86,25 +97,11 @@ DimensionReductionScatterplot <- function(algorithm,
         }
     }
 
-    if (algorithm == "PCA")
+    if (algorithm == "t-SNE")
     {
-        # missing, use.correaltion and rotation are fixed
-        dat <- AsNumeric(data, binary = binary, remove.first = TRUE)
-        pca <- PrincipalComponentsAnalysis(data = dat, subset = subset,
-                                                missing = "Exclude cases with missing data",
-                                                use.correlation = use.correlation,
-                                                rotation = "none",
-                                                select.n.rule = "Number of factors",
-                                                n.factors = 2,
-                                                print.type = "2d",
-                                                data.groups = data.groups)
-        return(pca)
-    }
-    else if (algorithm == "t-SNE")
-    {
-        result <- tSNE(data = if (distance) distance.matrix else data,
-                       subset = subset, is.distance = distance,
-                       binary = binary, perplexity = perplexity)
+        result <- tSNE(data = if (input.distance) distance.matrix else processed.data,
+                       is.distance = input.distance,
+                       perplexity = perplexity)
     }
     else if (algorithm == "MDS - Metric")
     {
@@ -117,15 +114,25 @@ DimensionReductionScatterplot <- function(algorithm,
     else
         stop("Algorithm not recognized.")
 
-    if (mds.from.data) {
-        result$input.is.distance <- FALSE
+    if (!input.distance) {
+        result$input.is.distance <- FALSE     # overwrite for MDS from data - determines output chart type
+        result$used.subset <- used.subset
+
         # Expand the output to be same size as data, filling with NA by default
-        expanded <- matrix(nrow = length(subset), ncol = 2)
-        expanded[subset] <- result$embedding
-        result$embedding <- expanded
+        expanded.embedding <- matrix(nrow = length(subset), ncol = 2)
+        expanded.embedding[used.subset] <- result$embedding
+        result$embedding <- expanded.embedding
+
+        if (algorithm == "t-SNE") {
+            # t-SNE from data - expand input to be same length as original data
+            expanded.input <- matrix(nrow = length(subset), ncol = ncol(processed.data))
+            expanded.input[used.subset] <- as.matrix(processed.data)
+            result$input.data <- expanded.input
+        }
     }
 
     result$data.groups <- data.groups
+    result$normalized <- normalization
     return(result)
 }
 
@@ -148,11 +155,23 @@ convertFactorAnalysisTo2D <- function(x) {
     if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
         stop("Lengths of data and data.groups must the the same.")
 
+    used.subset <- !is.na(x$scores[, 1])
+    input.data <- x$original.data
+    if (x$use.correlation) {
+        # Normalize the used.subset and re-expand
+        data.subset <- input.data[used.subset, , drop = FALSE]
+        data.subset <- StandardizeData(data.subset, method = "z-scores")
+        input.data <- matrix(nrow = nrow(x$original.data), ncol = ncol(x$original.data))
+        input.data[used.subset] <- data.subset
+    }
+
     output <- list(embedding = x$scores[, 1:2],
                    data.groups = x$data.groups,
-                   input.data = x$original.data,
+                   input.data = input.data,
+                   used.subset = used.subset,
+                   normalized = x$use.correlation,
+                   input.is.distance = FALSE,
                    title = "PCA")
-    output$input.is.distance <- FALSE
     class(output) <- c("2Dreduction", "flipFactorAnalysis")
     return(output)
 }
@@ -173,6 +192,7 @@ print.2Dreduction <- function(x, ...) {
     if (x$input.is.distance) {
         chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
                        label = x$label,
+                       fixed.aspect = TRUE,
                        title = x$title,
                        x.title = "Dimension 1",
                        y.title = "Dimension 2",
@@ -191,13 +211,8 @@ print.2Dreduction <- function(x, ...) {
         title <- x$title
         set.seed(1066)
 
-        # Remove NAs due to subset, missing data (all algorithms) and duplicates (tSNE only)
-        # since they cannot be plotted nor nearest-neighbor calculated.
-        complete <- complete.cases(x$embedding)
-        if (!is.null(x$data.groups))
-            complete <- complete & !is.na(x$data.groups)
-        embedding <- x$embedding[complete, ]
-        groups <- x$data.groups[complete]
+        embedding <- x$embedding[x$used.subset, ]
+        groups <- x$data.groups[x$used.subset]
 
         if (!is.null(groups)) {
 
