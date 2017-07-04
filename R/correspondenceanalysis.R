@@ -336,12 +336,28 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
         # Find asymmetric factors
         tmp.sv <- round(ca.obj$sv, 6)
-        ind.sym <- which(!duplicated(tmp.sv) & !duplicated(tmp.sv, fromLast=T))
-        if (x$output == "Scatterplot" && !x$dim1.plot %in% ind.sym)
-            warning("Dimension ", x$dim1.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
-        if (x$output == "Scatterplot" && !x$dim2.plot %in% ind.sym)
-            warning("Dimension ", x$dim2.plot, " is asymmetric and may not be unique. Symmetric and asymmetric dimensions should not be plotted together.")
+        n.sv <- length(tmp.sv)
+        ind.asym <- which(duplicated(tmp.sv) | duplicated(tmp.sv, fromLast=T))
+        ind.sym <- setdiff(1:n.sv, ind.asym)
+        if (x$output == "Scatterplot")
+        {
+            if (x$dim1.plot == x$dim2.plot)
+                stop("Dimensions are not distinct.")
+            if (x$dim1.plot < 1 || x$dim1.plot > n.sv)
+                stop("Dimension 1 should be between 1 and ", n.sv, ".")
+            if (x$dim2.plot < 1 || x$dim2.plot > n.sv)
+                stop("Dimension 2 should be between 1 and ", n.sv, ".")
 
+            num.asym <- sum(c(x$dim1.plot, x$dim2.plot)%in% ind.asym)
+            if (num.asym > 0  && tmp.sv[x$dim1.plot] != tmp.sv[x$dim2.plot])
+            {
+                asym.pair <- sapply(ind.asym, function(ii){which(tmp.sv == tmp.sv[ii])})
+                asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair))], 2,
+                                        function(x){paste(x, collapse=" and ")}),
+                                  collapse="; or ")
+                stop("Asymmetric dimensions should only be plotted in pairs: ", asym.str, ".")
+            }
+        }
 
     } else if (x$num.tables == 1)
     {

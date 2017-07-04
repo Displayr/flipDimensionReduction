@@ -39,6 +39,11 @@ test_that("Low symmetry",
               expect_equal(round(res2$original$sv, 3), c(0.316,0.271,0.271,0.227,0.079,0.065,0.028,0.028,0.0))
               expect_equal(round(abs(unname(res2$original$rowcoord[1:5,4])),2), c(0.37,1.25,0.58,1.00,0.88))
               expect_equal(round(abs(unname(res2$original$rowcoord[1:5,6])),2), c(2.61,0.68,1.61,0.23,0.29))
+
+              expect_error(print(CorrespondenceAnalysis(x2, square=T)), "Asymmetric dimensions should only be plotted in pairs")
+              expect_error(print(CorrespondenceAnalysis(x2, square=T, dim1.plot = 1, dim2.plot = 10)), "Dimension 2 should be between 1 and 9.")
+              expect_error(print(CorrespondenceAnalysis(x2, dim1.plot = 1, dim2.plot = 4, square=T)), NA)
+              expect_error(print(CorrespondenceAnalysis(x2, dim1.plot = 2, dim2.plot = 3, square=T)), NA)
           })
 
 test_that("Check row/column names",
