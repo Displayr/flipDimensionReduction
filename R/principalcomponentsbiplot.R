@@ -98,7 +98,7 @@ print.PCAbiplot <- function(x, ...)
                title = "Principal Components Analysis Biplot",
                x.title = sprintf("%s (%.1f%%)", colnames(coords)[1], pvar[1]),
                y.title = sprintf("%s (%.1f%%)", colnames(coords)[2], pvar[2]),
-               axis.font.size = 8,
+               axis.font.size = 10,
                labels.font.size = 12,
                title.font.size = 20,
                y.title.font.size = 16,
