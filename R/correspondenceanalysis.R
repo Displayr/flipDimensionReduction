@@ -355,7 +355,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                 asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair))], 2,
                                         function(x){paste(x, collapse=" and ")}),
                                   collapse="; or ")
-                stop("Asymmetric dimensions should only be plotted in pairs: ", asym.str, ".")
+                stop("Asymmetric dimensions should only be plotted in the following pairs: ", asym.str, ".")
             }
         }
 
