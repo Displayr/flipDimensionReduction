@@ -97,6 +97,7 @@ CorrespondenceAnalysis = function(x,
 
     # Multiple tables
     # note that a dataframe is actually a list
+    x.stat <- attr(x, "statistic")
     if (!is.null(dim(x[[1]])) && length(x) > 1)
     {
         if (!is.na(multiple.tables) && !multiple.tables)
@@ -182,6 +183,12 @@ CorrespondenceAnalysis = function(x,
                 stop("Output 'Moonplot' is not valid with square matrixes.")
             if (nrow(x) != ncol(x))
                 stop("Input Table is not a square matrix.")
+
+            valid.stat <- c("n", "Total %", "Population", "Correlation", "Index")
+            if (!is.null(x.stat) && !(x.stat %in% valid.stat))
+                warning("Underlying table may not have the appropriate structure. ",
+                        "Correspondence Analysis of Square Tables should only be applied to tables containing one of '",
+                        paste(valid.stat, collapse="', '"), "'.")
 
             r.names <- gsub("^\\s+", "", gsub("\\s+$", "", rownames(x)))
             c.names <- gsub("^\\s+", "", gsub("\\s+$", "", colnames(x)))
@@ -300,6 +307,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     if (x$square)
     {
+        # Trim dimensions of CA?
         n1 <- nrow(x$x)/2
         colnames(ca.obj$rowcoord) <- sprintf("Dimension %d", 1:ncol(ca.obj$rowcoord))
         coords <- sweep(ca.obj$rowcoord[1:n1,], 2, ca.obj$sv, "*")
@@ -355,7 +363,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
                 asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair))], 2,
                                         function(x){paste(x, collapse=" and ")}),
                                   collapse="; or ")
-                stop("Asymmetric dimensions should only be plotted in the following pairs: ", asym.str, ".")
+                warning("Asymmetric dimensions should only be plotted in the following pairs: ", 
+                      asym.str, ". Alternatively, symmetric dimensions can be plotted together in any combination. ",
+                      "The two first symmetric dimensions are ", paste(ind.sym[1:2], collapse=" and "), ".")
             }
         }
 
