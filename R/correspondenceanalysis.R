@@ -263,7 +263,7 @@ CorrespondenceAnalysis = function(x,
 
     original <- ca(x, ...)
 
-    focused <- if (!is.null(focus)) {
+    focused <- if (!is.null(focus) && focus != "") {
         row.col.names <- c(original$rownames, original$colnames)
         if (!focus %in% row.col.names)
             stop(paste(focus, " is not a label in the input table."))
