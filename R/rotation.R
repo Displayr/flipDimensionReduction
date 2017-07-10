@@ -209,3 +209,88 @@ sortLoadingsByComponents <- function(rotated.loadings) {
     return(rotated.loadings)
 }
 
+# Rotate correspondence anlysis so focus.i row or column is along first axis.
+# Second axis maximises variance whilst being orthogonal.
+#' @importFrom nloptr nloptr nl.jacobian
+#' @importFrom GPArotation targetT
+#' @importFrom utils head tail
+setFocus <- function(original, focus.i) {
+
+    # select standard coordinates
+    coords <- rbind(original$rowcoord, original$colcoord)
+
+    # add a dummy focus point for testing
+    #coords <- rbind(coords, rep(0, ncol(coords)))
+    #rownames(coords)[nrow(coords)] <- "DUMMY"
+    #coords[nrow(coords), 1:3] <- c(0.0001, 0, 1.1)
+
+    # show unrotated coordinates and variance explained by axis
+    #print(coords)
+    #plot(coords[, 1], coords[, 2])
+    #text(coords[, 1], coords[, 2], labels = rownames(coords))
+    #print(ca$original$sv)
+    #print(prop.table(ca$original$sv^2))
+    #stop()
+
+    # choose focus point to be rotated to the x-axis
+    #focus <- "Sad"
+    #focus.i <- match(focus, rownames(coords))
+
+    # find the direction of most variance that is perpendicular to the focus direction
+    # minimise negative of length of vector d
+    objective <- function(d) {
+        return(-sum(d^2))
+    }
+
+    grad_objective <- function(d) {
+        return(-2 * d)
+    }
+
+    # d must be perpendicular to focus direction and on variance ellipsoid
+    constraint <- function(d) {
+        perp <- d %*% coords[focus.i, ]
+        ellipse <- sum((d / original$sv)^2) - 1
+        return(rbind(perp, ellipse))
+    }
+
+    grad_constraint <- function(d) {
+        return(nl.jacobian(d, constraint))
+    }
+
+    opt <- nloptr(rep(1, ncol(coords)), eval_f = objective, eval_grad_f = grad_objective, eval_g_eq = constraint,
+                  eval_jac_g_eq = grad_constraint, opts = list("algorithm" = "NLOPT_LD_SLSQP", "xtol_rel" = 1e-6))
+
+    #print(opt)
+    #print(objective(opt$solution))
+    #print(constraint(opt$solution))
+
+    # add new point to coords perpendicular to focus and in plane of most variance
+    coords <- rbind(coords, opt$solution / sqrt(sum(opt$solution^2)))
+
+    tgt <- coords
+    tgt[, ] <- NA
+    #tgt[focus.i, 1:2] <- coords[focus.i, 1:2]        # rotate to same point in plane
+    tgt[focus.i, ] <- 0
+    tgt[focus.i, 1] <- sqrt(sum(coords[focus.i, ]^2))    # rotate focus point to x-axis
+    #tgt[nrow(tgt), ] <- 0
+    #tgt[nrow(tgt), 2] <- 1    #  rotate perpendicular max variance to y-axis
+    rotated <- targetT(coords, Target = tgt)
+
+    #print(rot)
+    #plot(rot$loadings[, 1], rot$loadings[, 2])
+    #text(rot$loadings[, 1], rot$loadings[, 2], labels = rownames(coords))
+
+    old.eigen.mat <- diag(original$sv^2)
+    # equation 11 in Rotation in Correspondence Analysis, van de Velden & Kiers
+    theta <- rotated$Th
+    new.eigen.mat <- t(theta) %*% old.eigen.mat %*% theta
+    rotated.eigenvalues <- sqrt(diag(new.eigen.mat))
+    #print(rotated.eigenvalues)
+    #print(prop.table(rotated.eigenvalues^2))
+    row.col.coord <- head(rotated$loadings, -1)
+    return(list(rowcoord = head(row.col.coord, nrow(original$rowcoord)),
+                colcoord = tail(row.col.coord, nrow(original$colcoord)),
+                sv = rotated.eigenvalues))
+}
+
+

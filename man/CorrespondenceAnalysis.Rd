@@ -6,8 +6,8 @@
 \usage{
 CorrespondenceAnalysis(x, normalization = "Principal",
   output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text",
-  "Input Table")[1], row.names.to.remove = c("NET", "Total", "SUM"),
-  column.names.to.remove = c("NET", "Total", "SUM"),
+  "Input Table")[1], focus = NULL, row.names.to.remove = c("NET", "Total",
+  "SUM"), column.names.to.remove = c("NET", "Total", "SUM"),
   color.palette = "Default colors", row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
@@ -29,6 +29,9 @@ principal coordinates. Note that the plotting occurs via
 \code{\link{print.CorrespondenceAnalysis}}.}
 
 \item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.}
+
+\item{focus}{The label of a row or column category. The output is rotated
+so that the variance of this category lies along the first dimension.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 

@@ -13,7 +13,7 @@
 #' of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.
 #' @param binary If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 #' they are treated as sequential integers. Ignored if input is provided by \code{table}.
-#' @param normalization If \code{data} is supplied, whether to normalize the data so each variable
+#' @param normalization If \code{data} is supplied, whether to standardize the data so each variable
 #' has a mean of 0 and standard deviation of 1.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
@@ -158,7 +158,7 @@ convertFactorAnalysisTo2D <- function(x) {
     used.subset <- !is.na(x$scores[, 1])
     input.data <- x$original.data
     if (x$use.correlation) {
-        # Normalize the used.subset and re-expand
+        # standardize the used.subset and re-expand
         data.subset <- input.data[used.subset, , drop = FALSE]
         data.subset <- StandardizeData(data.subset, method = "z-scores")
         input.data <- matrix(nrow = nrow(x$original.data), ncol = ncol(x$original.data))

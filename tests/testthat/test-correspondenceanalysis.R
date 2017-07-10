@@ -212,3 +212,13 @@ expect_error(CorrespondenceAnalysis(tab, output = "Bubble Chart",
                                     col.color = rep(c("Red", "Green", "Blue"),2),
                        bubble.size = tab[-nrow(tab), 3]), NA)
  })
+
+for (focus in c("Scatterplot", "Moonplot", "Text"))
+    test_that(paste0("CorrespondenceAnalysis focus ", output),
+        {
+        for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
+            expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus,
+                                                     row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
+            expect_error(print(ca), NA)
+        }
+})

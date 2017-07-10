@@ -10,6 +10,8 @@
 #'   principal coordinates. Note that the plotting occurs via
 #'   \code{\link{print.CorrespondenceAnalysis}}.
 #' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.
+#' @param focus The label of a row or column category. The output is rotated
+#'   so that the variance of this category lies along the first dimension.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
@@ -42,6 +44,7 @@
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
                                   output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "Input Table")[1],
+                                  focus = NULL,
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   color.palette = "Default colors",
@@ -257,6 +260,18 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
+
+    original <- ca(x, ...)
+
+    focused <- if (!is.null(focus)) {
+        row.col.names <- c(original$rownames, original$colnames)
+        if (!focus %in% row.col.names)
+            stop(paste(focus, " is not a label in the input table."))
+        focused <- setFocus(original, match(focus, row.col.names))
+    }
+    else
+        NULL
+
     result <- list(x = x,
                    row.column.names = row.column.names,
                    normalization = normalization,
@@ -264,7 +279,8 @@ CorrespondenceAnalysis = function(x,
                    color.palette = color.palette,
                    row.color = row.color,
                    col.color = col.color,
-                   original = ca(x, ...),
+                   original = original,
+                   focused = focused,
                    bubble.size = bubble.size,
                    bubble.title = bubble.title,
                    chart.title = chart.title,
@@ -295,7 +311,12 @@ CorrespondenceAnalysis = function(x,
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
-    ca.obj <- x$original
+    ca.obj <- if (!is.null(x$focused)) {
+        x$focused
+    } else {
+        x$original
+    }
+
     singular.values <- round(ca.obj$sv^2, 6)
     variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[c(x$dim1.plot, x$dim2.plot)]
     column.labels <- paste("Dimension", c(x$dim1.plot, x$dim2.plot), paste0("(", variance.explained, ")"))
@@ -327,12 +348,12 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (x$output == "Text")
             ca.obj$nd <- 1
-        else if(x$output == "Scatterplot")
+        else if(x$output == "Scatterplot" || x$output == "Bubble Chart")
             coords <- cbind(coords, 0)
         else
         {
-            ca.obj$rowcoord <- cbind(ca.obj$rowcoord, 0)
-            ca.obj$colcoord <- cbind(ca.obj$colcoord, 0)
+            row.coordinates <- cbind(row.coordinates, 0)
+            column.coordinates <- cbind(column.coordinates, 0)
         }
     }
 
@@ -363,7 +384,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                 asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair))], 2,
                                         function(x){paste(x, collapse=" and ")}),
                                   collapse="; or ")
-                warning("Asymmetric dimensions should only be plotted in the following pairs: ", 
+                warning("Asymmetric dimensions should only be plotted in the following pairs: ",
                       asym.str, ". Alternatively, symmetric dimensions can be plotted together in any combination. ",
                       "The two first symmetric dimensions are ", paste(ind.sym[1:2], collapse=" and "), ".")
             }
@@ -456,7 +477,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (x$normalization != "Row principal")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
-        print(moonplot(ca.obj$rowcoord[,1:2], ca.obj$colcoord[,1:2]))
+        print(moonplot(row.coordinates[,1:2], column.coordinates[,1:2]))
     } else if (x$output == "Input Table")
     {
         return(print(x.data))

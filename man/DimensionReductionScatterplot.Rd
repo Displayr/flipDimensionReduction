@@ -29,7 +29,7 @@ of the dimension reduction. Used only when \code{algorithm} is \code{t-SNE}.}
 \item{binary}{If \code{TRUE}, unordered factors are converted to dummy variables. Otherwise,
 they are treated as sequential integers. Ignored if input is provided by \code{table}.}
 
-\item{normalization}{If \code{data} is supplied, whether to normalize the data so each variable
+\item{normalization}{If \code{data} is supplied, whether to standardize the data so each variable
 has a mean of 0 and standard deviation of 1.}
 }
 \description{

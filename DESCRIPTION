@@ -25,13 +25,15 @@ Imports:
     flipU,
     GPArotation,
     MASS,
+    nloptr,
     plotly,
     psych,
     rhtmlLabeledScatter,
     rhtmlMoonPlot,
     Rtsne,
     stats,
-    tsne
+    tsne,
+    utils
 Remotes: 
     Displayr/flipChartBasics,
     Displayr/flipTransformations,
