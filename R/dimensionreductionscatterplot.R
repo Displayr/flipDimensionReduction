@@ -133,6 +133,7 @@ DimensionReductionScatterplot <- function(algorithm,
 
     result$data.groups <- data.groups
     result$normalized <- normalization
+    class(result) <- c("2Dreduction", class(result))
     return(result)
 }
 

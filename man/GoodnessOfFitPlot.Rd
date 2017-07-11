@@ -2,19 +2,11 @@
 % Please edit documentation in R/goodnessoffitplot.R
 \name{GoodnessOfFitPlot}
 \alias{GoodnessOfFitPlot}
-\alias{GoodnessOfFitPlot.default}
-\alias{GoodnessOfFitPlot.Regression}
 \alias{GoodnessOfFitPlot.flipFactorAnalysis}
 \alias{GoodnessOfFitPlot.2Dreduction}
 \title{\code{GoodnessOfFitPlot}}
 \usage{
 GoodnessOfFitPlot(object, ...)
-
-\method{GoodnessOfFitPlot}{default}(object, digits = max(3L,
-  getOption("digits") - 3L), max.points = 1000, ...)
-
-\method{GoodnessOfFitPlot}{Regression}(object, digits = max(3L,
-  getOption("digits") - 3L), max.points = 1000, ...)
 
 \method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000, ...)
 
@@ -24,8 +16,6 @@ GoodnessOfFitPlot(object, ...)
 \item{object}{An object for which a summary is desired.}
 
 \item{...}{Additional arguments affecting the goodness-of-fit displayed.}
-
-\item{digits}{Minimal number of significant digits, see \code{\link{print.default}}.}
 
 \item{max.points}{The maximum numner of points to plot.}
 }
@@ -38,10 +28,6 @@ Reports the goodness-of-fit of an object.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{default}: Default goodness-of-fit plot
-
-\item \code{Regression}: Goodness-of-fit plot for a Regression object
-
 \item \code{flipFactorAnalysis}: Goodness-of-fit plot for a flipFactorAnalysis object
 
 \item \code{2Dreduction}: Goodness-of-fit plot for a 2Dreduction object

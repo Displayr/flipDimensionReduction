@@ -40,7 +40,7 @@ tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
         output$embedding[, c(1, 2)] <- output$embedding[, c(2, 1)]
 
     output$input.is.distance <- is.distance
-    class(output) <- c("2Dreduction", "tSNE")
+    class(output) <- "tSNE"
     return(output)
 }
 

@@ -266,7 +266,7 @@ CorrespondenceAnalysis = function(x,
     focused <- if (!is.null(focus) && focus != "") {
         row.col.names <- c(original$rownames, original$colnames)
         if (!focus %in% row.col.names)
-            stop(paste(focus, " is not a label in the input table."))
+            stop(paste("Focus label ", focus, " is not a label in the input table."))
         focused <- setFocus(original, match(focus, row.col.names))
     }
     else
@@ -505,7 +505,24 @@ print.CorrespondenceAnalysis <- function(x, ...)
         print(coords[,ind.sym])
     } else
     {
-        print(ca.obj, ...)
+        if (!is.null(x$focused)) {
+            cat("**** AFTER FOCUS ROTATION ****\n")
+            cat("\n Principal inertias (eigenvalues):\n")
+            Value <- round(x$focused$sv^2, 6)
+            Percentage <- paste(as.character(round(100 * Value/sum(Value), 2)), "%", sep = "")
+            eigenvalues <- rbind(Value = as.character(Value), Percentage = as.character(Percentage))
+            colnames(eigenvalues) <- 1:length(x$focused$sv)
+            print.table(eigenvalues, width = 4)
+            cat("\n  Rows:\n")
+            print(x$focused$rowcoord)
+            cat("\n  Columns:\n")
+            print(x$focused$colcoord)
+            cat("\n**** BEFORE FOCUS ROTATION ****\n")
+        }
+        unrotated <- x$original
+        if (ncol(coords) == 1)
+            unrotated$nd <- 1
+        print(unrotated, ...)
     }
 }
 

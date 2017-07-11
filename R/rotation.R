@@ -219,23 +219,6 @@ setFocus <- function(original, focus.i) {
     # select standard coordinates
     coords <- rbind(original$rowcoord, original$colcoord)
 
-    # add a dummy focus point for testing
-    #coords <- rbind(coords, rep(0, ncol(coords)))
-    #rownames(coords)[nrow(coords)] <- "DUMMY"
-    #coords[nrow(coords), 1:3] <- c(0.0001, 0, 1.1)
-
-    # show unrotated coordinates and variance explained by axis
-    #print(coords)
-    #plot(coords[, 1], coords[, 2])
-    #text(coords[, 1], coords[, 2], labels = rownames(coords))
-    #print(ca$original$sv)
-    #print(prop.table(ca$original$sv^2))
-    #stop()
-
-    # choose focus point to be rotated to the x-axis
-    #focus <- "Sad"
-    #focus.i <- match(focus, rownames(coords))
-
     # find the direction of most variance that is perpendicular to the focus direction
     # minimise negative of length of vector d
     objective <- function(d) {
@@ -260,33 +243,22 @@ setFocus <- function(original, focus.i) {
     opt <- nloptr(rep(1, ncol(coords)), eval_f = objective, eval_grad_f = grad_objective, eval_g_eq = constraint,
                   eval_jac_g_eq = grad_constraint, opts = list("algorithm" = "NLOPT_LD_SLSQP", "xtol_rel" = 1e-6))
 
-    #print(opt)
-    #print(objective(opt$solution))
-    #print(constraint(opt$solution))
-
     # add new point to coords perpendicular to focus and in plane of most variance
     coords <- rbind(coords, opt$solution / sqrt(sum(opt$solution^2)))
 
     tgt <- coords
     tgt[, ] <- NA
-    #tgt[focus.i, 1:2] <- coords[focus.i, 1:2]        # rotate to same point in plane
     tgt[focus.i, ] <- 0
     tgt[focus.i, 1] <- sqrt(sum(coords[focus.i, ]^2))    # rotate focus point to x-axis
-    #tgt[nrow(tgt), ] <- 0
-    #tgt[nrow(tgt), 2] <- 1    #  rotate perpendicular max variance to y-axis
+    tgt[nrow(tgt), ] <- 0
+    tgt[nrow(tgt), 2] <- 1    # rotate max variance dirn (perp to focus point) to y-axis
     rotated <- targetT(coords, Target = tgt)
 
-    #print(rot)
-    #plot(rot$loadings[, 1], rot$loadings[, 2])
-    #text(rot$loadings[, 1], rot$loadings[, 2], labels = rownames(coords))
-
+    # Calculate rotated eigenvalues
     old.eigen.mat <- diag(original$sv^2)
-    # equation 11 in Rotation in Correspondence Analysis, van de Velden & Kiers
     theta <- rotated$Th
     new.eigen.mat <- t(theta) %*% old.eigen.mat %*% theta
     rotated.eigenvalues <- sqrt(diag(new.eigen.mat))
-    #print(rotated.eigenvalues)
-    #print(prop.table(rotated.eigenvalues^2))
     row.col.coord <- head(rotated$loadings, -1)
     return(list(rowcoord = head(row.col.coord, nrow(original$rowcoord)),
                 colcoord = tail(row.col.coord, nrow(original$colcoord)),
