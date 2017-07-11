@@ -5,7 +5,6 @@
 #' @param metric Whether to use metric or non-metric scaling.
 #' @importFrom stats cmdscale
 #' @importFrom MASS isoMDS
-#' @export
 
 MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
 

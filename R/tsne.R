@@ -12,7 +12,6 @@
 #' @importFrom flipTransformations AsNumeric
 #' @importFrom stats complete.cases
 #' @importFrom flipFormat Labels
-#' @export
 
 tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
 
