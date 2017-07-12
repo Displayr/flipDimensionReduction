@@ -2,9 +2,14 @@
 % Please edit documentation in R/dimensionreductionscatterplot.R
 \name{DimensionReductionScatterplot}
 \alias{DimensionReductionScatterplot}
+\alias{DimensionReduction}
 \title{\code{DimensionReductionScatterplot}}
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
+  table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
+  binary = TRUE, normalization = FALSE)
+
+DimensionReduction(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
   binary = TRUE, normalization = FALSE)
 }
@@ -33,6 +38,8 @@ they are treated as sequential integers. Ignored if input is provided by \code{t
 has a mean of 0 and standard deviation of 1.}
 }
 \description{
+\code{DimensionReductionScatterplot}
+
 Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally
 another \code{\link{vector}} to be used as a grouping variable, or takes a distance \code{\link{matrix}}.
 }

@@ -1,4 +1,22 @@
 #' \code{DimensionReductionScatterplot}
+#' @rdname DimensionReduction
+#' @export
+DimensionReductionScatterplot <- function(algorithm,
+                                          data = NULL,
+                                          data.groups = NULL,
+                                          table = NULL,
+                                          raw.table = FALSE,
+                                          subset = NULL,
+                                          perplexity = 10,
+                                          binary = TRUE,
+                                          normalization = FALSE) {
+
+    DimensionReduction(algorithm, data = data, data.groups = data.groups, table = table, raw.table = raw.table,
+                       subset = subset, perplexity = perplexity, binary = binary, normalization = normalization)
+}
+
+
+#' \code{DimensionReduction}
 #' @description Produces as 2-dimensional embedding. Takes either a \code{\link{data.frame}} of variables and optionally
 #' another \code{\link{vector}} to be used as a grouping variable, or takes a distance \code{\link{matrix}}.
 #' @param algorithm Valid options are \code{"t-SNE"}, \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or \code{"PCA"},
@@ -23,7 +41,7 @@
 #' @importFrom stats dist
 #' @export
 
-DimensionReductionScatterplot <- function(algorithm,
+DimensionReduction <- function(algorithm,
                                         data = NULL,
                                         data.groups = NULL,
                                         table = NULL,
