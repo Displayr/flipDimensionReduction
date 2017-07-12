@@ -37,6 +37,7 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: data.frame", {
                 expect_error(d <- DimensionReductionScatterplot(data = input.data, data.groups = groups, algorithm = algo,
                                                            perplexity = 10, normalization = norm, subset = subset), NA)
                 expect_error(GoodnessOfFitPlot(d, max.points = 100), NA)
+                expect_error(fitted(d), NA)
             }
         }
     }
@@ -47,6 +48,7 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: raw matrix", {
         expect_error(d <- DimensionReductionScatterplot(table = middle.east, algorithm = algo, raw.table = TRUE,
                                                         perplexity = 3), NA)
         expect_error(GoodnessOfFitPlot(d, max.points = 100), NA)
+        expect_error(fitted(d), NA)
     }
 })
 
@@ -55,5 +57,6 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: distance matrix", 
         expect_error(d <- DimensionReductionScatterplot(table = breakfast, algorithm = algo, raw.table = FALSE,
                                                         perplexity = 3), NA)
         expect_error(GoodnessOfFitPlot(d, max.points = 100), NA)
+        expect_error(fitted(d), NA)
     }
 })
