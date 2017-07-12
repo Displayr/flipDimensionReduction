@@ -224,12 +224,12 @@ for (output in c("Scatterplot", "Moonplot", "Text"))
         {
             for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
                 expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus,
-                                                         row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-                expect_error(print(ca), NA)
+                                                         row.names.to.remove = "NET",  column.names.to.remove = "NET", normalization = "Row principal"), NA)
+                expect_error(capture.output(print(ca)), NA)
             }
             for (focus in c(colnames(z), rownames(z))) {
-                expect_error(ca <- CorrespondenceAnalysis(z, output = output, focus = focus), NA)
-                expect_error(print(ca), NA)
+                expect_error(ca <- CorrespondenceAnalysis(z, output = output, focus = focus, normalization = "Row principal"), NA)
+                expect_error(capture.output(print(ca)), NA)
             }
         }
 )
