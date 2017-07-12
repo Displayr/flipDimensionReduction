@@ -103,7 +103,7 @@ DimensionReduction <- function(algorithm,
         }
 
         cls <- class(distance.matrix)
-        if (cls != "dist" && cls != "Distance") {
+        if (cls != "dist" && cls != "DistanceMatrix") {
             if (cls != "matrix" || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix))
                 stop("Distance matrix must be symmetrical and numeric.")
             diag(distance.matrix)[is.na(diag(distance.matrix))] <- 0

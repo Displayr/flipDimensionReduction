@@ -215,22 +215,30 @@ expect_error(CorrespondenceAnalysis(tab, output = "Bubble Chart",
 
 
 
-data("colas", package = "flipExampleData")
-z <- xtabs(~d1 + d2, data = colas)
-z <- z[rowSums(z) > 0, colSums(z) > 0]
 
 for (output in c("Scatterplot", "Moonplot", "Text"))
-    test_that(paste0("CorrespondenceAnalysis focus ", output),
+    test_that(paste0("CorrespondenceAnalysis: focus by output ", output),
         {
             for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
-                expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus,
+                expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus, normalization = "Row principal",
                                                          row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-                expect_error(print(ca), NA)
-            }
-            for (focus in c(colnames(z), rownames(z))) {
-                expect_error(ca <- CorrespondenceAnalysis(z, output = output, focus = focus), NA)
-                expect_error(print(ca), NA)
+                expect_error(capture.output(print(ca)), NA)
             }
         }
 )
 
+
+data("colas", package = "flipExampleData")
+z <- xtabs(~d1 + d2, data = colas)
+z <- z[rowSums(z) > 0, colSums(z) > 0]
+
+for (n in c("Principal", "Row principal", "Column principal", "None"))
+    test_that(paste0("CorrespondenceAnalysis: focus by normalization ", n),
+              {
+                  for (focus in c(colnames(z), rownames(z))) {
+                      expect_error(ca <- CorrespondenceAnalysis(z, output = "Scatterplot",
+                                                                normalization = n, focus = focus), NA)
+                      expect_error(capture.output(print(ca)), NA)
+                  }
+              }
+    )
