@@ -156,12 +156,11 @@ DistanceMatrix <- function(input.data,
             stop("The measures are constant and cannot be transformed to the range [0,1].")
     }
 
-    attr(distance.matrix, "show.cell.values") <- show.cell.values
-    attr(distance.matrix, "show.row.labels") <- show.row.labels
-    attr(distance.matrix, "show.column.labels") <- show.column.labels
-    attr(distance.matrix, "measure") <- measure
-    class(distance.matrix) <- "DistanceMatrix"
-    distance.matrix
+    output <- list(distance = distance.matrix, show.cell.values = show.cell.values,
+                   show.row.labels = show.row.labels, show.column.labels = show.column.labels,
+                   measure = measure)
+    class(output) <- "DistanceMatrix"
+    output
 }
 
 
@@ -173,20 +172,21 @@ DistanceMatrix <- function(input.data,
 #' @export
 print.DistanceMatrix <- function(x, ...)
 {
-    n <- ncol(x)
-    show.cell.values <- attr(x, "show.cell.values")
+    d <- x$distance
+    n <- ncol(d)
+    show.cell.values <- x$show.cell.values
     cellnote <- matrix("", n, n)
     for (i in 1:n)
         for (j in 1:n)
-            cellnote[i, j] <- FormatWithDecimals(x[i, j], 2)
+            cellnote[i, j] <- FormatWithDecimals(d[i, j], 2)
     show.cellnote.in.cell <- (n <= 10 && show.cell.values != "No") || show.cell.values == "Yes"
-    show.x.axes.labels <- attr(x, "show.column.labels") == "Yes"
-    show.y.axes.labels <- attr(x, "show.row.labels") == "Yes"
+    show.x.axes.labels <- x$show.column.labels == "Yes"
+    show.y.axes.labels <- x$show.row.labels == "Yes"
 
-    if (attr(x, "measure") == "Similarities") {
+    if (x$measure == "Similarities") {
         # Values may be slightly larger than 1 due to numerical errors
-        x[x > 1] <- 1
-        x[x < -1] <- -1
+        d[d > 1] <- 1
+        d[d < -1] <- -1
         colours <- "RdBu"
         colour.range <- c(-1, 1)
     } else {
@@ -194,7 +194,7 @@ print.DistanceMatrix <- function(x, ...)
         colour.range <- NULL
     }
 
-    dm <- rhtmlHeatmap::Heatmap(x,
+    dm <- rhtmlHeatmap::Heatmap(d,
                           Rowv = NULL,
                           Colv = NULL,
                           cellnote = cellnote,

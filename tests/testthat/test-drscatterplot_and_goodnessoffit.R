@@ -52,7 +52,7 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: raw matrix", {
     }
 })
 
-test_that("Dimension Reduction Scatterplot and GoodnessOfFit: distance matrix", {
+test_that("Dimension Reduction Scatterplot and GoodnessOfFit: distance matrix (class = dist)", {
     for (algo in c("t-SNE", "MDS - Metric", "MDS - Non-metric")) {
         expect_error(d <- DimensionReductionScatterplot(table = breakfast, algorithm = algo, raw.table = FALSE,
                                                         perplexity = 3), NA)
@@ -60,3 +60,18 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: distance matrix", 
         expect_error(fitted(d), NA)
     }
 })
+
+data(pcaPhoneTestData, package = "flipExampleData")
+phone.data <- pcaPhoneTestData$data.set.original # Most cases do not have missing observations (named "q23" in SPSS file)
+dm <- DistanceMatrix(phone.data)
+
+test_that("Dimension Reduction Scatterplot and GoodnessOfFit: distance matrix (class = DistanceMatrix)", {
+    for (algo in c("t-SNE", "MDS - Metric", "MDS - Non-metric")) {
+        expect_error(d <- DimensionReductionScatterplot(table = dm, algorithm = algo, raw.table = FALSE,
+                                                        perplexity = 3), NA)
+        expect_error(GoodnessOfFitPlot(d, max.points = 100), NA)
+        expect_error(fitted(d), NA)
+    }
+})
+
+

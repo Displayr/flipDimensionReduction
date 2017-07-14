@@ -21,7 +21,7 @@ where the latter does not accept a distance matrix as input.}
 
 \item{data.groups}{A \code{\link{vector}} to be used as a grouping variable for the embedded \code{data}.}
 
-\item{table}{A symmetrical distance \code{\link{matrix}}.}
+\item{table}{A symmetrical distance \code{\link{matrix}} or an object of class \code{dist} or \code{DistanceMatrix}.}
 
 \item{raw.table}{If \code{TRUE}, \code{\link{ParseEnteredData}} is called on \code{table} to create a numeric matrix from text.}
 

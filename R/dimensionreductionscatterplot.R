@@ -23,7 +23,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #' where the latter does not accept a distance matrix as input.
 #' @param data A \code{\link{data.frame}} with cases by row and variables by column.
 #' @param data.groups A \code{\link{vector}} to be used as a grouping variable for the embedded \code{data}.
-#' @param table A symmetrical distance \code{\link{matrix}}.
+#' @param table A symmetrical distance \code{\link{matrix}} or an object of class \code{dist} or \code{DistanceMatrix}.
 #' @param raw.table If \code{TRUE}, \code{\link{ParseEnteredData}} is called on \code{table} to create a numeric matrix from text.
 #' @param subset A logical vector which describes the subset of \code{data} to be analyzed.
 #' Not used for \code{table} input.
@@ -103,6 +103,8 @@ DimensionReduction <- function(algorithm,
         }
 
         cls <- class(distance.matrix)
+        if (cls == "DistanceMatrix")
+            distance.matrix <- distance.matrix$distance
         if (cls != "dist" && cls != "DistanceMatrix") {
             if (cls != "matrix" || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix))
                 stop("Distance matrix must be symmetrical and numeric.")
