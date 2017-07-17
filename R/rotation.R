@@ -209,18 +209,19 @@ sortLoadingsByComponents <- function(rotated.loadings) {
     return(rotated.loadings)
 }
 
-# Rotate correspondence anlysis so focus.i row or column is along first axis.
+# Rotate correspondence analysis so focus.i row or column is along first axis.
 # Second axis maximises variance whilst being orthogonal.
 #' @importFrom nloptr nloptr nl.jacobian
 #' @importFrom GPArotation targetT
 #' @importFrom utils head tail
 setFocus <- function(original, focus.i) {
 
-    # select standard coordinates
-    coords <- rbind(original$rowcoord, original$colcoord)
+    # Select principal coordinates
+    principal <- CANormalization(original, normalization = "Principal")
+    coords <- rbind(principal$row.coordinates, principal$column.coordinates)
 
-    # find the direction of most variance that is perpendicular to the focus direction
-    # minimise negative of length of vector d
+    # Find the direction of most variance that is perpendicular to the focus direction
+    # Minimise negative of length of vector d
     objective <- function(d) {
         return(-sum(d^2))
     }
@@ -243,7 +244,7 @@ setFocus <- function(original, focus.i) {
     opt <- nloptr(rep(1, ncol(coords)), eval_f = objective, eval_grad_f = grad_objective, eval_g_eq = constraint,
                   eval_jac_g_eq = grad_constraint, opts = list("algorithm" = "NLOPT_LD_SLSQP", "xtol_rel" = 1e-6))
 
-    # add new point to coords perpendicular to focus and in plane of most variance
+    # Add new point to coords perpendicular to focus and in plane of most variance
     coords <- rbind(coords, opt$solution / sqrt(sum(opt$solution^2)))
 
     tgt <- coords
@@ -259,9 +260,15 @@ setFocus <- function(original, focus.i) {
     theta <- rotated$Th
     new.eigen.mat <- t(theta) %*% old.eigen.mat %*% theta
     rotated.eigenvalues <- sqrt(diag(new.eigen.mat))
-    row.col.coord <- head(rotated$loadings, -1)
-    return(list(rowcoord = head(row.col.coord, nrow(original$rowcoord)),
-                colcoord = tail(row.col.coord, nrow(original$colcoord)),
+
+    # Convert back to standard coordinates
+    rotated.principal <- list(rowcoord = head(head(rotated$loadings, -1), nrow(original$rowcoord)),
+                              colcoord = tail(head(rotated$loadings, -1), nrow(original$colcoord)),
+                              sv = rotated.eigenvalues)
+    rotated.standard <- CANormalization(rotated.principal, "Inverse")
+
+    return(list(rowcoord = rotated.standard$row.coordinates,
+                colcoord = rotated.standard$column.coordinates,
                 sv = rotated.eigenvalues))
 }
 

@@ -551,8 +551,10 @@ CANormalization <- function(ca.object, normalization = "Principal")
             sweep(coords[,1:m], 2, ca.object$sv[1:m]^power, "*")
     }
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 1, "Column principal" = 0, "Symmetrical (\u00BD)" = 0.5, "None" = 0))
+        "Principal" = 1, "Row principal" = 1, "Column principal" = 0,
+        "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 0, "Column principal" = 1, "Symmetrical (\u00BD)" = 0.5, "None" = 0))
+        "Principal" = 1, "Row principal" = 0, "Column principal" = 1,
+        "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
     list(row.coordinates = rows, column.coordinates = columns)
 }
