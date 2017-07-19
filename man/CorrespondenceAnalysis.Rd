@@ -25,8 +25,10 @@ correspondence analysis plot (this changes the plot, but not the outputs of
 which plots the principal coordinates (i.e., the standard coordinates
 multiplied by the singular values). \code{"Row principal"} and \code{"Column
 principal"} plot the standard coordinates of the columns (rows) against the
-principal coordinates. Note that the plotting occurs via
-\code{\link{print.CorrespondenceAnalysis}}.}
+principal coordinates. \code{"Row principal (scaled)"} is the same as \code{"Row principal"}
+except that both column coordinates are equally scaled so that column points appear
+on a similar scale to row points. \code{"Column principal (scaled)"} is analagous.
+Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.}
 
 \item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.}
 

@@ -232,7 +232,7 @@ data("colas", package = "flipExampleData")
 z <- xtabs(~d1 + d2, data = colas)
 z <- z[rowSums(z) > 0, colSums(z) > 0]
 
-for (n in c("Principal", "Row principal", "Column principal", "None"))
+for (n in c("Principal", "Row principal", "Column principal", "None", "Row principal (scaled)", "Column principal (scaled)"))
     test_that(paste0("CorrespondenceAnalysis: focus by normalization ", n),
               {
                   for (focus in c(colnames(z), rownames(z))) {

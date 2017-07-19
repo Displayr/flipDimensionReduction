@@ -7,8 +7,10 @@
 #'   which plots the principal coordinates (i.e., the standard coordinates
 #'   multiplied by the singular values). \code{"Row principal"} and \code{"Column
 #'   principal"} plot the standard coordinates of the columns (rows) against the
-#'   principal coordinates. Note that the plotting occurs via
-#'   \code{\link{print.CorrespondenceAnalysis}}.
+#'   principal coordinates. \code{"Row principal (scaled)"} is the same as \code{"Row principal"}
+#'   except that both column coordinates are equally scaled so that column points appear
+#'   on a similar scale to row points. \code{"Column principal (scaled)"} is analagous.
+#'   Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.
 #' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.
 #' @param focus The label of a row or column category. The output is rotated
 #'   so that the variance of this category lies along the first dimension.
@@ -475,7 +477,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     } else if (x$output == "Moonplot")
     {
-        if (x$normalization != "Row principal")
+        if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         print(moonplot(row.coordinates[,1:2], column.coordinates[,1:2]))
     } else if (x$output == "Input Table")
@@ -551,10 +553,18 @@ CANormalization <- function(ca.object, normalization = "Principal")
             sweep(coords[,1:m], 2, ca.object$sv[1:m]^power, "*")
     }
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 1, "Column principal" = 0,
+        "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
+        "Column principal" = 0, "Column principal (scaled)" = 0,
         "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 0, "Column principal" = 1,
+        "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
+        "Column principal" = 1, "Column principal (scaled)" = 1,
         "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+
+    if (normalization == "Row principal (scaled)")
+        columns = columns * ca.object$sv[1]
+    if (normalization == "Column principal (scaled)")
+        rows = rows * ca.object$sv[1]
+
     list(row.coordinates = rows, column.coordinates = columns)
 }
