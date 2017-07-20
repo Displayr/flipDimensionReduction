@@ -320,8 +320,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
     }
 
     singular.values <- round(ca.obj$sv^2, 6)
-    variance.explained <- paste(as.character(round(100 * prop.table(singular.values), 1)), "%", sep = "")[c(x$dim1.plot, x$dim2.plot)]
-    column.labels <- paste("Dimension", c(x$dim1.plot, x$dim2.plot), paste0("(", variance.explained, ")"))
+    d.tmp <- c(x$dim1.plot, x$dim2.plot)
+    column.labels <- sprintf("Dimension %d (%.1f%%)", d.tmp, 100*prop.table(singular.values)[d.tmp])
 
     #if (x$dim1.plot > ncol(ca.obj$rowcoord))
     #    stop(sprintf("'First dimension to plot' must be an non-negative integer no greater than %d", ncol(ca.obj$rowcoord)))
