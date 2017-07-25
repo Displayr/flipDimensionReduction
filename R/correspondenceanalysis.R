@@ -1,6 +1,6 @@
 #' \code{CorrespondenceAnalysis}
 #' @description Removes rows or columns from the table.
-#' @param x A table or a list of tables.
+#' @param x A \code{\link{matrix}} or a list of matrices.
 #' @param normalization The method used to normalize the coordinates of the
 #'   correspondence analysis plot (this changes the plot, but not the outputs of
 #'   \code{\link[ca]{ca}} itself. The default method is \code{"Principal"},
@@ -14,6 +14,8 @@
 #' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.
 #' @param focus The label of a row or column category. The output is rotated
 #'   so that the variance of this category lies along the first dimension.
+#' @param supplementary A vector of rows or columns to be treated as supplementary, i.e. not included
+#'   in the calculation of the coordinate space but to be plotted.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
 #'   variable is provided, any cases with missing values on this variable are
@@ -41,12 +43,14 @@
 #' @param dim2.plot Dimension to show in Y-axis of bubble or scatterplot.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
+#' @importFrom flipTransformations RetainedRowsAndOrColumns
 #' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
                                   output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "Input Table")[1],
                                   focus = NULL,
+                                  supplementary = NULL,
                                   row.names.to.remove = c("NET", "Total", "SUM"),
                                   column.names.to.remove = c("NET", "Total", "SUM"),
                                   color.palette = "Default colors",
@@ -263,7 +267,30 @@ CorrespondenceAnalysis = function(x,
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
 
-    original <- ca(x, ...)
+    if (!is.null(supplementary)) {
+        #supp.rows <- match(supplementary, rownames(x))
+        #supp.cols <- match(supplementary, colnames(x))
+        #unmatched <- is.na(supp.rows) && is.na(supp.cols)
+        #if (any(unmatched)) {
+        #    unmatched.labels <- supplementary[unmatched]
+        #    warning(paste("Supplementary rows or columns", unmatched.labels,
+        #                  "do not match any rows or columns in the data and will be ignored."))
+        #}
+        retained <- RetainedRowsAndOrColumns(x, row.names.to.remove = supplementary,
+                                             column.names.to.remove = supplementary)
+        rowsup <- setdiff(seq(nrow(x)), retained$retained.rows)
+        colsup <- setdiff(seq(ncol(x)), retained$retained.cols)
+
+        removed.labels <- tolower(trimws(c((rownames(x)[rowsup]), (colnames(x)[colsup]))))
+        supp.labels <- tolower(trimws(unlist(strsplit(supplementary, split = ","))))
+        unmatched.labels <- setdiff(supp.labels, removed.labels)
+        if (!is.null(unmatched.labels))
+            warning(paste("Supplementary rows or columns", unmatched.labels,
+                          "do not match any rows or columns in the data and will be ignored."))
+
+    }
+
+    original <- ca(x, rowsup = rowsup, colsup = colsup, ...)
 
     focused <- if (!is.null(focus) && focus != "") {
         row.col.names <- c(original$rownames, original$colnames)

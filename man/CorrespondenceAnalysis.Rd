@@ -6,8 +6,9 @@
 \usage{
 CorrespondenceAnalysis(x, normalization = "Principal",
   output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text",
-  "Input Table")[1], focus = NULL, row.names.to.remove = c("NET", "Total",
-  "SUM"), column.names.to.remove = c("NET", "Total", "SUM"),
+  "Input Table")[1], focus = NULL, supplementary = NULL,
+  row.names.to.remove = c("NET", "Total", "SUM"),
+  column.names.to.remove = c("NET", "Total", "SUM"),
   color.palette = "Default colors", row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
@@ -17,7 +18,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   dim2.plot = 2, ...)
 }
 \arguments{
-\item{x}{A table or a list of tables.}
+\item{x}{A \code{\link{matrix}} or a list of matrices.}
 
 \item{normalization}{The method used to normalize the coordinates of the
 correspondence analysis plot (this changes the plot, but not the outputs of
@@ -34,6 +35,9 @@ Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.}
 
 \item{focus}{The label of a row or column category. The output is rotated
 so that the variance of this category lies along the first dimension.}
+
+\item{supplementary}{A vector of rows or columns to be treated as supplementary, i.e. not included
+in the calculation of the coordinate space but to be plotted.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 
