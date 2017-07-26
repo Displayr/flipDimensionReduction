@@ -267,35 +267,37 @@ CorrespondenceAnalysis = function(x,
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
 
+    footer <- paste0("Normalization: ", normalization)
+
+    suprow <- supcol <- integer(0)
     if (!is.null(supplementary)) {
-        #supp.rows <- match(supplementary, rownames(x))
-        #supp.cols <- match(supplementary, colnames(x))
-        #unmatched <- is.na(supp.rows) && is.na(supp.cols)
-        #if (any(unmatched)) {
-        #    unmatched.labels <- supplementary[unmatched]
-        #    warning(paste("Supplementary rows or columns", unmatched.labels,
-        #                  "do not match any rows or columns in the data and will be ignored."))
-        #}
         retained <- RetainedRowsAndOrColumns(x, row.names.to.remove = supplementary,
                                              column.names.to.remove = supplementary)
-        rowsup <- setdiff(seq(nrow(x)), retained$retained.rows)
-        colsup <- setdiff(seq(ncol(x)), retained$retained.cols)
+        if (length(retained$retained.rows) < 2 || length(retained$retained.cols) < 2)
+            stop("At least 2 rows and 2 columns must remain after removing supplementary points.")
+        suprow <- setdiff(seq(nrow(x)), retained$retained.rows)
+        supcol <- setdiff(seq(ncol(x)), retained$retained.cols)
 
-        removed.labels <- tolower(trimws(c((rownames(x)[rowsup]), (colnames(x)[colsup]))))
-        supp.labels <- tolower(trimws(unlist(strsplit(supplementary, split = ","))))
-        unmatched.labels <- setdiff(supp.labels, removed.labels)
-        if (!is.null(unmatched.labels))
-            warning(paste("Supplementary rows or columns", unmatched.labels,
-                          "do not match any rows or columns in the data and will be ignored."))
+        removed.labels <- c((rownames(x)[suprow]), (colnames(x)[supcol]))
+        supp.labels <- unlist(strsplit(supplementary, split = ","))
+        unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
+        if (!identical(unmatched.labels, character(0)))
+            warning(paste0("Supplementary rows or columns '", unmatched.labels,
+                          "' do not match any rows or columns in the data and will be ignored."))
+        if (!identical(removed.labels, character(0)))
+            footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
+        matched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
 
     }
 
-    original <- ca(x, rowsup = rowsup, colsup = colsup, ...)
+    original <- ca(x, suprow = suprow, supcol = supcol, ...)
 
     focused <- if (!is.null(focus) && focus != "") {
-        row.col.names <- c(original$rownames, original$colnames)
+        footer <- paste0(footer, ". Focus: ", focus)
+        focus <- tolower(trimws(focus))
+        row.col.names <- tolower(trimws(c(original$rownames, original$colnames)))
         if (!focus %in% row.col.names)
-            stop(paste("Focus label ", focus, " is not a label in the input table."))
+            stop(paste0("Focus label '", focus, "' is not a label in the input table."))
         focused <- setFocus(original, match(focus, row.col.names))
     }
     else
@@ -322,7 +324,8 @@ CorrespondenceAnalysis = function(x,
                    max.col.labels.plot = max.col.labels.plot,
                    square = square,
                    dim1.plot = dim1.plot,
-                   dim2.plot = dim2.plot)
+                   dim2.plot = dim2.plot,
+                   footer = footer)
     class(result) <- c("CorrespondenceAnalysis")
     result
 }

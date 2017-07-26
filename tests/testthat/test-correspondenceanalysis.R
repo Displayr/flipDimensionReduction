@@ -242,3 +242,17 @@ for (n in c("Principal", "Row principal", "Column principal", "None", "Row princ
                   }
               }
     )
+
+
+test_that(paste0("CorrespondenceAnalysis: supplementary points"),
+      {
+        expect_error(CorrespondenceAnalysis(x.with.labels, supplementary = "Coke"), NA)
+        expect_warning(CorrespondenceAnalysis(x.with.labels, supplementary = "missing"), "Supplementary rows or columns 'missing'.")
+        expect_error(CorrespondenceAnalysis(x.with.labels, supplementary =
+                                                paste0(rownames(x.with.labels), collapse = ",")), "At least 2 rows and 2 columns.")
+        expect_error(CorrespondenceAnalysis(x.with.labels, supplementary =
+                                                paste0(rownames(x.with.labels[c(-1, -2)]), collapse = ",")), NA)
+        expect_error(CorrespondenceAnalysis(x.with.labels, supplementary = "Coke", focus = "coke"), NA)
+        expect_error(CorrespondenceAnalysis(x.with.labels, supplementary = "FANTA, lift", focus = "coke"), NA)
+      }
+)
