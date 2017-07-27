@@ -66,3 +66,10 @@ test_that("Check row/column names",
               expect_equal(rownames(res1d$x), colnames(res1d$x))
               expect_warning(print(CorrespondenceAnalysis(x1[1:3, 1:3], square=T)))
           })
+
+test_that("Supplementary",
+          {
+              expect_warning(print(CorrespondenceAnalysis(x1, square=T, supplementary = "xxx")), "Supplementary rows or columns 'xxx'.")
+              expect_error(print(CorrespondenceAnalysis(x1, square=T, supplementary = "optus, vodafone")), NA)
+          })
+
