@@ -413,7 +413,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             if (num.asym > 0  && tmp.sv[x$dim1.plot] != tmp.sv[x$dim2.plot])
             {
                 asym.pair <- sapply(ind.asym, function(ii){which(tmp.sv == tmp.sv[ii])})
-                asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair))], 2,
+                asym.str <- paste(apply(asym.pair[,seq(1, by=2, to=ncol(asym.pair)), drop=F], 2,
                                         function(x){paste(x, collapse=" and ")}),
                                   collapse="; or ")
                 warning("Asymmetric dimensions should only be plotted in the following pairs: ",

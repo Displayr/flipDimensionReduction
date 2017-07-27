@@ -64,4 +64,5 @@ test_that("Check row/column names",
 
               expect_error(res1d <- CorrespondenceAnalysis(x1[,c(1,5,3,2,4)], square=T), NA)
               expect_equal(rownames(res1d$x), colnames(res1d$x))
+              expect_warning(print(CorrespondenceAnalysis(x1[1:3, 1:3], square=T)))
           })
