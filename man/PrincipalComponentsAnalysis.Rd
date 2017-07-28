@@ -11,7 +11,8 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   select.n.rule = "Number of factors", eigen.min = 1, n.factors = 1,
   sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
   min.display.loading.value = 0.1, print.type = "loadings",
-  show.labels = TRUE, plot.labels = TRUE, data.groups = NULL)
+  show.labels = TRUE, plot.labels = TRUE, data.groups = NULL,
+  tol = 1e-13)
 
 \method{fitted}{flipFactorAnalysis}(object, ...)
 }
@@ -77,6 +78,10 @@ specifying the column number of each variable.}
 
 \item{data.groups}{A \code{\link{vector}} of labels used to group the cases
 when \code{"print.type"} is \code{"2d"}.}
+
+\item{tol}{When the correlation martrix (or covariance) matrix has any singular values below this number
+the analysis will stop. Note that the function \code{principal} from package \code{psych} has its
+own internal cuttoff as well.}
 
 \item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
 
