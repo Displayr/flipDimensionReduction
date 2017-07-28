@@ -62,6 +62,7 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
                    x.title = x.title,
                    y.title = "Output distance",
                    background.fill.opacity = 0,
-                   charting.area.fill.opacity = 0)
+                   charting.area.fill.opacity = 0,
+                   legend.fill.opacity = 0)
 }
 
