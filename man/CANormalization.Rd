@@ -20,11 +20,11 @@ coordinates of the columns (rows) against the principal coordinates.
 produce the standard coordinates of the columns (rows) scaled by the first
 singular value so as to appear on a similar scale to rows (columns).
 Rows (columns) are in principal coordinates.
-\code{"Symmetrical (\u00BD)"} plots the standard coordinates multiplied
+\code{"Symmetrical"} returns the standard coordinates multiplied
 by the square root of the singular values.
 \code{"Inverse"} takes an object specified in terms of principal coordinates
 and calculates standard coordinates.
-\code{"None"} plots the standard coordinates.}
+\code{"None"} returns the standard coordinates.}
 }
 \description{
 Produces normalized coordinates from a \code{\link[ca]{ca}} object.

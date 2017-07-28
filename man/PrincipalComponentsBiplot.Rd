@@ -23,9 +23,7 @@ principal coordinates.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 
-\item{column.names.to.remove}{A vector of the column labels to remove.
-variable is provided, any cases with missing values on this variable are
-excluded from the final data file.}
+\item{column.names.to.remove}{A vector of the column labels to remove.}
 
 \item{row.color}{Color to display row-attributes in scatterplot.}
 

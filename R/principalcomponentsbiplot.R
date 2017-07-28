@@ -9,8 +9,6 @@
 #' @param output Specify output generated. May be one of \code{"Scatterplot", "Moonplot"} or \code{"Text"}.
 #' @param row.names.to.remove A vector of the row labels to remove.
 #' @param column.names.to.remove A vector of the column labels to remove.
-#'   variable is provided, any cases with missing values on this variable are
-#'   excluded from the final data file.
 #' @param row.color Color to display row-attributes in scatterplot.
 #' @param col.color Color to display column-attributes in scatterplot.
 #' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows

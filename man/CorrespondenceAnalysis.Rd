@@ -9,6 +9,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   "Input Table")[1], focus = NULL, supplementary = NULL,
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"),
+  mirror.horizontal = FALSE, mirror.vertical = FALSE,
   color.palette = "Default colors", row.color = "#5B9BD5",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
@@ -41,9 +42,11 @@ in the calculation of the coordinate space but to be plotted.}
 
 \item{row.names.to.remove}{A vector of the row labels to remove.}
 
-\item{column.names.to.remove}{A vector of the column labels to remove.
-variable is provided, any cases with missing values on this variable are
-excluded from the final data file.}
+\item{column.names.to.remove}{A vector of the column labels to remove.}
+
+\item{mirror.horizontal}{Boolean indicating whether to reverse the sign of values plotted along the horizontal axis.}
+
+\item{mirror.vertical}{Boolean indicating whether to reverse the sign of values plotted along the vertical axis.}
 
 \item{color.palette}{Palette used to color scatterplot when multiple tables are used.}
 
@@ -84,9 +87,4 @@ If no value is given, it will be guessed from the structure of \code{x}.}
 }
 \description{
 Removes rows or columns from the table.
-}
-\details{
-Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
-and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
-If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 }

@@ -256,3 +256,14 @@ test_that(paste0("CorrespondenceAnalysis: supplementary points"),
         expect_error(CorrespondenceAnalysis(x.with.labels, supplementary = "FANTA, lift", focus = "coke"), NA)
       }
 )
+
+
+test_that(paste0("CorrespondenceAnalysis: mirroring"),
+          {
+              ca1 <- CorrespondenceAnalysis(x.with.labels)
+              ca2 <- CorrespondenceAnalysis(x.with.labels, mirror.vertical = T, mirror.horizontal = T)
+              expect_equal(-1 * ca1$original$rowcoord[, 1:2], ca2$original$rowcoord[, 1:2], tolerance = 0.000001, scale = 1)
+              expect_equal(-1 * ca1$original$colcoord[, 1:2], ca2$original$colcoord[, 1:2], tolerance = 0.000001, scale = 1)
+          }
+)
+
