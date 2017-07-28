@@ -560,17 +560,24 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
 
 #' \code{CANormalization}
-#' @description Normalizes the coordinates of a \code{\link[ca]{ca}} object.
+#' @description Produces normalized coordinates from a \code{\link[ca]{ca}} object.
 #' @param ca.object The object to normalize.
 #' @param normalization The method used to normalize the coordinates of the
-#'   correspondence analysis plot (this changes the plot, but not the outputs of
+#'   correspondence analysis (this changes the plot, but not the outputs of
 #'   \code{\link[ca]{ca}} itself. The default method is \code{"Principal"},
-#'   which plots the principal coordinates (i.e., the standard coordinates
-#'   multipled by the singular values). \code{"Row principal"} and \code{"Column
-#'   principal"} plot the standard coordinates of the columns (rows) against the
-#'   principal coordinates. \code{"Symmetrical (\u00BD)"} plots the standard
-#'   coordinates multiplied by the square root of the singular values.
-#'   \code{"None"} plots the standard coordinates.
+#'   which calculates the principal coordinates (i.e., the standard coordinates
+#'   multipled by the singular values).
+#'   \code{"Row principal"} and \code{"Column principal"} produce the standard
+#'   coordinates of the columns (rows) against the principal coordinates.
+#'   \code{"Row principal (scaled)"} and \code{"Column principal (scaled)"}
+#'   produce the standard coordinates of the columns (rows) scaled by the first
+#'   singular value so as to appear on a similar scale to rows (columns).
+#'   Rows (columns) are in principal coordinates.
+#'   \code{"Symmetrical"} returns the standard coordinates multiplied
+#'   by the square root of the singular values.
+#'   \code{"Inverse"} takes an object specified in terms of principal coordinates
+#'   and calculates standard coordinates.
+#'   \code{"None"} returns the standard coordinates.
 #' @export
 CANormalization <- function(ca.object, normalization = "Principal")
 {
