@@ -316,16 +316,26 @@ CorrespondenceAnalysis = function(x,
     inertia <- round(ca.obj$sv^2, 6)
     col.labels <- sprintf("Dimension %d (%.1f%%)", 1:length(inertia),
                           100*prop.table(inertia))
-
-    normed <- CANormalization(ca.obj, normalization)
-    row.coordinates <- normed$row.coordinates
-    column.coordinates <- normed$column.coordinates
-    colnames(row.coordinates) <- col.labels
-    colnames(column.coordinates) <- col.labels
-    if (ncol(row.coordinates) == 1)
+    if (square)
     {
-        row.coordinates <- cbind(row.coordinates, 'Dimension 2 (0.0%)' = 0)
-        column.coordinates <- cbind(column.coordinates, 'Dimension 2 (0.0)' = 0)
+        n1 <- nrow(x)/2
+        std.coords <- original$rowcoord[1:n1,]   # not normalized
+        row.coordinates <- sweep(std.coords, 2, original$sv, "*") 
+        colnames(row.coordinates) <- col.labels
+        column.coordinates <- NULL
+
+    } else
+    {
+        normed <- CANormalization(ca.obj, normalization)
+        row.coordinates <- normed$row.coordinates
+        column.coordinates <- normed$column.coordinates
+        colnames(row.coordinates) <- col.labels
+        colnames(column.coordinates) <- col.labels
+        if (ncol(row.coordinates) == 1)
+        {
+            row.coordinates <- cbind(row.coordinates, 'Dimension 2 (0.0%)' = 0)
+            column.coordinates <- cbind(column.coordinates, 'Dimension 2 (0.0)' = 0)
+        }
     }
 
     result <- list(x = x,
@@ -354,7 +364,7 @@ CorrespondenceAnalysis = function(x,
                    dim2.plot = dim2.plot,
                    footer = footer)
     class(result) <- c("CorrespondenceAnalysis")
-    attr(result, "ChartData") <- rbind(row.coordinates[, 1:2], column.coordinates[, 1:2])
+    attr(result, "ChartData") <- rbind(row.coordinates[,1:2], column.coordinates[,1:2])
     result
 }
 
@@ -371,8 +381,6 @@ CorrespondenceAnalysis = function(x,
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
-    #ca.obj <- if (!is.null(x$focused)) x$focused
-    #          else x$original
     d.tmp <- c(x$dim1.plot, x$dim2.plot)
 
     nc <- ncol(x$row.coordinates)
@@ -384,9 +392,13 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$square)
     {
         n1 <- nrow(x$x)/2
-        rowcoords <- x$original$rowcoord[1:n1,]
-        colnames(rowcoords) <- sprintf("Dimension %d", 1:ncol(rowcoords))
-        coords <- sweep(rowcoords, 2, x$original$sv, "*")
+        coords <- x$row.coordinates
+        std.coords <- x$original$rowcoord[1:n1,]
+        if (x$output == "Text")
+        {
+            colnames(coords) <- sprintf("Dimension %d", 1:ncol(coords))
+            colnames(std.coords) <- colnames(coords)
+        }
         x.data <- x$x[1:n1, 1:n1]
 
     } else
@@ -534,7 +546,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
         print(res.summary)
         cat("\nStandard coordinates:\n")
-        print(rowcoords)
+        print(std.coords)
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
