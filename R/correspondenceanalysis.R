@@ -324,8 +324,8 @@ CorrespondenceAnalysis = function(x,
     colnames(column.coordinates) <- col.labels
     if (ncol(row.coordinates) == 1)
     {
-        row.coordinates <- cbind(row.coordinates, 0)
-        column.coordinates <- cbind(column.coordinates, 0)
+        row.coordinates <- cbind(row.coordinates, 'Dimension 2 (0.0%)' = 0)
+        column.coordinates <- cbind(column.coordinates, 'Dimension 2 (0.0)' = 0)
     }
 
     result <- list(x = x,
@@ -384,7 +384,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$square)
     {
         n1 <- nrow(x$x)/2
-        coords <- sweep(x$row.coordinates[1:n1,], 2, x$original$sv, "*")
+        rowcoords <- x$original$rowcoord[1:n1,]
+        colnames(rowcoords) <- sprintf("Dimension %d", 1:ncol(rowcoords))
+        coords <- sweep(rowcoords, 2, x$original$sv, "*")
         x.data <- x$x[1:n1, 1:n1]
 
     } else
@@ -532,7 +534,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
         print(res.summary)
         cat("\nStandard coordinates:\n")
-        print(x$row.coordinates[1:n1,])
+        print(rowcoords)
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
