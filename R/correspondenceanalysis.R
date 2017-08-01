@@ -311,15 +311,34 @@ CorrespondenceAnalysis = function(x,
     else
         NULL
 
+    ca.obj <- if (!is.null(focused)) focused
+              else original
+    inertia <- round(ca.obj$sv^2, 6)
+    col.labels <- sprintf("Dimension %d (%.1f%%)", 1:length(inertia),
+                          100*prop.table(inertia))
+
+    normed <- CANormalization(ca.obj, normalization)
+    row.coordinates <- normed$row.coordinates
+    column.coordinates <- normed$column.coordinates
+    colnames(row.coordinates) <- col.labels
+    colnames(column.coordinates) <- col.labels
+    if (ncol(row.coordinates) == 1)
+    {
+        row.coordinates <- cbind(row.coordinates, 0)
+        column.coordinates <- cbind(column.coordinates, 0)
+    }
+
     result <- list(x = x,
+                   original = original,
+                   focused = focused,
+                   row.coordinates = row.coordinates,
+                   column.coordinates = column.coordinates,
                    row.column.names = row.column.names,
                    normalization = normalization,
                    output = output,
                    color.palette = color.palette,
                    row.color = row.color,
                    col.color = col.color,
-                   original = original,
-                   focused = focused,
                    bubble.size = bubble.size,
                    bubble.title = bubble.title,
                    chart.title = chart.title,
@@ -335,6 +354,7 @@ CorrespondenceAnalysis = function(x,
                    dim2.plot = dim2.plot,
                    footer = footer)
     class(result) <- c("CorrespondenceAnalysis")
+    attr(result, "ChartData") <- rbind(row.coordinates[, 1:2], column.coordinates[, 1:2])
     result
 }
 
@@ -351,50 +371,27 @@ CorrespondenceAnalysis = function(x,
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
-    ca.obj <- if (!is.null(x$focused)) {
-        x$focused
-    } else {
-        x$original
-    }
-
-    singular.values <- round(ca.obj$sv^2, 6)
+    #ca.obj <- if (!is.null(x$focused)) x$focused
+    #          else x$original
     d.tmp <- c(x$dim1.plot, x$dim2.plot)
-    column.labels <- sprintf("Dimension %d (%.1f%%)", d.tmp, 100*prop.table(singular.values)[d.tmp])
 
-    #if (x$dim1.plot > ncol(ca.obj$rowcoord))
-    #    stop(sprintf("'First dimension to plot' must be an non-negative integer no greater than %d", ncol(ca.obj$rowcoord)))
-    #if (x$dim2.plot > ncol(ca.obj$rowcoord))
-    #    stop(sprintf("'Second dimension to plot' must be an non-negative integer no greater than %d", ncol(ca.obj$rowcoord)))
+    nc <- ncol(x$row.coordinates)
+    if (x$dim1.plot < 0 || x$dim1.plot > nc)
+        stop(sprintf("Dimension 1 should be between 1 and %d.", nc))
+    if (x$dim2.plot < 0 || x$dim2.plot > nc) 
+        stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
 
     if (x$square)
     {
-        # Trim dimensions of CA?
         n1 <- nrow(x$x)/2
-        colnames(ca.obj$rowcoord) <- sprintf("Dimension %d", 1:ncol(ca.obj$rowcoord))
-        coords <- sweep(ca.obj$rowcoord[1:n1,], 2, ca.obj$sv, "*")
+        coords <- sweep(x$row.coordinates[1:n1,], 2, x$original$sv, "*")
         x.data <- x$x[1:n1, 1:n1]
 
     } else
     {
-        normed <- CANormalization(ca.obj, x$normalization)
-        row.coordinates <- normed$row.coordinates
-        column.coordinates <- normed$column.coordinates
-        coords <- rbind(row.coordinates, column.coordinates)
+        coords <- rbind(x$row.coordinates, x$column.coordinates)
         row.column.names <- x$row.column.names
         x.data <- as.matrix(x$x)
-    }
-
-    if (ncol(coords) == 1) # dealing with 1D case
-    {
-        if (x$output == "Text")
-            ca.obj$nd <- 1
-        else if(x$output == "Scatterplot" || x$output == "Bubble Chart")
-            coords <- cbind(coords, 0)
-        else
-        {
-            row.coordinates <- cbind(row.coordinates, 0)
-            column.coordinates <- cbind(column.coordinates, 0)
-        }
     }
 
     if (x$square)
@@ -404,7 +401,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         n2 <- 0
 
         # Find asymmetric factors
-        tmp.sv <- round(ca.obj$sv, 6)
+        tmp.sv <- round(x$original$sv, 6)
         n.sv <- length(tmp.sv)
         ind.asym <- which(duplicated(tmp.sv) | duplicated(tmp.sv, fromLast=T))
         ind.sym <- setdiff(1:n.sv, ind.asym)
@@ -434,8 +431,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (sum(nchar(x$row.column.names)) > 0 && x$row.column.names[1] == x$row.column.names[2])
             warning("Row and column titles should not be the same.")
-        n1 <- nrow(row.coordinates)
-        n2 <- nrow(column.coordinates)
+        n1 <- nrow(x$row.coordinates)
+        n2 <- nrow(x$column.coordinates)
         x.groups <- if(length(x$row.color) == 1) rep(x$row.column.names[1], n1) else paste("Row", 1:n1)
         y.groups <- if(length(x$col.color) == 1) rep(x$row.column.names[2], n2) else paste("Column", 1:n2)
         groups <- rep(x$row.column.names, c(n1, n2))
@@ -444,7 +441,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     } else
     {
         n1 <- nrow(x$x)/x$num.tables
-        n2 <- nrow(column.coordinates)
+        n2 <- nrow(x$column.coordinates)
         groups <- c(rep(paste0("R", 1:n1), x$num.tables), paste0("C", 1:n2)) # legend hidden so names are arbitary
         colors <- ChartColors(n1+1, x$color.palette, trim.light.colors=TRUE)
         colors <- colors[c((1:n1)+1, rep(1,n2))]
@@ -502,8 +499,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        trend.lines.point.size = 2,
                        fixed.aspect = TRUE,
                        title = x$chart.title,
-                       x.title = column.labels[1],
-                       y.title = column.labels[2],
+                       x.title = colnames(coords)[x$dim1.plot],
+                       y.title = colnames(coords)[x$dim2.plot],
                        z.title = x$bubble.title,
                        axis.font.size = 10,
                        labels.font.size = 14,
@@ -517,7 +514,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
-        print(moonplot(row.coordinates[,1:2], column.coordinates[,1:2]))
+        print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2]))
     } else if (x$output == "Input Table")
     {
         return(print(x.data))
@@ -526,16 +523,16 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         # Text output
         # No description of the data
-        inertia <- ca.obj$sv^2
+        inertia <- x$original$sv^2
         cat("Correspondence analysis of a square table\n")
         cat("\nInertia(s):\n")
-        res.summary <- cbind('Canonical Correlation' = ca.obj$sv,
+        res.summary <- cbind('Canonical Correlation' = x$original$sv,
                              'Inertia' = inertia,
                              'Proportion explained' = inertia/sum(inertia))
         rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
         print(res.summary)
         cat("\nStandard coordinates:\n")
-        print(ca.obj$rowcoord[1:n1,])
+        print(x$row.coordinates[1:n1,])
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
@@ -560,7 +557,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             cat("\n**** BEFORE FOCUS ROTATION ****\n")
         }
         unrotated <- x$original
-        if (ncol(coords) == 1)
+        if (ncol(coords) == 1 || all(coords[,2] == 0))
             unrotated$nd <- 1
         print(unrotated, ...)
     }
