@@ -281,8 +281,8 @@ CorrespondenceAnalysis = function(x,
         supp.labels <- unlist(strsplit(supplementary, split = ","))
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
         if (!identical(unmatched.labels, character(0)))
-            warning(paste0("Supplementary rows or columns '", unmatched.labels,
-                          "' do not match any rows or columns in the data and will be ignored."))
+            stop(paste0("Supplementary rows or columns '", unmatched.labels,
+                          "' do not match any rows or columns in the data."))
         if (!identical(removed.labels, character(0)))
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
         matched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
@@ -320,7 +320,7 @@ CorrespondenceAnalysis = function(x,
     {
         n1 <- nrow(x)/2
         std.coords <- original$rowcoord[1:n1,]   # not normalized
-        row.coordinates <- sweep(std.coords, 2, original$sv, "*") 
+        row.coordinates <- sweep(std.coords, 2, original$sv, "*")
         colnames(row.coordinates) <- col.labels
         column.coordinates <- NULL
 
@@ -386,7 +386,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     nc <- ncol(x$row.coordinates)
     if (x$dim1.plot < 0 || x$dim1.plot > nc)
         stop(sprintf("Dimension 1 should be between 1 and %d.", nc))
-    if (x$dim2.plot < 0 || x$dim2.plot > nc) 
+    if (x$dim2.plot < 0 || x$dim2.plot > nc)
         stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
 
     if (x$square)

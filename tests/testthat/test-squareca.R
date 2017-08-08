@@ -71,7 +71,7 @@ test_that("Check row/column names",
 
 test_that("Supplementary",
           {
-              expect_warning(print(CorrespondenceAnalysis(x1, square=T, supplementary = "xxx")), "Supplementary rows or columns 'xxx'.")
+              expect_error(print(CorrespondenceAnalysis(x1, square=T, supplementary = "xxx")), "Supplementary rows or columns 'xxx'.")
               expect_error(print(CorrespondenceAnalysis(x1, square=T, supplementary = "optus, vodafone")), NA)
           })
 
