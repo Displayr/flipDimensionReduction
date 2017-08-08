@@ -523,7 +523,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        legend.font.size = 15,
                        y.title.font.size = 16,
                        x.title.font.size = 16,
-                       debug.mode = grepl("DEBUG_MODE_ON", title)))
+                       debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
     } else if (x$output == "Moonplot")
     {
