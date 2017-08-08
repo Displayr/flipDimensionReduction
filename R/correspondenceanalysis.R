@@ -522,7 +522,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
                        legend.font.size = 15,
                        y.title.font.size = 16,
-                       x.title.font.size = 16))
+                       x.title.font.size = 16,
+                       debug.mode = grepl("DEBUG_MODE_ON", title)))
 
     } else if (x$output == "Moonplot")
     {
