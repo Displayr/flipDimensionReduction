@@ -564,15 +564,16 @@ print.CorrespondenceAnalysis <- function(x, ...)
             eigenvalues <- rbind(Value = as.character(Value), Percentage = as.character(Percentage))
             colnames(eigenvalues) <- 1:length(x$focused$sv)
             print.table(eigenvalues, width = 4)
-            cat("\n  Rows:\n")
+            cat("\n  Rows in standard coordinates:\n")
             print(x$focused$rowcoord)
-            cat("\n  Columns:\n")
+            cat("\n  Columns in standard coordinates:\n")
             print(x$focused$colcoord)
             cat("\n**** BEFORE FOCUS ROTATION ****\n")
         }
         unrotated <- x$original
         if (ncol(coords) == 1 || all(coords[,2] == 0))
             unrotated$nd <- 1
+        cat("\nStandard coordinates:\n")
         print(unrotated, ...)
     }
 }
