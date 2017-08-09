@@ -22,8 +22,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
 \item{x}{A \code{\link{matrix}} or a list of matrices.}
 
 \item{normalization}{The method used to normalize the coordinates of the
-correspondence analysis plot (this changes the plot, but not the outputs of
-\code{\link[ca]{ca}} itself. The default method is \code{"Principal"},
+correspondence analysis plot. The default method is \code{"Principal"},
 which plots the principal coordinates (i.e., the standard coordinates
 multiplied by the singular values). \code{"Row principal"} and \code{"Column
 principal"} plot the standard coordinates of the columns (rows) against the
@@ -32,7 +31,8 @@ except that both column coordinates are equally scaled so that column points app
 on a similar scale to row points. \code{"Column principal (scaled)"} is analagous.
 Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.}
 
-\item{output}{How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.}
+\item{output}{How the map is displayed: \code{"Scatterplot"}, \code{"Moonplot"},
+\code{"Input Table"} \code{"Bubble Chart"} or \code{"Text"}.}
 
 \item{focus}{The label of a row or column category. The output is rotated
 so that the variance of this category lies along the first dimension.}
@@ -86,5 +86,5 @@ If no value is given, it will be guessed from the structure of \code{x}.}
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
 \description{
-Removes rows or columns from the table.
+Performs correspondence analysis to analyze a table or list of tables.
 }

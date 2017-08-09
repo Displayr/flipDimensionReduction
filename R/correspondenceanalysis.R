@@ -1,9 +1,8 @@
 #' \code{CorrespondenceAnalysis}
-#' @description Removes rows or columns from the table.
+#' @description Performs correspondence analysis to analyze a table or list of tables.
 #' @param x A \code{\link{matrix}} or a list of matrices.
 #' @param normalization The method used to normalize the coordinates of the
-#'   correspondence analysis plot (this changes the plot, but not the outputs of
-#'   \code{\link[ca]{ca}} itself. The default method is \code{"Principal"},
+#'   correspondence analysis plot. The default method is \code{"Principal"},
 #'   which plots the principal coordinates (i.e., the standard coordinates
 #'   multiplied by the singular values). \code{"Row principal"} and \code{"Column
 #'   principal"} plot the standard coordinates of the columns (rows) against the
@@ -11,7 +10,8 @@
 #'   except that both column coordinates are equally scaled so that column points appear
 #'   on a similar scale to row points. \code{"Column principal (scaled)"} is analagous.
 #'   Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.
-#' @param output How the map is displayed: \code{"Scatterplot"}, or \code{"Moonplot"}, or \code{"Text"}.
+#' @param output How the map is displayed: \code{"Scatterplot"}, \code{"Moonplot"},
+#' \code{"Input Table"} \code{"Bubble Chart"} or \code{"Text"}.
 #' @param focus The label of a row or column category. The output is rotated
 #'   so that the variance of this category lies along the first dimension.
 #' @param supplementary A vector of rows or columns to be treated as supplementary, i.e. not included
@@ -106,7 +106,7 @@ CorrespondenceAnalysis = function(x,
     # Multiple tables
     # note that a dataframe is actually a list
     x.stat <- attr(x, "statistic")
-    if (!is.null(dim(x[[1]])) && length(x) > 1)
+    if (!is.null(dim(x[[1]])) && length(x) > 1 && !is.data.frame(x))
     {
         if (!is.na(multiple.tables) && !multiple.tables)
             stop("Input data 'x' contains multiple tables. Select checkbox for 'multiple tables'\n")
