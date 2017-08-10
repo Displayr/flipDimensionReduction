@@ -33,8 +33,7 @@
 #' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
 #' @param trend.lines Boolean indicating whether to draw trend lines when multiple tables are supplied.
-#' @param multiple.tables Optional boolean indicating whether or not multiple tables have been supplied.
-#'   If no value is given, it will be guessed from the structure of \code{x}.
+#' @param multiple.tables Deprecated.
 #' @param square Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.
 #' @param dim1.plot Dimension to show in X-axis of bubble or scatterplot.
 #' @param dim2.plot Dimension to show in Y-axis of bubble or scatterplot.
@@ -108,9 +107,6 @@ CorrespondenceAnalysis = function(x,
     x.stat <- attr(x, "statistic")
     if (!is.null(dim(x[[1]])) && length(x) > 1 && !is.data.frame(x))
     {
-        if (!is.na(multiple.tables) && !multiple.tables)
-            stop("Input data 'x' contains multiple tables. Select checkbox for 'multiple tables'\n")
-
         if (!output %in% c("Scatterplot", "Input Table"))
             stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
         row.color <- '#5B9BD5'
@@ -281,7 +277,7 @@ CorrespondenceAnalysis = function(x,
         supp.labels <- unlist(strsplit(supplementary, split = ","))
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
         if (!identical(unmatched.labels, character(0)))
-            stop(paste0("Supplementary rows or columns '", unmatched.labels,
+            stop(paste0("Supplementary rows or columns '", paste(unmatched.labels, collapse = ", "),
                           "' do not match any rows or columns in the data."))
         if (!identical(removed.labels, character(0)))
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
