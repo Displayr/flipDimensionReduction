@@ -651,16 +651,21 @@ CANormalization <- function(ca.object, normalization = "Principal")
 
 #' \code{CAQuality}
 #' @description Quality measures of a correspondence analysis.
-#' @param ca.object The object to compute quality for.
+#' @param CorrespondenceAnalysis.object The object to compute quality for.
 #' @export
-CAQuality <- function(ca.object)
+CAQuality <- function(CorrespondenceAnalysis.object)
 {
-    n <- CANormalization(ca.object)
-    q <- cbind(n$rows, n$columns)
+    n <- CANormalization(CorrespondenceAnalysis.object$original)
+    print(n)
+    q <- rbind(n$row.coordinates, n$column.coordinates)
     q <- q ^ 2
-    e <- round(prop.table(column.sums(q) * 100), 1)
-    q <- prop.table(q) * 100
-    colnames(q) <- paste0(e, "%\n(%)")
+    e <- colSums(q[1:nrow(n$row.coordinates)])
+    e <- prop.table(e)
+    e <- round(e * 100, 1)
+    q <- prop.table(q, 1) * 100
+    colnames(q) <- paste0(colnames(q), " ", e, "%")
+    rownames(q) <- paste0(round(q[, 1] + q[, 2]), "% ", rownames(q))
+    attr(q, "statistic") <- "Quality %"
     q
 }
 

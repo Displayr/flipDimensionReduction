@@ -4,10 +4,10 @@
 \alias{CAQuality}
 \title{\code{CAQuality}}
 \usage{
-CAQuality(ca.object)
+CAQuality(CorrespondenceAnalysis.object)
 }
 \arguments{
-\item{ca.object}{The object to compute quality for.}
+\item{CorrespondenceAnalysis.object}{The object to compute quality for.}
 }
 \description{
 Quality measures of a correspondence analysis.
