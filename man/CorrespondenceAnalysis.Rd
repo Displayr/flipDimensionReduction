@@ -34,7 +34,7 @@ on a similar scale to row points. \code{"Column principal (scaled)"} is analagou
 Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.}
 
 \item{output}{How the map is displayed: \code{"Scatterplot"}, \code{"Moonplot"},
-\code{"Input Table"} \code{"Bubble Chart"} or \code{"Text"}.}
+\code{"Input Table"}, \code{"Diagnostics"}, \code{"Bubble Chart"} or \code{"Text"}.}
 
 \item{focus}{The label of a row or column category. The output is rotated
 so that the variance of this category lies along the first dimension.}

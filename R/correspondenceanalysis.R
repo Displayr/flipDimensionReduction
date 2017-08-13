@@ -141,17 +141,17 @@ CorrespondenceAnalysis = function(x,
             x.names[i] <- attr(x[[i]], "name")[1]
         }
         if (unnamed.tables & !trend.lines)
-                warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"name\") <- \"Description\"'", paste(used.names, collapse="', '")))
+            warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"name\") <- \"Description\"'", paste(used.names, collapse="', '")))
 
         # Check tables match - order of rows will match first table
         x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
-                  else GetTidyTwoDimensionalArray(x[[1]], row.names.to.remove, column.names.to.remove)
+        else GetTidyTwoDimensionalArray(x[[1]], row.names.to.remove, column.names.to.remove)
         r.names <- rownames(x[[1]])
         c.names <- colnames(x[[1]])
         for (i in 2:num.tables)
         {
             x[[i]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[i]]))
-                      else GetTidyTwoDimensionalArray(x[[i]])
+            else GetTidyTwoDimensionalArray(x[[i]])
             r.tmp <- match(r.names, rownames(x[[i]]))
             c.tmp <- match(c.names, colnames(x[[i]]))
 
@@ -290,7 +290,7 @@ CorrespondenceAnalysis = function(x,
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
         if (!identical(unmatched.labels, character(0)))
             stop(paste0("Supplementary rows or columns '", paste(unmatched.labels, collapse = ", "),
-                          "' do not match any rows or columns in the data."))
+                        "' do not match any rows or columns in the data."))
         if (!identical(removed.labels, character(0)))
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
         matched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
@@ -320,7 +320,7 @@ CorrespondenceAnalysis = function(x,
         NULL
 
     ca.obj <- if (!is.null(focused)) focused
-              else original
+    else original
     inertia <- round(ca.obj$sv^2, 6)
     col.labels <- sprintf("Dimension %d (%.1f%%)", 1:length(inertia),
                           100*prop.table(inertia))
@@ -394,7 +394,6 @@ CorrespondenceAnalysis = function(x,
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom flipTransformations TextAsVector
 #' @importFrom flipChartBasics ChartColors
-#' @importFrom ca summary.ca
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
@@ -459,8 +458,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
                                         function(x){paste(x, collapse=" and ")}),
                                   collapse="; or ")
                 warning("Asymmetric dimensions should only be plotted in the following pairs: ",
-                      asym.str, ". Alternatively, symmetric dimensions can be plotted together in any combination. ",
-                      "The two first symmetric dimensions are ", paste(ind.sym[1:2], collapse=" and "), ".")
+                        asym.str, ". Alternatively, symmetric dimensions can be plotted together in any combination. ",
+                        "The two first symmetric dimensions are ", paste(ind.sym[1:2], collapse=" and "), ".")
             }
         }
 
@@ -499,7 +498,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         if (!is.null(logo.urls) && !inherits(logo.urls, "try-error"))
         {
             logo.required.length <- if (x$num.tables > 1) n1
-                                    else                  nrow(x.data)
+            else                  nrow(x.data)
             if (length(logo.urls) != logo.required.length)
                 stop(sprintf("Number of URLs supplied in logos must be equal to the number of %s in the table (%d)\n",
                              ifelse(x$transpose, "columns", "rows"), logo.required.length))
@@ -513,7 +512,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
         n1.tot <- n1 * x$num.tables
         if (x$max.row.labels.plot >= 0 && (x$trend.lines && x$max.row.labels.plot < n1 ||
-                                          !x$trend.lines && x$max.row.labels.plot < n1.tot))
+                                           !x$trend.lines && x$max.row.labels.plot < n1.tot))
         {
             warning("Some row labels have been hidden. Adjust 'Maximum row labels to plot' to show more labels.")
             lab[(x$max.row.labels.plot+1):n1.tot] <- ""
@@ -524,29 +523,29 @@ print.CorrespondenceAnalysis <- function(x, ...)
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
         print(LabeledScatter(X = coords[,x$dim1.plot],
-                       Y = coords[,x$dim2.plot],
-                       Z = bubble.size,
-                       label = lab,
-                       label.alt = rownames(coords),
-                       group = groups,
-                       colors = colors,
-                       labels.logo.scale = logo.size,
-                       trend.lines.show = x$trend.lines,
-                       trend.lines.line.thickness = 1,
-                       trend.lines.point.size = 2,
-                       fixed.aspect = TRUE,
-                       title = x$chart.title,
-                       x.title = colnames(coords)[x$dim1.plot],
-                       y.title = colnames(coords)[x$dim2.plot],
-                       z.title = x$bubble.title,
-                       axis.font.size = x$axis.font.size,
-                       labels.font.size = x$labels.font.size,
-                       title.font.size = x$title.font.size,
-                       legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
-                       legend.font.size = x$legend.font.size,
-                       y.title.font.size = x$y.title.font.size,
-                       x.title.font.size = x$x.title.font.size,
-                       debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
+                             Y = coords[,x$dim2.plot],
+                             Z = bubble.size,
+                             label = lab,
+                             label.alt = rownames(coords),
+                             group = groups,
+                             colors = colors,
+                             labels.logo.scale = logo.size,
+                             trend.lines.show = x$trend.lines,
+                             trend.lines.line.thickness = 1,
+                             trend.lines.point.size = 2,
+                             fixed.aspect = TRUE,
+                             title = x$chart.title,
+                             x.title = colnames(coords)[x$dim1.plot],
+                             y.title = colnames(coords)[x$dim2.plot],
+                             z.title = x$bubble.title,
+                             axis.font.size = x$axis.font.size,
+                             labels.font.size = x$labels.font.size,
+                             title.font.size = x$title.font.size,
+                             legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
+                             legend.font.size = x$legend.font.size,
+                             y.title.font.size = x$y.title.font.size,
+                             x.title.font.size = x$x.title.font.size,
+                             debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
     } else if (x$output == "Moonplot")
     {
@@ -634,13 +633,13 @@ CANormalization <- function(ca.object, normalization = "Principal")
             sweep(coords[,1:m], 2, ca.object$sv[1:m]^power, "*")
     }
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
-        "Column principal" = 0, "Column principal (scaled)" = 0,
-        "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                  "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
+                                                  "Column principal" = 0, "Column principal (scaled)" = 0,
+                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
-        "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
-        "Column principal" = 1, "Column principal (scaled)" = 1,
-        "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                     "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
+                                                     "Column principal" = 1, "Column principal (scaled)" = 1,
+                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
 
     if (normalization == "Row principal (scaled)")
         columns = columns * ca.object$sv[1]
@@ -649,3 +648,19 @@ CANormalization <- function(ca.object, normalization = "Principal")
 
     list(row.coordinates = rows, column.coordinates = columns)
 }
+
+#' \code{CAQuality}
+#' @description Quality measures of a correspondence analysis.
+#' @param ca.object The object to compute quality for.
+#' @export
+CAQuality <- function(ca.object)
+{
+    n <- CANormalization(ca.object)
+    q <- cbind(n$rows, n$columns)
+    q <- q ^ 2
+    e <- round(prop.table(column.sums(q) * 100), 1)
+    q <- prop.table(q) * 100
+    colnames(q) <- paste0(e, "%\n(%)")
+    q
+}
+
