@@ -11,7 +11,7 @@
 #'   on a similar scale to row points. \code{"Column principal (scaled)"} is analagous.
 #'   Note that the plotting occurs via \code{\link{print.CorrespondenceAnalysis}}.
 #' @param output How the map is displayed: \code{"Scatterplot"}, \code{"Moonplot"},
-#' \code{"Input Table"} \code{"Bubble Chart"} or \code{"Text"}.
+#' \code{"Input Table"}, \code{"Diagnostics"}, \code{"Bubble Chart"} or \code{"Text"}.
 #' @param focus The label of a row or column category. The output is rotated
 #'   so that the variance of this category lies along the first dimension.
 #' @param supplementary A vector of rows or columns to be treated as supplementary, i.e. not included
@@ -394,6 +394,7 @@ CorrespondenceAnalysis = function(x,
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom flipTransformations TextAsVector
 #' @importFrom flipChartBasics ChartColors
+#' @importFrom ca summary.ca
 #' @export
 print.CorrespondenceAnalysis <- function(x, ...)
 {
@@ -405,6 +406,12 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$dim2.plot < 0 || x$dim2.plot > nc)
         stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
 
+    if (x$output == "Diagnostics")
+    {
+        if (x$focused)
+            stop("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
+        return(summary(output$original))
+    }
     if (x$square)
     {
         n1 <- nrow(x$x)/2

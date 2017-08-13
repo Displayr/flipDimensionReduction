@@ -213,18 +213,25 @@ expect_error(CorrespondenceAnalysis(tab, output = "Bubble Chart",
  })
 
 
+test_that("focus",{
+    output = "Diagnostics"
+    ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = "V", normalization = "Row principal",
+                                              row.names.to.remove = "NET",  column.names.to.remove = "NET")
+    expect_error(print(ca))
+    expect_error(capture.output(print(ca)), NA)
+    for (output in c("Scatterplot", "Moonplot", "Text"))
+        test_that(paste0("CorrespondenceAnalysis: focus by output ", output),
+                  {
+                      for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
+                          expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus, normalization = "Row principal",
+                                                                    row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
+                          expect_error(capture.output(print(ca)), NA)
+                      }
+                  }
+        )
 
+})
 
-for (output in c("Scatterplot", "Moonplot", "Text"))
-    test_that(paste0("CorrespondenceAnalysis: focus by output ", output),
-        {
-            for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
-                expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus, normalization = "Row principal",
-                                                         row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-                expect_error(capture.output(print(ca)), NA)
-            }
-        }
-)
 
 
 data("colas", package = "flipExampleData")
@@ -273,7 +280,7 @@ test_that(paste0("CorrespondenceAnalysis: font sizes"),
               for (f in c(5, 10, 15))
                   print(CorrespondenceAnalysis(x.with.labels),
                         title.font.size = f,
-                        x.title.font.size = f,
+                           x.title.font.size = f,
                         y.title.font.size = f,
                         labels.font.size = f,
                         axis.font.size = f,
