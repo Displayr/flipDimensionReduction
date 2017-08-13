@@ -37,6 +37,12 @@
 #' @param square Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.
 #' @param dim1.plot Dimension to show in X-axis of bubble or scatterplot.
 #' @param dim2.plot Dimension to show in Y-axis of bubble or scatterplot.
+#' @param title.font.size Font size of the chart title.
+#' @param x.title.font.size Font size of the horizontal axis title.
+#' @param y.title.font.size Font size of the vertical axis title.
+#' @param labels.font.size Font size of the labels on the scatterplot.
+#' @param axis.font.size Font size of the labels on the x- and y-axis.
+#' @param legend.font.size Font size on th legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom flipTransformations RetainedRowsAndOrColumns
@@ -68,6 +74,12 @@ CorrespondenceAnalysis = function(x,
                                   max.labels.plot = NA,
                                   dim1.plot = 1,
                                   dim2.plot = 2,
+                                  title.font.size = 20,
+                                  x.title.font.size = 16,
+                                  y.title.font.size = 16,
+                                  labels.font.size = 14,
+                                  axis.font.size = 10,
+                                  legend.font.size = 15,
                                   ...)
 {
     # Backwards compatibility
@@ -358,7 +370,15 @@ CorrespondenceAnalysis = function(x,
                    square = square,
                    dim1.plot = dim1.plot,
                    dim2.plot = dim2.plot,
-                   footer = footer)
+                   footer = footer,
+                   dim2.plot = 2,
+                   title.font.size = 20,
+                   x.title.font.size = 16,
+                   y.title.font.size = 16,
+                   labels.font.size = 14,
+                   axis.font.size = 10,
+                   legend.font.size = 15
+    )
     class(result) <- c("CorrespondenceAnalysis")
     attr(result, "ChartData") <- rbind(row.coordinates[,1:2], column.coordinates[,1:2])
     result
@@ -512,13 +532,13 @@ print.CorrespondenceAnalysis <- function(x, ...)
                        x.title = colnames(coords)[x$dim1.plot],
                        y.title = colnames(coords)[x$dim2.plot],
                        z.title = x$bubble.title,
-                       axis.font.size = 10,
-                       labels.font.size = 14,
-                       title.font.size = 20,
+                       axis.font.size = x$axis.font.size,
+                       labels.font.size = x$labels.font.size,
+                       title.font.size = x$title.font.size,
                        legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
-                       legend.font.size = 15,
-                       y.title.font.size = 16,
-                       x.title.font.size = 16,
+                       legend.font.size = x$legend.font.size,
+                       y.title.font.size = x$y.title.font.size,
+                       x.title.font.size = x$x.title.font.size,
                        debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
     } else if (x$output == "Moonplot")

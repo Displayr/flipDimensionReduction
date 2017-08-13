@@ -16,7 +16,9 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   logos = NULL, logo.size = 0.5, trend.lines = FALSE,
   multiple.tables = NA, square = FALSE, max.row.labels.plot = 200,
   max.col.labels.plot = 200, max.labels.plot = NA, dim1.plot = 1,
-  dim2.plot = 2, ...)
+  dim2.plot = 2, title.font.size = 20, x.title.font.size = 16,
+  y.title.font.size = 16, labels.font.size = 14, axis.font.size = 10,
+  legend.font.size = 15, ...)
 }
 \arguments{
 \item{x}{A \code{\link{matrix}} or a list of matrices.}
@@ -68,8 +70,7 @@ in the calculation of the coordinate space but to be plotted.}
 
 \item{trend.lines}{Boolean indicating whether to draw trend lines when multiple tables are supplied.}
 
-\item{multiple.tables}{Optional boolean indicating whether or not multiple tables have been supplied.
-If no value is given, it will be guessed from the structure of \code{x}.}
+\item{multiple.tables}{Deprecated.}
 
 \item{square}{Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.}
 
@@ -82,6 +83,18 @@ If no value is given, it will be guessed from the structure of \code{x}.}
 \item{dim1.plot}{Dimension to show in X-axis of bubble or scatterplot.}
 
 \item{dim2.plot}{Dimension to show in Y-axis of bubble or scatterplot.}
+
+\item{title.font.size}{Font size of the chart title.}
+
+\item{x.title.font.size}{Font size of the horizontal axis title.}
+
+\item{y.title.font.size}{Font size of the vertical axis title.}
+
+\item{labels.font.size}{Font size of the labels on the scatterplot.}
+
+\item{axis.font.size}{Font size of the labels on the x- and y-axis.}
+
+\item{legend.font.size}{Font size on th legend.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }
