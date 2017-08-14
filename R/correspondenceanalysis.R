@@ -407,9 +407,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     if (x$output == "Diagnostics")
     {
-        if (x$focused)
+        if (!is.null(x$focused))
             stop("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
-        return(summary(output$original))
+        return(summary(x$original))
     }
     if (x$square)
     {

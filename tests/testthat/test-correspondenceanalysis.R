@@ -290,7 +290,7 @@ test_that(paste0("CorrespondenceAnalysis: font sizes"),
 
 
 
-test-that("Correspondence anlaysis quality",
+test_that("Correspondence anlaysis quality",
           {
               expect_error(CAQuality(CorrespondenceAnalysis(x.with.labels)), NA)
               ca = CorrespondenceAnalysis(x.with.labels, focus = "Lift")
