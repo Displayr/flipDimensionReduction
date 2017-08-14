@@ -214,10 +214,6 @@ expect_error(CorrespondenceAnalysis(tab, output = "Bubble Chart",
 
 
 test_that("focus",{
-    output = "Diagnostics"
-    ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = "V", normalization = "Row principal",
-                                              row.names.to.remove = "NET",  column.names.to.remove = "NET")
-    expect_error(print(ca))
     for (output in c("Scatterplot", "Moonplot", "Text"))
 
                   {
@@ -231,6 +227,13 @@ test_that("focus",{
 
 })
 
+
+test_that("Diagnostics",{
+    expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Diagnostics", normalization = "Row principal",
+                                              row.names.to.remove = "NET",  column.names.to.remove = "NET")), NA)
+    expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Diagnostics", focus = "V", normalization = "Row principal",
+                                 row.names.to.remove = "NET",  column.names.to.remove = "NET")), "Output should not be set to 'Diagnostics' when 'Focus' has been set.")
+})
 
 
 data("colas", package = "flipExampleData")
@@ -290,10 +293,8 @@ test_that(paste0("CorrespondenceAnalysis: font sizes"),
 
 
 
-test_that("Correspondence anlaysis quality",
+test_that("Correspondence analysis quality",
           {
               expect_error(CAQuality(CorrespondenceAnalysis(x.with.labels)), NA)
-              ca = CorrespondenceAnalysis(x.with.labels, focus = "Lift")
-              expect_error(CAQuality(ca), NA)
-
+              expect_error(CAQuality(CorrespondenceAnalysis(x.with.labels, focus = "Lift", supplementary = "Pepsi")), NA)
           })

@@ -42,7 +42,7 @@
 #' @param y.title.font.size Font size of the vertical axis title.
 #' @param labels.font.size Font size of the labels on the scatterplot.
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
-#' @param legend.font.size Font size on th legend.
+#' @param legend.font.size Font size of the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
 #' @importFrom flipTransformations RetainedRowsAndOrColumns
@@ -409,8 +409,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (!is.null(x$focused))
             stop("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
-        summary(x$original)
-        return()
+        return(summary(x$original))
     }
     if (x$square)
     {
@@ -657,6 +656,8 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' @export
 CAQuality <- function(x)
 {
+    if (!is(x, "CorrespondenceAnalysis"))
+        stop("Object must be of class 'CorrespondenceAnalysis' to calculate quality.")
     or <- if (is.null(x$focused)) x$original else x$focused
     n <- CANormalization(or, "Principal")
     row.masses <- x$original$rowmass
