@@ -168,7 +168,7 @@ DistanceMatrix <- function(input.data,
 #' @description Display distance matrix as a heatmap.
 #' @param x An object of class \code{"DistanceMatrix"}.
 #' @param ... Not used.
-#' @importFrom flipFormat FormatWithDecimals
+#' @importFrom flipFormat FormatAsReal
 #' @export
 print.DistanceMatrix <- function(x, ...)
 {
@@ -178,7 +178,7 @@ print.DistanceMatrix <- function(x, ...)
     cellnote <- matrix("", n, n)
     for (i in 1:n)
         for (j in 1:n)
-            cellnote[i, j] <- FormatWithDecimals(d[i, j], 2)
+            cellnote[i, j] <- FormatAsReal(d[i, j], decimals = 2)
     show.cellnote.in.cell <- (n <= 10 && show.cell.values != "No") || show.cell.values == "Yes"
     show.x.axes.labels <- x$show.column.labels == "Yes"
     show.y.axes.labels <- x$show.row.labels == "Yes"

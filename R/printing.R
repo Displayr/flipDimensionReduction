@@ -15,7 +15,7 @@ sortLoadings <- function(x) {
 
 
 #' @importFrom stats lm.fit setNames
-#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatWithDecimals FormatAsPercent ExtractCommonPrefix Labels
+#' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
 #' @export
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
@@ -120,7 +120,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
         nvar <- ncol(x$original.data)
         eigenvalues.caption <- paste("Unrotated eigenvalues:",
-                                     paste0(paste0(rep("(", nvar), 1:nvar, rep(") ", nvar), FormatWithDecimals(x$values, 2)), collapse = ", "))
+                                     paste0(paste0(rep("(", nvar), 1:nvar, rep(") ", nvar), FormatAsReal(x$values, decimals = 2)), collapse = ", "))
 
         oblique.rotation <- x$rotation == "oblimin" || x$rotation == "promax"
         if (print.type == "structure" && !oblique.rotation)
