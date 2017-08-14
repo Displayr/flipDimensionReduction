@@ -661,7 +661,7 @@ CAQuality <- function(x)
     e <- colSums(sweep(n$row.coordinates^2, 1, x$original$rowmass, "*"))
     e <- FormatAsPercent(prop.table(e), decimals = 1, remove.leading.0 = TRUE)
     q <- rbind(n$row.coordinates, n$column.coordinates)
-    q <- prop.table(q ^ 2 * 100, 1)
+    q <- prop.table(q ^ 2, 1) * 100
     colnames(q) <- paste0(colnames(q), "\n", e)
     rownames(q) <- paste(FormatAsPercent(q[, 1] + q[, 2], decimals = 0, pad = TRUE, remove.leading.0 = TRUE), rownames(q))
     attr(q, "statistic") <- "Quality %"
