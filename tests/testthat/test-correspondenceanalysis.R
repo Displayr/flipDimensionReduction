@@ -218,9 +218,8 @@ test_that("focus",{
     ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = "V", normalization = "Row principal",
                                               row.names.to.remove = "NET",  column.names.to.remove = "NET")
     expect_error(print(ca))
-    expect_error(capture.output(print(ca)), NA)
     for (output in c("Scatterplot", "Moonplot", "Text"))
-        test_that(paste0("CorrespondenceAnalysis: focus by output ", output),
+
                   {
                       for (focus in c(colnames(x.with.labels), rownames(x.with.labels))) {
                           expect_error(ca <- CorrespondenceAnalysis(x.with.labels, output = output, focus = focus, normalization = "Row principal",
@@ -228,7 +227,7 @@ test_that("focus",{
                           expect_error(capture.output(print(ca)), NA)
                       }
                   }
-        )
+
 
 })
 
