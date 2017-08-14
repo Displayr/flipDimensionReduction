@@ -372,12 +372,12 @@ CorrespondenceAnalysis = function(x,
                    dim2.plot = dim2.plot,
                    footer = footer,
                    dim2.plot = 2,
-                   title.font.size = 20,
-                   x.title.font.size = 16,
-                   y.title.font.size = 16,
-                   labels.font.size = 14,
-                   axis.font.size = 10,
-                   legend.font.size = 15
+                   title.font.size = title.font.size,
+                   x.title.font.size = x.title.font.size,
+                   y.title.font.size = y.title.font.size,
+                   labels.font.size = labels.font.size,
+                   axis.font.size = axis.font.size,
+                   legend.font.size = legend.font.size
     )
     class(result) <- c("CorrespondenceAnalysis")
     attr(result, "ChartData") <- rbind(row.coordinates[,1:2], column.coordinates[,1:2])
@@ -652,19 +652,18 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' \code{CAQuality}
 #' @description Quality measures of a correspondence analysis.
 #' @param x The object to compute quality for.
+#' @importFrom flipFormat FormatAsPercent
 #' @export
 CAQuality <- function(x)
 {
     or <- if (is.null(x$focused)) x$original else x$focused
     n <- CANormalization(or)
     e <- colSums(sweep(n$row.coordinates^2, 1, x$original$rowmass, "*"))
-    e <- prop.table(e)
-    e <- round(e * 100, 1)
+    e <- FormatAsPercent(prop.table(e), decimals = 1, remove.leading.0 = TRUE)
     q <- rbind(n$row.coordinates, n$column.coordinates)
-    q <- q ^ 2
-    q <- prop.table(q, 1) * 100
-    colnames(q) <- paste0(colnames(q), " ", e, "%")
-    rownames(q) <- paste0(round(q[, 1] + q[, 2]), "% ", rownames(q))
+    q <- prop.table(q ^ 2 * 100, 1)
+    colnames(q) <- paste0(colnames(q), "\n", e)
+    rownames(q) <- paste(FormatAsPercent(q[, 1] + q[, 2], decimals = 0, pad = TRUE, remove.leading.0 = TRUE), rownames(q))
     attr(q, "statistic") <- "Quality %"
     q
 }
