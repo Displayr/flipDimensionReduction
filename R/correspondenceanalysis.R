@@ -657,8 +657,10 @@ CANormalization <- function(ca.object, normalization = "Principal")
 CAQuality <- function(x)
 {
     or <- if (is.null(x$focused)) x$original else x$focused
-    n <- CANormalization(or)
-    e <- colSums(sweep(n$row.coordinates^2, 1, x$original$rowmass, "*"))
+    n <- CANormalization(or, "Principal")
+    row.masses <- x$original$rowmass
+    row.masses[is.na(row.masses)] <- 0
+    e <- colSums(sweep(n$row.coordinates^2, 1, row.masses, "*"))
     e <- FormatAsPercent(prop.table(e), decimals = 1, remove.leading.0 = TRUE)
     q <- rbind(n$row.coordinates, n$column.coordinates)
     q <- prop.table(q ^ 2, 1) * 100
