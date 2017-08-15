@@ -94,7 +94,7 @@ in the calculation of the coordinate space but to be plotted.}
 
 \item{axis.font.size}{Font size of the labels on the x- and y-axis.}
 
-\item{legend.font.size}{Font size on th legend.}
+\item{legend.font.size}{Font size of the legend.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

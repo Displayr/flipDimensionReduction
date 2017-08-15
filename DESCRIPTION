@@ -25,6 +25,7 @@ Imports:
     flipU,
     GPArotation,
     MASS,
+    methods,
     nloptr,
     plotly,
     psych,

@@ -170,11 +170,7 @@ CorrespondenceAnalysis = function(x,
 
     } else
     {
-        # Convert list of 1 table
         if (!is.null(dim(x[[1]])))
-            x <- x[[1]]
-
-        if (!is.na(multiple.tables) && multiple.tables)
             stop("Input data 'x' contains only one table. Unselect checkbox for 'multiple tables'\n")
 
         num.tables <- 1
@@ -273,6 +269,9 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
+
+    if (sum(x < 0) > 0)
+        stop("Input tables must not contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
 
@@ -652,6 +651,7 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' \code{CAQuality}
 #' @description Quality measures of a correspondence analysis.
 #' @param x The object to compute quality for.
+#' @importFrom methods is
 #' @importFrom flipFormat FormatAsPercent
 #' @export
 CAQuality <- function(x)

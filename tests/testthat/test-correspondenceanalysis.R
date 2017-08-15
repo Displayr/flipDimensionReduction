@@ -55,6 +55,12 @@ for (output in c("Scatterplot", "Moonplot",  "Text"))
         expect_error(CorrespondenceAnalysis(x,output = output), NA)
     })
 
+test_that(paste("CorrespondenceAnalysis negative values"),
+          {
+              x2 <- x
+              x2[1, 1] <- -1
+              expect_error(CorrespondenceAnalysis(x2, output = output), "Input tables must not contain negative values.")
+          })
 
 
 test_that("Row and column labels",
@@ -101,7 +107,7 @@ test_that("Logos",
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T))))
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:4]))))
 
-              z2 <- z + rnorm(72)
+              z2 <- z + runif(72)
               zz <- list(z, z2)
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))), NA)
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9], transpose=T))))
