@@ -34,3 +34,6 @@ notifications:
 # committing a new change to .travis.yml in each repository
 after_success: >-
   Rscript -e "require(devtools); install_github('Displayr/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
+  - Rscript -e "devtools::install_github('Displayr/flipDimensionReduction'); covr::coveralls(type = 'all')"
+r_packages:
+  - covr
