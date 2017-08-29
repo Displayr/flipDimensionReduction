@@ -12,12 +12,21 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
+
+r_packages:
+  - roxygen2
+  - covr
+
+r_github_packages:
+  - Displayr/flipExampleData
+  - Displayr/travisCI
+  - Displayr/flipU
+
+r_build_args: '--no-manual --no-build-vignettes --no-resave-data'
+
+r_check_args: '--as-cran --no-manual --no-build-vignettes --no-tests'
+
 script:
-  - R CMD build --no-manual --no-build-vignettes --no-resave-data .
-  - sudo Rscript -e 'require(devtools); install_github("Displayr/flipExampleData")'
-  - sudo Rscript -e 'require(devtools); install_github("Displayr/flipU")'
-  - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
-  - sudo Rscript -e 'install.packages("roxygen2")'
   - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); write.csv(df, file="test_results.csv"); quit(status=1-pass, save="no")'; fi
 
 notifications:
@@ -32,8 +41,6 @@ notifications:
 # Warning notifications and downstream package builds are implemented
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
-after_success: >-
-  Rscript -e "require(devtools); install_github('Displayr/travisCI'); travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
+after_success: 
+  - Rscript -e "travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
   - Rscript -e "devtools::install_github('Displayr/flipDimensionReduction'); covr::coveralls(type = 'all')"
-r_packages:
-  - covr
