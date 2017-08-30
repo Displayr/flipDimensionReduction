@@ -253,7 +253,7 @@ setFocus <- function(original, focus.i) {
     tgt[focus.i, 1] <- sqrt(sum(coords[focus.i, ]^2))    # rotate focus point to x-axis
     tgt[nrow(tgt), ] <- 0
     tgt[nrow(tgt), 2] <- 1    # rotate max variance dirn (perp to focus point) to y-axis
-    rotated <- targetT(coords, Target = tgt)
+    rotated <- targetT(coords, Target = tgt, eps = 1e-5, maxit = 1000)
 
     # Calculate rotated eigenvalues
     old.eigen.mat <- diag(original$sv^2)

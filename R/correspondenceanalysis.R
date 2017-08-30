@@ -142,6 +142,8 @@ CorrespondenceAnalysis = function(x,
         }
         if (unnamed.tables & !trend.lines)
             warning(sprintf("Tables have been automatically assigned names '%s'. You can name tables using R code: 'attr(table.name, \"name\") <- \"Description\"'", paste(used.names, collapse="', '")))
+        if (any(duplicated(x.names)) & !trend.lines)
+            warning(sprintf("Tables have duplicate names: '%s'. Points from duplicated tables cannot be distinguised.", paste(x.names[duplicated(x.names)], collapse = "', '")))
 
         # Check tables match - order of rows will match first table
         x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
