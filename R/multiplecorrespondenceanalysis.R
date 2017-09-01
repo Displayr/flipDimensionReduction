@@ -170,7 +170,7 @@ print.mcaObj <- function(x, digits = 3, ...)
         if (max.length > 20)
             warning("The labels of the variables and/or values are long. Edit the labels in the input variables to improve the look of this map.")
         groups <- rep(x$colnames, x$levels.n)
-        gcolors <- ChartColors(length(x$colnames), x$scatter.palette, trim.light.colors=TRUE)
+        gcolors <- ChartColors(length(x$colnames), x$scatter.palette)
 
         lab <- x$variablenames
         if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)

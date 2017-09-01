@@ -480,7 +480,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         n1 <- nrow(x$x)/x$num.tables
         n2 <- nrow(x$column.coordinates)
         groups <- c(rep(paste0("R", 1:n1), x$num.tables), paste0("C", 1:n2)) # legend hidden so names are arbitary
-        colors <- ChartColors(n1+1, x$color.palette, trim.light.colors=TRUE)
+        colors <- ChartColors(n1+1, x$color.palette)
         colors <- colors[c((1:n1)+1, rep(1,n2))]
     }
 
