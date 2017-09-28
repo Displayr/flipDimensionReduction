@@ -40,7 +40,6 @@ PrincipalComponentsBiplot <- function(x,
     if (is.null(row.column.names))
         row.column.names <- c("Rows", "Columns")
 
-    x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
     row.names <- rownames(x)
     col.names <- colnames(x)
     xm <- apply(x, 2, mean)
