@@ -20,6 +20,7 @@ Imports:
     flipImputation,
     flipStatistics,
     flipStandardCharts,
+    flipTables,
     flipTransformations,
     flipU,
     GPArotation,

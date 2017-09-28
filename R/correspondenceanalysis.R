@@ -44,7 +44,7 @@
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
 #' @param legend.font.size Font size of the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
-#' @importFrom flipData GetTidyTwoDimensionalArray
+#' @importFrom flipTables BasicTable
 #' @importFrom flipTransformations RemoveRowsAndOrColumns
 #' @importFrom ca ca
 #' @export
@@ -145,15 +145,14 @@ CorrespondenceAnalysis = function(x,
         if (any(duplicated(x.names)) & !trend.lines)
             warning(sprintf("Tables have duplicate names: '%s'. Points from duplicated tables cannot be distinguised.", paste(x.names[duplicated(x.names)], collapse = "', '")))
 
-        # Check tables match - order of rows will match first table
-        x[[1]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[1]]), row.names.to.remove, column.names.to.remove)
-        else GetTidyTwoDimensionalArray(x[[1]], row.names.to.remove, column.names.to.remove)
+        ## Check tables match - order of rows will match first table
+        x[[1]] <- BasicTable(x[[1]], row.names.to.remove = row.names.to.remove,
+                             col.names.to.remove = column.names.to.remove, transpose = transpose)
         r.names <- rownames(x[[1]])
         c.names <- colnames(x[[1]])
         for (i in 2:num.tables)
         {
-            x[[i]] <- if (transpose) GetTidyTwoDimensionalArray(t(x[[i]]))
-            else GetTidyTwoDimensionalArray(x[[i]])
+            x[[i]] <- BasicTable(x[[i]], transpose = transpose)
             r.tmp <- match(r.names, rownames(x[[i]]))
             c.tmp <- match(c.names, colnames(x[[i]]))
 
@@ -180,7 +179,8 @@ CorrespondenceAnalysis = function(x,
         trend.lines <- FALSE
         row.column.names.attribute <- attr(x, "row.column.names")
         row.column.names <- names(dimnames(x))[1:2] # This needs to go above GetTidyTwoDimensionalArray which assigns dimnames
-        x <- GetTidyTwoDimensionalArray(x, row.names.to.remove, column.names.to.remove)
+        x <- BasicTable(x, row.names.to.remove = row.names.to.remove,
+                        col.names.to.remove = column.names.to.remove)
         if (transpose)
         {
             x <- t(x)
