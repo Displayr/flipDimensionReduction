@@ -18,7 +18,6 @@ Imports:
     flipData,
     flipFormat,
     flipImputation,
-    flipPlots,
     flipStatistics,
     flipStandardCharts,
     flipTransformations,
@@ -34,7 +33,6 @@ Imports:
     rhtmlMoonPlot,
     Rtsne,
     stats,
-    tsne,
     utils,
     weights
 Remotes: 
@@ -42,8 +40,8 @@ Remotes:
     Displayr/flipTransformations,
     Displayr/flipImputation,
     Displayr/flipFormat,
+    Displayr/flipTables,
     Displayr/flipData,
-    Displayr/flipPlots,
     Displayr/flipStatistics,
     Displayr/flipStandardCharts,
     Displayr/flipTransformations,
