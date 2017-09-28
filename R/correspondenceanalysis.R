@@ -45,7 +45,7 @@
 #' @param legend.font.size Font size of the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipData GetTidyTwoDimensionalArray
-#' @importFrom flipTransformations RetainedRowsAndOrColumns
+#' @importFrom flipTransformations RemoveRowsAndOrColumns
 #' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
@@ -279,14 +279,15 @@ CorrespondenceAnalysis = function(x,
 
     suprow <- supcol <- integer(0)
     if (!is.null(supplementary)) {
-        retained <- RetainedRowsAndOrColumns(x, row.names.to.remove = supplementary,
-                                             column.names.to.remove = supplementary)
-        if (length(retained$retained.rows) < 2 || length(retained$retained.cols) < 2)
-            stop("At least 2 rows and 2 columns must remain after removing supplementary points.")
-        suprow <- setdiff(seq(nrow(x)), retained$retained.rows)
-        supcol <- setdiff(seq(ncol(x)), retained$retained.cols)
 
+        reduced.x <- RemoveRowsAndOrColumns(x, row.names.to.remove = supplementary,
+                                            column.names.to.remove = supplementary)
+        if (length(rownames(reduced.x)) < 2 || length(colnames(reduced.x)) < 2)
+            stop("At least 2 rows and 2 columns must remain after removing supplementary points.")
+        suprow <- seq(nrow(x))[is.na(match(rownames(x), rownames(reduced.x)))]
+        supcol <- seq(ncol(x))[is.na(match(colnames(x), colnames(reduced.x)))]
         removed.labels <- c((rownames(x)[suprow]), (colnames(x)[supcol]))
+
         supp.labels <- unlist(strsplit(supplementary, split = ","))
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
         if (!identical(unmatched.labels, character(0)))
@@ -294,7 +295,6 @@ CorrespondenceAnalysis = function(x,
                         "' do not match any rows or columns in the data."))
         if (!identical(removed.labels, character(0)))
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
-        matched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
 
     }
 
