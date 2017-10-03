@@ -146,7 +146,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom flipChartBasics ChartColors
 #' @export
-
+#' @method print mcaObj
 print.mcaObj <- function(x, digits = 3, ...)
 {
     if (x$output == "Text")

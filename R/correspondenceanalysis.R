@@ -178,7 +178,7 @@ CorrespondenceAnalysis = function(x,
         color.palette <- "Default colors"
         trend.lines <- FALSE
         row.column.names.attribute <- attr(x, "row.column.names")
-        row.column.names <- names(dimnames(x))[1:2] # This needs to go above GetTidyTwoDimensionalArray which assigns dimnames
+        row.column.names <- names(dimnames(x))[1:2] # This needs to go above BasicTable which assigns dimnames
         x <- BasicTable(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove)
         if (transpose)
@@ -396,6 +396,7 @@ CorrespondenceAnalysis = function(x,
 #' @importFrom flipTransformations TextAsVector
 #' @importFrom flipChartBasics ChartColors
 #' @export
+#' @method print CorrespondenceAnalysis
 print.CorrespondenceAnalysis <- function(x, ...)
 {
     d.tmp <- c(x$dim1.plot, x$dim2.plot)

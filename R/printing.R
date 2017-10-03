@@ -17,6 +17,7 @@ sortLoadings <- function(x) {
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
 #' @export
+#' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
     min.display.loading.value <- if (x$suppress.small.coefficients) x$min.display.loading.value else 0

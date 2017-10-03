@@ -220,6 +220,7 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
 #' @export
+#' @method print 2Dreduction
 print.2Dreduction <- function(x, ...) {
 
     if (x$input.is.distance) {

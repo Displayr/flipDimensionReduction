@@ -170,6 +170,7 @@ DistanceMatrix <- function(input.data,
 #' @param ... Not used.
 #' @importFrom flipFormat FormatAsReal
 #' @export
+#' @method print DistanceMatrix
 print.DistanceMatrix <- function(x, ...)
 {
     d <- x$distance
