@@ -14,7 +14,7 @@
 #' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
 #' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
 #' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
-#' @importFrom flipTables BasicTable
+#' @importFrom flipTables TidyTabularData
 #' @examples
 #' x2 <- cbind(Glance=c(0.016, 0.058, 0.061, 0.038, 0.01),
 #'            FairlyThorough=c(0.022, 0.147, 0.093, 0.128, 0.022),
@@ -33,7 +33,7 @@ PrincipalComponentsBiplot <- function(x,
                       col.color = '#ED7D31')
 {
     row.column.names.attribute <- attr(x, "row.column.names")
-    x <- BasicTable(x, row.names.to.remove = row.names.to.remove,
+    x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                     col.names.to.remove = column.names.to.remove)
     row.column.names <- names(dimnames(x))
     if (is.null(row.column.names))

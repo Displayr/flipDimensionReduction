@@ -44,7 +44,7 @@
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
 #' @param legend.font.size Font size of the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
-#' @importFrom flipTables BasicTable
+#' @importFrom flipTables TidyTabularData
 #' @importFrom flipTransformations RemoveRowsAndOrColumns
 #' @importFrom ca ca
 #' @export
@@ -146,13 +146,13 @@ CorrespondenceAnalysis = function(x,
             warning(sprintf("Tables have duplicate names: '%s'. Points from duplicated tables cannot be distinguised.", paste(x.names[duplicated(x.names)], collapse = "', '")))
 
         ## Check tables match - order of rows will match first table
-        x[[1]] <- BasicTable(x[[1]], row.names.to.remove = row.names.to.remove,
+        x[[1]] <- TidyTabularData(x[[1]], row.names.to.remove = row.names.to.remove,
                              col.names.to.remove = column.names.to.remove, transpose = transpose)
         r.names <- rownames(x[[1]])
         c.names <- colnames(x[[1]])
         for (i in 2:num.tables)
         {
-            x[[i]] <- BasicTable(x[[i]], transpose = transpose)
+            x[[i]] <- TidyTabularData(x[[i]], transpose = transpose)
             r.tmp <- match(r.names, rownames(x[[i]]))
             c.tmp <- match(c.names, colnames(x[[i]]))
 
@@ -178,8 +178,8 @@ CorrespondenceAnalysis = function(x,
         color.palette <- "Default colors"
         trend.lines <- FALSE
         row.column.names.attribute <- attr(x, "row.column.names")
-        row.column.names <- names(dimnames(x))[1:2] # This needs to go above BasicTable which assigns dimnames
-        x <- BasicTable(x, row.names.to.remove = row.names.to.remove,
+        row.column.names <- names(dimnames(x))[1:2] # This needs to go above TidyTabularData which assigns dimnames
+        x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove)
         if (transpose)
         {
