@@ -44,8 +44,7 @@
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
 #' @param legend.font.size Font size of the legend.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
-#' @importFrom flipTables TidyTabularData
-#' @importFrom flipTransformations RemoveRowsAndOrColumns
+#' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
 #' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
