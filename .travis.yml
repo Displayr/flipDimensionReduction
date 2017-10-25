@@ -11,19 +11,26 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
+  - rcode="res<-devtools::test(); "
+  - rcode+="df <- as.data.frame(res); "
+  - rcode+='pass <- sum(df$failed)==0 && all(!df$error); '
+  - rcode+="write.csv(df, file='test_results.csv'); "
+  - rcode+="quit(status=1-pass, save='no');"
 
 r_packages:
   - roxygen2
   - covr
 
 r_github_packages:
-  - Displayr/travisCI
+  - Displayr/flipDevTools
   - Displayr/flipExampleData
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
-  - if [ -d tests/testthat ]; then Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e 'res<-devtools::test(); df <- as.data.frame(res); pass <- sum(df$failed)==0 && all(!df$error); write.csv(df, file="test_results.csv"); quit(status=1-pass, save="no")'; fi
+  - if [ -d tests/testthat ]; then
+    Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
+    fi
 
 notifications:
   slack:
@@ -38,5 +45,5 @@ notifications:
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
 after_success: 
-  - Rscript -e "require(travisCI); NotifyWarnings(); TriggerDownstreamBuilds()"
-  - travis_wait Rscript -e "travisCI::CheckCoverage()"
+  - Rscript -e "require(flipDevTools); NotifyWarnings(); TriggerDownstreamBuilds()"
+  - travis_wait Rscript -e "flipDevTools::CheckCoverage()"
