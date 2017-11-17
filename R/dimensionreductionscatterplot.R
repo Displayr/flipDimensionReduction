@@ -254,7 +254,7 @@ print.2Dreduction <- function(x, ...) {
                 scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
                 scatter.group.labels <- paste(levels(groups), collapse = ", ")
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
-                same.category <- sum(nearest == groups) / length(groups)
+                same.category <- sum(nearest == factor(groups, ordered = FALSE)) / length(groups)
                 title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
