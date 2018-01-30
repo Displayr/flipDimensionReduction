@@ -250,7 +250,7 @@ CorrespondenceAnalysis = function(x,
                 bubble.names <- names(bubble.size)
             if (is.null(bubble.names))
                 stop("The bubble sizes need to be named.")
-            bubble.size <- as.numeric(bubble.size)
+            bubble.size <- as.numeric(unlist(bubble.size))
             if (length(table.names <- rownames(x)) != length(bubble.names))
                 stop("The number of bubble sizes does not match the number of ", table.maindim, " in the table.")
             if (length(unique(bubble.names)) !=  length(bubble.names))
