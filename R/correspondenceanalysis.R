@@ -245,8 +245,12 @@ CorrespondenceAnalysis = function(x,
             table.maindim <- ifelse(transpose, "columns", "rows")
             if(is.null(bubble.size))
                 stop("Bubble Charts require bubble sizes.")
-            if (is.null(bubble.names <- names(bubble.size)))
+            bubble.names <- rownames(bubble.size)
+            if (is.null(bubble.names) && !is.null(names(bubble.size)))
+                bubble.names <- names(bubble.size)
+            if (is.null(bubble.names))
                 stop("The bubble sizes need to be named.")
+            bubble.size <- as.numeric(bubble.size)
             if (length(table.names <- rownames(x)) != length(bubble.names))
                 stop("The number of bubble sizes does not match the number of ", table.maindim, " in the table.")
             if (length(unique(bubble.names)) !=  length(bubble.names))
@@ -259,7 +263,7 @@ CorrespondenceAnalysis = function(x,
                          paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
                 }
             # Sorting bubble sizes to match the row names of the table.
-            order = match(rownames(x), names(bubble.size))
+            order = match(rownames(x), bubble.names)
             if (sum(order, na.rm = TRUE) != sum(1:length(order)))
                 stop("The bubble sizes must contain the same names as in the rows of the input data table: ",
                      paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
