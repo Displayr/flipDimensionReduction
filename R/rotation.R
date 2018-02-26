@@ -216,6 +216,14 @@ sortLoadingsByComponents <- function(rotated.loadings) {
 #' @importFrom utils head tail
 setFocus <- function(original, focus.i) {
 
+    if (length(original$rownames) <= 2 || length(original$colnames) <= 2)
+    {
+        warning("Output is one dimensional and focus has no effect.")
+        return(list(rowcoord = original$rowcoord,
+                    colcoord = original$colcoord,
+                    sv = original$sv))
+    }
+
     # Select principal coordinates
     principal <- CANormalization(original, normalization = "Principal")
     coords <- rbind(principal$row.coordinates, principal$column.coordinates)

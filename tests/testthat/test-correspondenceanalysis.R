@@ -279,6 +279,13 @@ for (n in c("Principal", "Row principal", "Column principal", "None", "Row princ
               }
     )
 
+z <- z[, 3:4]
+test_that("CorrespondenceAnalysis: focus 1D warning",
+          {
+                expect_warning(ca <- CorrespondenceAnalysis(z, output = "Scatterplot", focus = "25 to 29"),
+                               "Output is one dimensional and focus has no effect.")
+          }
+)
 
 test_that(paste0("CorrespondenceAnalysis: supplementary points"),
       {
