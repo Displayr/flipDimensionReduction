@@ -16,7 +16,7 @@ before_install:
   - rcode+='pass <- sum(df$failed)==0 && all(!df$error); '
   - rcode+="write.csv(df, file='test_results.csv'); "
   - rcode+="quit(status=1-pass, save='no');"
-  - pip install numpy
+  - pip3 install numpy
 
 r_packages:
   - roxygen2
