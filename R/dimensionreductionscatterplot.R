@@ -22,8 +22,8 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     \code{\link{vector}} to be used as a grouping variable, or
 #'     takes a distance \code{\link{matrix}}.
 #' @param algorithm Valid options are \code{"t-SNE"},
-#'     \code{"MDS - Metric"}, \code{"MDS - Non-metric"} or
-#'     \code{"PCA"}, where the latter does not accept a distance
+#'     \code{"MDS - Metric"}, \code{"MDS - Non-metric"}, \code{"PCA"}
+#'     or \code{"UMAP"}, where the final two do not accept a distance
 #'     matrix as input.
 #' @param data A \code{\link{data.frame}} with cases by row and
 #'     variables by column.
@@ -38,7 +38,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     \code{data} to be analyzed.  Not used for \code{table} input.
 #' @param perplexity The perplexity coefficient which defines the
 #'     extent of the locality of the dimension reduction. Used only
-#'     when \code{algorithm} is \code{t-SNE}.
+#'     when \code{algorithm} is \code{t-SNE} or \code{UMAP}.
 #' @param binary If \code{TRUE}, unordered factors are converted to
 #'     dummy variables. Otherwise, they are treated as sequential
 #'     integers. Ignored if input is provided by \code{table}.
@@ -143,6 +143,10 @@ DimensionReduction <- function(algorithm,
     {
         result <- MultiDimesnsionalScaling(distance.matrix = distance.matrix, metric = FALSE)
     }
+    else if (algorithm == "UMAP")
+    {
+        result <- UMAP(data = processed.data, n.neighbours = perplexity)
+    }
     else
         stop("Algorithm not recognized.")
 
@@ -155,7 +159,7 @@ DimensionReduction <- function(algorithm,
         expanded.embedding[used.subset] <- result$embedding
         result$embedding <- expanded.embedding
 
-        if (algorithm == "t-SNE") {
+        if (algorithm == "t-SNE" || algorithm == "UMAP") {
             # t-SNE from data - expand input to be same length as original data
             expanded.input <- matrix(nrow = length(subset), ncol = ncol(processed.data))
             expanded.input[used.subset] <- as.matrix(processed.data)

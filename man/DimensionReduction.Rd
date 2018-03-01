@@ -15,8 +15,8 @@ DimensionReduction(algorithm, data = NULL, data.groups = NULL,
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},
-\code{"MDS - Metric"}, \code{"MDS - Non-metric"} or
-\code{"PCA"}, where the latter does not accept a distance
+\code{"MDS - Metric"}, \code{"MDS - Non-metric"}, \code{"PCA"}
+or \code{"UMAP"}, where the final two do not accept a distance
 matrix as input.}
 
 \item{data}{A \code{\link{data.frame}} with cases by row and
@@ -37,7 +37,7 @@ called on \code{table} to create a numeric matrix from text.}
 
 \item{perplexity}{The perplexity coefficient which defines the
 extent of the locality of the dimension reduction. Used only
-when \code{algorithm} is \code{t-SNE}.}
+when \code{algorithm} is \code{t-SNE} or \code{UMAP}.}
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to
 dummy variables. Otherwise, they are treated as sequential

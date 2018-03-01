@@ -1,4 +1,4 @@
-context("t-SNE")
+context("t-SNE and UMAP")
 
 data(hbatwithsplits, package = "flipExampleData")
 
@@ -12,6 +12,12 @@ test_that("tSNE: perplexity", {
     }
 })
 
+
+test_that("UMAP: n.neighbours", {
+    for (n.neighbours in c(2, 5, 10, 20)) {
+        expect_error(UMAP(input.data, n.neighbours = n.neighbours), NA)
+    }
+})
 
 
 data(breakfast.dissimilarities, package = "flipExampleData")
