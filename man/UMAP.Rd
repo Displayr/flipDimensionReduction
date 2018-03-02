@@ -4,7 +4,7 @@
 \alias{UMAP}
 \title{\code{UMAP}}
 \usage{
-UMAP(data, n.neighbours = 10, min.dist = 0.1)
+UMAP(data, n.neighbours = 10, min.dist = 0.1, seed = 1066)
 }
 \arguments{
 \item{data}{A code{\link{data.frame}} or numeric \code{\link{matrix}} containing the data to be
@@ -14,6 +14,8 @@ analyzed with each case as a row and each variable as a column.}
 approximations of manifold structured.}
 
 \item{min.dist}{Controls how tightly the embedding is allowed compress points together.}
+
+\item{seed}{Random seed.}
 }
 \description{
 Produce a Uniform Manifold Approximation and Projection embedding.

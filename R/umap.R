@@ -5,10 +5,13 @@
 #' @param n.neighbours A coefficient which determines the number of neighboring points used in local
 #' approximations of manifold structured.
 #' @param min.dist Controls how tightly the embedding is allowed compress points together.
+#' @param seed Random seed.
 #'
 #' @importFrom reticulate import
 
-UMAP <- function(data, n.neighbours = 10, min.dist = 0.1) {
+UMAP <- function(data, n.neighbours = 10, min.dist = 0.1, seed = 1066) {
+
+    set.seed(seed)
 
     # Convert to numeric matrix
     data <- data.matrix(data)
