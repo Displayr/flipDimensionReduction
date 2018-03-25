@@ -9,10 +9,12 @@ DimensionReductionScatterplot <- function(algorithm,
                                           subset = NULL,
                                           perplexity = 10,
                                           binary = TRUE,
-                                          normalization = FALSE) {
+                                          normalization = FALSE,
+                                          seed = 1066) {
 
     DimensionReduction(algorithm, data = data, data.groups = data.groups, table = table, raw.table = raw.table,
-                       subset = subset, perplexity = perplexity, binary = binary, normalization = normalization)
+                       subset = subset, perplexity = perplexity, binary = binary, normalization = normalization,
+                       seed = seed)
 }
 
 
@@ -45,6 +47,8 @@ DimensionReductionScatterplot <- function(algorithm,
 #' @param normalization If \code{data} is supplied, whether to
 #'     standardize the data so each variable has a mean of 0 and
 #'     standard deviation of 1.
+#' @param seed Random seed. Used only when \code{algorithm} is
+#'     \code{"t-SNE"} or \code{"UMAP"}.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
@@ -61,7 +65,8 @@ DimensionReduction <- function(algorithm,
                                         subset = NULL,
                                         perplexity = 10,
                                         binary = TRUE,
-                                        normalization = FALSE) {
+                                        normalization = FALSE,
+                                        seed = 1066) {
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
@@ -133,7 +138,8 @@ DimensionReduction <- function(algorithm,
     {
         result <- tSNE(data = if (input.distance) distance.matrix else processed.data,
                        is.distance = input.distance,
-                       perplexity = perplexity)
+                       perplexity = perplexity,
+                       seed = seed)
     }
     else if (algorithm == "MDS - Metric")
     {
@@ -145,7 +151,7 @@ DimensionReduction <- function(algorithm,
     }
     else if (algorithm == "UMAP")
     {
-        result <- UMAP(data = processed.data, n.neighbours = perplexity)
+        result <- UMAP(data = processed.data, n.neighbours = perplexity, seed = seed)
     }
     else
         stop("Algorithm not recognized.")
@@ -160,7 +166,7 @@ DimensionReduction <- function(algorithm,
         result$embedding <- expanded.embedding
 
         if (algorithm == "t-SNE" || algorithm == "UMAP") {
-            # t-SNE from data - expand input to be same length as original data
+            # expand output to be same length as original data (not distance matrix).
             expanded.input <- matrix(nrow = length(subset), ncol = ncol(processed.data))
             expanded.input[used.subset] <- as.matrix(processed.data)
             result$input.data <- expanded.input

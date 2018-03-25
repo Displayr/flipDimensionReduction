@@ -7,11 +7,11 @@
 \usage{
 DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = FALSE)
+  binary = TRUE, normalization = FALSE, seed = 1066)
 
 DimensionReduction(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = FALSE)
+  binary = TRUE, normalization = FALSE, seed = 1066)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},
@@ -46,6 +46,9 @@ integers. Ignored if input is provided by \code{table}.}
 \item{normalization}{If \code{data} is supplied, whether to
 standardize the data so each variable has a mean of 0 and
 standard deviation of 1.}
+
+\item{seed}{Random seed. Used only when \code{algorithm} is
+\code{"t-SNE"} or \code{"UMAP"}.}
 }
 \description{
 \code{DimensionReductionScatterplot}
