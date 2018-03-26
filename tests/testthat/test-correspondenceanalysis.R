@@ -88,14 +88,15 @@ test_that("Row and column labels",
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
                 expect_equal(x$row.column.names, c("Brand",  "Attribute"))
 
-                attr(x.with.labels, "row.column.names") <- c("My rows", "My columns")
+                attr(x.with.labels, "row.column.names") <- c("", "")
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
                 expect_equal(x$row.column.names, c("Brand",  "Attribute"))
 
-                names(dimnames(x.with.labels)) <- NULL
+                attr(x.with.labels, "row.column.names") <- c("My rows", "My columns")
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
-                expect_equal(x$row.column.names, c("My rows", "My columns"))
+                expect_equal(x$row.column.names, c("My rows",  "My columns"))
 
+                names(dimnames(x.with.labels)) <- NULL
                 attr(x.with.labels, "row.column.names") <- NULL
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
                 expect_equal(x$row.column.names, c("Rows",  "Columns"))

@@ -176,8 +176,13 @@ CorrespondenceAnalysis = function(x,
         num.tables <- 1
         color.palette <- "Default colors"
         trend.lines <- FALSE
-        row.column.names.attribute <- attr(x, "row.column.names")
-        row.column.names <- names(dimnames(x))[1:2] # This needs to go above TidyTabularData which assigns dimnames
+
+        row.column.names <- names(dimnames(x))[1:2]
+        if (!is.null(attr(x, "row.column.names")) && !all(attr(x, "row.column.names") == ""))
+            row.column.names <- attr(x, "row.column.names")
+        if (is.null(row.column.names))
+            row.column.names <- c("Rows", "Columns")
+
         x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove)
         if (transpose)
@@ -185,10 +190,6 @@ CorrespondenceAnalysis = function(x,
             x <- t(x)
             row.column.names <- rev(row.column.names)
         }
-        if (is.null(row.column.names))
-            row.column.names <- row.column.names.attribute
-        if (is.null(row.column.names))
-            row.column.names <- c("Rows", "Columns")
 
         if (square)
         {
