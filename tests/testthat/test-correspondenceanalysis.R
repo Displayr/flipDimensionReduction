@@ -90,7 +90,7 @@ test_that("Row and column labels",
 
                 attr(x.with.labels, "row.column.names") <- c("", "")
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
-                expect_equal(x$row.column.names, c("Brand",  "Attribute"))
+                expect_equal(x$row.column.names, c("",  ""))
 
                 attr(x.with.labels, "row.column.names") <- c("My rows", "My columns")
                 x <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
