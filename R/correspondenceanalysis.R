@@ -474,7 +474,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     } else if (x$num.tables == 1)
     {
         if (sum(nchar(x$row.column.names)) > 0 && x$row.column.names[1] == x$row.column.names[2])
-            warning("Row and column titles should not be the same.")
+            warning("Row and column titles are identical which will cause the same label to be used for both.")
         n1 <- nrow(x$row.coordinates)
         n2 <- nrow(x$column.coordinates)
         x.groups <- if(length(x$row.color) == 1) rep(x$row.column.names[1], n1) else paste("Row", 1:n1)
