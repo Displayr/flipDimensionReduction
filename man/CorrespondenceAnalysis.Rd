@@ -14,11 +14,11 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
   chart.title = "Correspondence analysis", transpose = FALSE,
   logos = NULL, logo.size = 0.5, trend.lines = FALSE,
-  multiple.tables = NA, square = FALSE, max.row.labels.plot = 200,
-  max.col.labels.plot = 200, max.labels.plot = NA, dim1.plot = 1,
-  dim2.plot = 2, title.font.size = 20, x.title.font.size = 16,
-  y.title.font.size = 16, labels.font.size = 14, axis.font.size = 10,
-  legend.font.size = 15, ...)
+  show.gridlines = TRUE, multiple.tables = NA, square = FALSE,
+  max.row.labels.plot = 200, max.col.labels.plot = 200,
+  max.labels.plot = NA, dim1.plot = 1, dim2.plot = 2,
+  title.font.size = 20, x.title.font.size = 16, y.title.font.size = 16,
+  labels.font.size = 14, axis.font.size = 10, legend.font.size = 15, ...)
 }
 \arguments{
 \item{x}{A \code{\link{matrix}} or a list of matrices.}
@@ -69,6 +69,8 @@ in the calculation of the coordinate space but to be plotted.}
 \item{logo.size}{Numeric controlling the size of the logos.}
 
 \item{trend.lines}{Boolean indicating whether to draw trend lines when multiple tables are supplied.}
+
+\item{show.gridlines}{Boolean indicating whether to show gridlines for \code{"Scatterplot"} and \code{"Bubble Chart"}.}
 
 \item{multiple.tables}{Deprecated.}
 

@@ -46,7 +46,7 @@ test_that("Row/column names",
         {
             res0 <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
             expect_equal(res0$row.column.names, c("Brand", "Attribute"))
-            res1 <- CorrespondenceAnalysis(x)
+            res1 <- CorrespondenceAnalysis(x, show.gridlines = FALSE)
             expect_equal(res1$row.column.names, c("Rows", "Columns"))
             attr(x, "row.column.names") <- c("ABC", "DEF")
             res2 <- CorrespondenceAnalysis(x)
@@ -157,7 +157,7 @@ test_that("Empty rows/columns",
 
 test_that("Bubble charts",
           {
-                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart"))
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", show.gridlines = FALSE))
                 bsizes = x.with.labels[,1]
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), NA)
                 names(bsizes)[2] = "Dog"

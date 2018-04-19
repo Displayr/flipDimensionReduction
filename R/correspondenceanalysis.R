@@ -33,6 +33,7 @@
 #' @param logo.size Numeric controlling the size of the logos.
 #' @param transpose Boolean indicating whether the rows and columns of \code{x} should be swapped.
 #' @param trend.lines Boolean indicating whether to draw trend lines when multiple tables are supplied.
+#' @param show.gridlines Boolean indicating whether to show gridlines for \code{"Scatterplot"} and \code{"Bubble Chart"}.
 #' @param multiple.tables Deprecated.
 #' @param square Boolean indicating whether the input table is square. If true the row and column names of the table must be the same.
 #' @param dim1.plot Dimension to show in X-axis of bubble or scatterplot.
@@ -66,6 +67,7 @@ CorrespondenceAnalysis = function(x,
                                   logos = NULL,
                                   logo.size = 0.5,
                                   trend.lines = FALSE,
+                                  show.gridlines = TRUE,
                                   multiple.tables = NA,
                                   square = FALSE,
                                   max.row.labels.plot = 200,
@@ -371,6 +373,7 @@ CorrespondenceAnalysis = function(x,
                    logo.size = logo.size,
                    transpose = transpose,
                    trend.lines = trend.lines,
+                   show.gridlines = show.gridlines,
                    num.tables = num.tables,
                    max.row.labels.plot = max.row.labels.plot,
                    max.col.labels.plot = max.col.labels.plot,
@@ -387,7 +390,7 @@ CorrespondenceAnalysis = function(x,
                    legend.font.size = legend.font.size
     )
     class(result) <- c("CorrespondenceAnalysis")
-    attr(result, "ChartData") <- rbind(row.coordinates[,1:2], column.coordinates[,1:2])
+    attr(result, "ChartData") <- rbind(row.coordinates[, 1:2], column.coordinates[, 1:2])
     result
 }
 
@@ -546,6 +549,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              x.title = colnames(coords)[x$dim1.plot],
                              y.title = colnames(coords)[x$dim2.plot],
                              z.title = x$bubble.title,
+                             grid = x$show.gridlines,
                              axis.font.size = x$axis.font.size,
                              labels.font.size = x$labels.font.size,
                              title.font.size = x$title.font.size,
