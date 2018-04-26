@@ -16,9 +16,9 @@ before_install:
   - rcode+='pass <- sum(df$failed)==0 && all(!df$error); '
   - rcode+="write.csv(df, file='test_results.csv'); "
   - rcode+="quit(status=1-pass, save='no');"
-  - sudo pip install numpy umap-learn
 
 r_packages:
+  - devtools
   - roxygen2
   - covr
 
@@ -45,6 +45,6 @@ notifications:
 # Warning notifications and downstream package builds are implemented
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
-after_success:
+after_success: 
   - Rscript -e "require(flipDevTools); NotifyWarnings(); TriggerDownstreamBuilds()"
   - travis_wait Rscript -e "flipDevTools::CheckCoverage()"
