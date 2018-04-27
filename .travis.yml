@@ -11,7 +11,7 @@ warnings_are_errors: false
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
-  - sudo pip numpy umap-learn
+  - sudo pip install numpy umap-learn
   - rcode="res<-devtools::test(); "
   - rcode+="df <- as.data.frame(res); "
   - rcode+='pass <- sum(df$failed)==0 && all(!df$error); '
