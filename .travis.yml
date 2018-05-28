@@ -10,7 +10,7 @@ warnings_are_errors: false
 # update pre-installed packages to latest versions
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev python3 python3-pip
+  - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
   - sudo pip install numpy umap-learn
   - rcode="res<-devtools::test(); "
   - rcode+="df <- as.data.frame(res); "
@@ -46,6 +46,6 @@ notifications:
 # Warning notifications and downstream package builds are implemented
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
-after_success:
+after_success: 
   - Rscript -e "require(flipDevTools); NotifyWarnings(); TriggerDownstreamBuilds()"
   - travis_wait Rscript -e "flipDevTools::CheckCoverage()"
