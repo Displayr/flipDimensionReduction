@@ -1,7 +1,7 @@
 language: r
 r:
   - release
-dist: trusty  # ubuntu 14.04 has additional libraries available
+dist: trusty
 sudo: required
 cache: false
 warnings_are_errors: false
@@ -9,6 +9,7 @@ warnings_are_errors: false
 # install debian libraries to match R-servers
 # update pre-installed packages to latest versions
 before_install:
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
   - sudo pip install numpy umap-learn
