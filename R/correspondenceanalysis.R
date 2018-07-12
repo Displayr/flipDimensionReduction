@@ -91,6 +91,10 @@ CorrespondenceAnalysis = function(x,
         stop("Parameter 'Maximum row labels to plot' must be an integer.")
     if (max.col.labels.plot != round(max.col.labels.plot))
         stop("Parameter 'Maximum column labels to plot' must be an integer.")
+    if (is.null(dim1.plot))
+        dim1.plot <- 1
+    if (is.null(dim2.plot))
+        dim2.plot <- 2
 
     # Mask undefined arguments for R Gui control
     if (!output %in% c("Scatterplot", "Bubble Chart"))
@@ -100,8 +104,6 @@ CorrespondenceAnalysis = function(x,
         col.color <- ""
         max.row.labels.plot <- 0
         max.col.labels.plot <- 0
-        dim1.plot <- 1
-        dim2.plot <- 2
     }
     if (output != "Bubble Chart")
     {
@@ -390,7 +392,8 @@ CorrespondenceAnalysis = function(x,
                    legend.font.size = legend.font.size
     )
     class(result) <- c("CorrespondenceAnalysis")
-    attr(result, "ChartData") <- rbind(row.coordinates[, 1:2], column.coordinates[, 1:2])
+    plot.dims <- c(dim1.plot, dim2.plot)
+    attr(result, "ChartData") <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
     result
 }
 
