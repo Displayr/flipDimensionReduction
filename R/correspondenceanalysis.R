@@ -392,6 +392,12 @@ CorrespondenceAnalysis = function(x,
                    legend.font.size = legend.font.size
     )
     class(result) <- c("CorrespondenceAnalysis")
+    nc <- min(ncol(row.coordinates), ncol(column.coordinates))
+    if (dim1.plot < 0 || dim1.plot > nc)
+        stop(sprintf("Dimension 1 should be between 1 and %d.", nc))
+    if (dim2.plot < 0 || dim2.plot > nc)
+        stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
+
     plot.dims <- c(dim1.plot, dim2.plot)
     attr(result, "ChartData") <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
     result
