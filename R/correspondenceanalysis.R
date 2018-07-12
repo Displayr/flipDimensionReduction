@@ -394,6 +394,15 @@ CorrespondenceAnalysis = function(x,
     result
 }
 
+#' @export
+flipStatistics::ExtractChartData
+
+#' @export
+ExtractChartData.CorrespondenceAnalysis <- function(x)
+{
+    return(attr(x, "ChartData"))
+}
+
 
 #' \code{print.CorrespondenceAnalysis}
 #' @description Creates a plot displaying the correspondence analysis results.
