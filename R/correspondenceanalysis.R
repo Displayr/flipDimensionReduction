@@ -394,6 +394,7 @@ CorrespondenceAnalysis = function(x,
     result
 }
 
+#' @importFrom flipStatistics ExtractChartData
 #' @export
 flipStatistics::ExtractChartData
 
