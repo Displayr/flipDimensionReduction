@@ -91,9 +91,11 @@ CorrespondenceAnalysis = function(x,
         stop("Parameter 'Maximum row labels to plot' must be an integer.")
     if (max.col.labels.plot != round(max.col.labels.plot))
         stop("Parameter 'Maximum column labels to plot' must be an integer.")
-    if (missing(dim1.plot) || is.null(dim1.plot))
+    check1 <- try(is.null(dim1.plot))
+    check2 <- try(is.null(dim2.plot))
+    if (inherits(check1, "try-error") || check1)
         dim1.plot <- 1
-    if (missing(dim2.plot) || is.null(dim2.plot))
+    if (inherits(check2, "try-error") || check2)
         dim2.plot <- 2
 
     # Mask undefined arguments for R Gui control
