@@ -367,7 +367,7 @@ fitted.flipFactorAnalysis <- function(object, ...)
 #' @export
 ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases with missing data", use.correlation = TRUE)
 {
-    if (class(x) == "data.frame")
+    if ("data.frame" %in% class(x))
     {
         prepared.data <- prepareDataForFactorAnalysis(data = x, weights = weights, subset = subset, missing = missing)
         input.matrix <- CovarianceAndCorrelationMatrix(
@@ -377,7 +377,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
             use.correlation = use.correlation)
         input.values <- eigen(input.matrix)$values
     }
-    else if (class(x) == "numeric")
+    else if ("numeric" %in% class(x))
     {
         input.values <- x
     }
