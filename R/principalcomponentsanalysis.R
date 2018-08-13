@@ -387,7 +387,8 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     }
     else
     {
-        stop(paste0("Can't make a Scree Plot for object of class", class(x)))
+        stop(paste0("Can't make a Scree Plot for object of class ", paste(class(x), collapse = ", ")),
+             " Select a Principal Components Anlaysis output.")
     }
 
     input.values <- sort(input.values, decreasing = TRUE)

@@ -4,11 +4,12 @@
 \alias{PrincipalComponentsBiplot}
 \title{\code{PrincipalComponentsBiplot}}
 \usage{
-PrincipalComponentsBiplot(x, normalization = c("Principal", "Row principal",
-  "Column principal", "Symmetrical", "None")[1], output = c("Scatterplot",
-  "Moonplot", "Text")[1], row.names.to.remove = c("NET", "Total", "SUM"),
-  column.names.to.remove = c("NET", "Total", "SUM"), row.color = "#5B9BD5",
-  col.color = "#ED7D31")
+PrincipalComponentsBiplot(x, normalization = c("Principal",
+  "Row principal", "Column principal", "Symmetrical", "None")[1],
+  output = c("Scatterplot", "Moonplot", "Text")[1],
+  row.names.to.remove = c("NET", "Total", "SUM"),
+  column.names.to.remove = c("NET", "Total", "SUM"),
+  row.color = "#5B9BD5", col.color = "#ED7D31")
 }
 \arguments{
 \item{x}{A table containing rows and columns}
