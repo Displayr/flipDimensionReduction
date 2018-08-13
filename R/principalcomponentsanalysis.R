@@ -462,7 +462,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
     groups <- 1:nrow(coords)
     LabeledScatter(X = coords[, 1],
                    Y = coords[, 2],
-                   label = rownames(coords),
+                   label = labels,
                    group = groups,
                    fixed.aspect = TRUE,
                    title = "Component Plot",
