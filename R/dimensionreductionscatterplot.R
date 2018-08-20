@@ -100,7 +100,11 @@ DimensionReduction <- function(algorithm,
             stop("Input data and subset must be same length.")
 
         # Remove cases with missing data and duplicates
+        print("Before dups")
+        dput(data)
         used.subset <- subset & complete.cases(data) & !duplicated(data)
+        dput(used.subset)
+        dput(duplicated(data))
         processed.data <- data[used.subset, , drop = FALSE]
         if (normalization)
             processed.data <- data.frame(StandardizeData(processed.data, method = "Range [0,1]"))
