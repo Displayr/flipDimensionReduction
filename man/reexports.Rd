@@ -11,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{flipStatistics}{\code{\link[flipStatistics]{ExtractChartData}}}
+  \item{flipFormat}{\code{\link[flipFormat]{ExtractChartData}}}
 }}
 

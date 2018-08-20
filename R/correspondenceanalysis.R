@@ -400,14 +400,20 @@ CorrespondenceAnalysis = function(x,
     if (dim2.plot < 0 || dim2.plot > nc)
         stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
 
+    # Store chart data - to use in print.CorrespondenceAnalysis
     plot.dims <- c(dim1.plot, dim2.plot)
-    attr(result, "ChartData") <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
+    tmp.data <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
+    if (output == "Bubble Chart")
+        attr(result, "ChartData") <- cbind(tmp.data, Size = c(bubble.size, rep(max(bubble.size)/75, length(original$colnames))))
+    else
+        attr(result, "ChartData") <-  tmp.data
+
     result
 }
 
-#' @importFrom flipStatistics ExtractChartData
+#' @importFrom flipFormat ExtractChartData
 #' @export
-flipStatistics::ExtractChartData
+flipFormat::ExtractChartData
 
 #' @export
 ExtractChartData.CorrespondenceAnalysis <- function(x)
@@ -429,37 +435,35 @@ ExtractChartData.CorrespondenceAnalysis <- function(x)
 #' @method print CorrespondenceAnalysis
 print.CorrespondenceAnalysis <- function(x, ...)
 {
-    d.tmp <- c(x$dim1.plot, x$dim2.plot)
-
-    nc <- ncol(x$row.coordinates)
-    if (x$dim1.plot < 0 || x$dim1.plot > nc)
-        stop(sprintf("Dimension 1 should be between 1 and %d.", nc))
-    if (x$dim2.plot < 0 || x$dim2.plot > nc)
-        stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
-
     if (x$output == "Diagnostics")
     {
         if (!is.null(x$focused))
             stop("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
         return(summary(x$original))
+    } else if (x$output == "Input Table")
+    {
+        if (x$square)
+        {
+            n1 <- nrow(x$x)/2
+            x.data <- x$x[1:n1, 1:n1]
+        } else
+            x.data <- as.matrix(x$x)
+        return(print(x.data))
+    } else if (x$output == "Moonplot")
+    {
+        if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
+            warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
+        print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2]))
     }
     if (x$square)
     {
         n1 <- nrow(x$x)/2
-        coords <- x$row.coordinates
-        std.coords <- x$original$rowcoord[1:n1,]
-        if (x$output == "Text")
-        {
-            colnames(coords) <- sprintf("Dimension %d", 1:ncol(coords))
-            colnames(std.coords) <- colnames(coords)
-        }
-        x.data <- x$x[1:n1, 1:n1]
+        coords <- attr(x, "ChartData")
 
     } else
     {
-        coords <- rbind(x$row.coordinates, x$column.coordinates)
+        coords <- attr(x, "ChartData")
         row.column.names <- x$row.column.names
-        x.data <- as.matrix(x$x)
     }
 
     if (x$square)
@@ -517,12 +521,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     if (x$output %in% c("Scatterplot", "Bubble Chart"))
     {
-        bubble.size <- if (x$output == "Bubble Chart")
-            c(x$bubble.size, rep(max(x$bubble.size) / 75, length(x$original$colnames)))
-        else
-            NULL
-
         lab <- rownames(coords)
+        x.nrow <- nrow(x$x) / (1 + x$square)
         if (x$num.tables > 1 && x$trend.lines)
             lab[1:n1] <- x$row.column.names[1:n1]
         logo.size <- NA
@@ -530,7 +530,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         if (!is.null(logo.urls) && !inherits(logo.urls, "try-error"))
         {
             logo.required.length <- if (x$num.tables > 1) n1
-            else                  nrow(x.data)
+                                    else              x.nrow
             if (length(logo.urls) != logo.required.length)
                 stop(sprintf("Number of URLs supplied in logos must be equal to the number of %s in the table (%d)\n",
                              ifelse(x$transpose, "columns", "rows"), logo.required.length))
@@ -538,7 +538,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                 stop("Logos cannot be an empty string\n")
             if (x$num.tables > 1)
                 logo.urls <- rep(logo.urls, x$num.tables)
-            lab[1:nrow(x.data)] <- logo.urls
+            lab[1:x.nrow] <- logo.urls
             logo.size <- rep(x$logo.size, length(lab))
         }
 
@@ -554,9 +554,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("Some column labels have been hidden. Adjust 'Maximum column labels to plot' to show more labels.")
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
-        print(LabeledScatter(X = coords[,x$dim1.plot],
-                             Y = coords[,x$dim2.plot],
-                             Z = bubble.size,
+        print(LabeledScatter(X = coords[,1],
+                             Y = coords[,2],
+                             Z = if (NCOL(coords) >= 3) coords[,3] else NULL,
                              label = lab,
                              label.alt = rownames(coords),
                              group = groups,
@@ -567,8 +567,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              trend.lines.point.size = 2,
                              fixed.aspect = TRUE,
                              title = x$chart.title,
-                             x.title = colnames(coords)[x$dim1.plot],
-                             y.title = colnames(coords)[x$dim2.plot],
+                             x.title = colnames(coords)[1],
+                             y.title = colnames(coords)[2],
                              z.title = x$bubble.title,
                              grid = x$show.gridlines,
                              axis.font.size = x$axis.font.size,
@@ -582,19 +582,15 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              footer.font.size = x$axis.font.size,
                              debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
-    } else if (x$output == "Moonplot")
-    {
-        if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
-            warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
-        print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2]))
-    } else if (x$output == "Input Table")
-    {
-        return(print(x.data))
-
     } else if (x$square)
     {
         # Text output
         # No description of the data
+        n1 <- nrow(x$x)/2
+        coords <- x$row.coordinates
+        std.coords <- x$original$rowcoord[1:n1,]
+        colnames(coords) <- sprintf("Dimension %d", 1:ncol(coords))
+        colnames(std.coords) <- colnames(coords)
         inertia <- x$original$sv^2
         cat("Correspondence analysis of a square table\n")
         cat("\nInertia(s):\n")
