@@ -99,15 +99,16 @@ DimensionReduction <- function(algorithm,
         else if (length(subset) != nrow(data))
             stop("Input data and subset must be same length.")
 
+        if (normalization)
+            data <- data.frame(StandardizeData(data, method = "Range [0,1]"))
         # Remove cases with missing data and duplicates
-        print("Before dups")
-        dput(data)
         used.subset <- subset & complete.cases(data) & !duplicated(data)
-        dput(used.subset)
-        dput(duplicated(data))
         processed.data <- data[used.subset, , drop = FALSE]
+        # Normalization may cause duplicates so is done before removing duplicates
+        # Renormalize after subset, since subset may remove extreme values
         if (normalization)
             processed.data <- data.frame(StandardizeData(processed.data, method = "Range [0,1]"))
+
         if (algorithm != "t-SNE" && is.null(table))
             distance.matrix <- dist(processed.data)
     }

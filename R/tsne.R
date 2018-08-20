@@ -21,8 +21,6 @@ tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
     set.seed(seed)
 
     output <- list(title = "t-SNE", input.data = data)
-    print("Before Rtsne")
-    dput(data)
     output$embedding <- Rtsne(data, perplexity = perplexity, is_distance = is.distance)$Y
 
     if (is.distance) {
