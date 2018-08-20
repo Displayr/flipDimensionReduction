@@ -453,8 +453,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
     {
         if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
-        print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2]))
+        return(print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2])))
     }
+
     if (x$square)
     {
         n1 <- nrow(x$x)/2
