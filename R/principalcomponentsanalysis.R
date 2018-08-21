@@ -480,7 +480,28 @@ ComponentPlot <- function(x, show.labels = TRUE)
 #' @export
 ExtractChartData.flipFactorAnalysis <- function(x)
 {
-    return(x$loadings)
+    if (x$print.type == "scree" || x$print.type == "Scree Plot")
+        return(sort(x$values, decreasing = TRUE))
+    if (x$print.type == "2d" || x$print.type == "2D Scatterplot")
+    {
+        tmp <- convertFactorAnalysisTo2D(x)
+        if (is.null(tmp$data.groups))
+            return(tmp$embedding)
+        return(data.frame(tmp$embedding, Group = tmp$data.groups, stringsAsFactors = FALSE,
+            check.names = FALSE, check.rows = FALSE))
+    }
+    if (NCOL(x$loadings) < 2)
+        return(x$loadings)
+
+    # Otherwise return data for a component plot
+    component.data <- x$loadings[,1:2]
+    if (!(x$rotation %in% c("promax", "oblimin")))
+    {
+        var.exp <- colSums(x$loadings^2)/nrow(x$loadings)
+        colnames(component.data) <- sprintf("Component %d (%.1f%% variance explained)",
+                                            1:2, var.exp[1:2] * 100)
+    }
+    return(component.data)
 }
 
 
