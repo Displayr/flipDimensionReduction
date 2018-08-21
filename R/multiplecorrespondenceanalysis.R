@@ -134,8 +134,20 @@ MultipleCorrespondenceAnalysis <- function(formula,
     obj$data.description <- processed.data$description
     obj$chart.title <- chart.title
     obj$max.labels.plot <- max.labels.plot
+
+    groups <- rep(obj$colnames, obj$levels.n)
+    coords <- data.frame(obj$colpcoord[,1:2], Group = groups, stringsAsFactors = FALSE,
+                    check.names = FALSE, check.rows = FALSE)
+    colnames(coords)[1:2] <- sprintf("Dimension %d (%.1f%%)", 1:2, obj$inertia.e[1:2] * 100)
+    attr(obj, "ChartData") <- coords
     class(obj) <- "mcaObj"
     return(obj)
+}
+
+#' @export
+ExtractChartData.mcaObj <- function(x)
+{
+    return(attr(x, "ChartData"))
 }
 
 
@@ -166,25 +178,25 @@ print.mcaObj <- function(x, digits = 3, ...)
         print(round(x$colpcoord, digits=digits))
     } else
     {
+        coords <- attr(x, "ChartData")
         max.length <- max(nchar(x$variablenames))
         if (max.length > 20)
             warning("The labels of the variables and/or values are long. Edit the labels in the input variables to improve the look of this map.")
-        groups <- rep(x$colnames, x$levels.n)
         gcolors <- ChartColors(length(x$colnames), x$scatter.palette)
 
         lab <- x$variablenames
         if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
             lab[-(1:x$max.labels.plot)] <- ""
-        print(LabeledScatter(X = x$colpcoord[,1],
-                       Y = x$colpcoord[,2],
+        print(LabeledScatter(X = coords[,1],
+                       Y = coords[,2],
                        label = lab,
                        label.alt = x$variablenames,
-                       group = groups,
+                       group = coords[,3],
                        colors = gcolors,
                        fixed.aspect = TRUE,
                        title = x$chart.title,
-                       x.title = sprintf("Dimension 1 (%.1f%%)", x$inertia.e[1] * 100),
-                       y.title = sprintf("Dimension 2 (%.1f%%)", x$inertia.e[2] * 100),
+                       x.title = colnames(coords)[1], 
+                       y.title = colnames(coords)[2],
                        axis.font.size = 10,
                        labels.font.size = 12,
                        title.font.size = 20,
