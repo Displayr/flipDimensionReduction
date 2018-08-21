@@ -184,6 +184,12 @@ DimensionReduction <- function(algorithm,
     return(result)
 }
 
+#' @export
+ExtractChartData.2Dreduction <- function(x)
+{
+    return(x$embedding)
+}
+
 
 #' \code{fitted.2Dreduction}
 #' @param object Object of class \code{"2Dreduction"}.

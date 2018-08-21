@@ -477,6 +477,12 @@ ComponentPlot <- function(x, show.labels = TRUE)
 
 }
 
+#' @export
+ExtractChartData.flipFactorAnalysis <- function(x)
+{
+    return(x$loadings)
+}
+
 
 #' \code{prepareDataForFactorAnalysis}
 #' @description Filter data, remove cases with missing values, and impute where requested.

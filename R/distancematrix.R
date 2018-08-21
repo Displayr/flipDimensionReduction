@@ -163,6 +163,11 @@ DistanceMatrix <- function(input.data,
     output
 }
 
+#' @export
+ExtractChartData.DistanceMatrix <- function(x)
+{
+    return(x$distance)
+}
 
 #' \code{print.DistanceMatrix}
 #' @description Display distance matrix as a heatmap.
