@@ -577,7 +577,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              axis.font.size = x$axis.font.size,
                              labels.font.size = x$labels.font.size,
                              title.font.size = x$title.font.size,
-                             legend.show = x$num.tables==1 && !x$square && NCOL(coords) > 3,
+                             legend.show = x$num.tables==1 && !x$square && NCOL(coords) > 2,
                              legend.font.size = x$legend.font.size,
                              y.title.font.size = x$y.title.font.size,
                              x.title.font.size = x$x.title.font.size,
