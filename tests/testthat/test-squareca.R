@@ -32,7 +32,8 @@ test_that("High symmetry",
               # only eigenvectors of symmetric dimensions are uniquely determined
               expect_equal(round(abs(unname(res1$original$rowcoord[1:5,2])),2), c(0.21,1.06,0.98,0.18, 1.46))
               expect_equal(round(abs(unname(res1$original$rowcoord[1:5,8])),2), c(2.32,0.67,3.35,0.06,0.14))
-              expect_equal(unname(res1$row.coordinates[1:5,1:2]), unname(attr(res1, "ChartData")))
+              expect_equal(as.numeric(unname(res1$row.coordinates[1:5,1:2])),
+                           as.numeric(unname(unlist(attr(res1, "ChartData")[1:5,1:2]))))
               expect_equal(round(unname(attr(res1, "ChartData")[1:5,1]), 3), c(-0.073,0.319,0.499,-0.873,0.498))
           })
 

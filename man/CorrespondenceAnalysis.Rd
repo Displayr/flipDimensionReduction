@@ -17,9 +17,8 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   show.gridlines = TRUE, multiple.tables = NA, square = FALSE,
   max.row.labels.plot = 200, max.col.labels.plot = 200,
   max.labels.plot = NA, dim1.plot = 1, dim2.plot = 2,
-  title.font.size = 20, x.title.font.size = 16,
-  y.title.font.size = 16, labels.font.size = 14, axis.font.size = 10,
-  legend.font.size = 15, ...)
+  title.font.size = 20, x.title.font.size = 16, y.title.font.size = 16,
+  labels.font.size = 14, axis.font.size = 10, legend.font.size = 15, ...)
 }
 \arguments{
 \item{x}{A \code{\link{matrix}} or a list of matrices.}

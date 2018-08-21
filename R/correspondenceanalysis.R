@@ -403,10 +403,24 @@ CorrespondenceAnalysis = function(x,
     # Store chart data - to use in print.CorrespondenceAnalysis
     plot.dims <- c(dim1.plot, dim2.plot)
     tmp.data <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
+    if (num.tables == 1)
+    {
+        n1 <- nrow(row.coordinates)
+        n2 <- sum(nrow(column.coordinates))
+        groups <- rep(row.column.names, c(n1, n2))
+    } else
+    {
+        n1 <- nrow(x)/num.tables
+        n2 <- nrow(column.coordinates)
+        groups <- c(rep(paste0("R", 1:n1), num.tables), paste0("C", 1:n2))
+    }
+
     if (output == "Bubble Chart")
-        attr(result, "ChartData") <- cbind(tmp.data, Size = c(bubble.size, rep(max(bubble.size)/75, length(original$colnames))))
+        attr(result, "ChartData") <- data.frame(tmp.data,
+            Size = c(bubble.size, rep(max(bubble.size)/75, length(original$colnames))),
+            Group = groups, check.names = FALSE)
     else
-        attr(result, "ChartData") <-  tmp.data
+        attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups, check.names = FALSE)
 
     result
 }
@@ -456,19 +470,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
         return(print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2])))
     }
 
+    # set up info for plotting
+    coords <- attr(x, "ChartData")
     if (x$square)
     {
         n1 <- nrow(x$x)/2
-        coords <- attr(x, "ChartData")
-
-    } else
-    {
-        coords <- attr(x, "ChartData")
-        row.column.names <- x$row.column.names
-    }
-
-    if (x$square)
-    {
         groups <- rep(1, n1)
         colors <- c(x$row.color, n1)
         n2 <- 0
@@ -506,16 +512,12 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("Row and column titles are identical which will cause the same label to be used for both.")
         n1 <- nrow(x$row.coordinates)
         n2 <- nrow(x$column.coordinates)
-        x.groups <- if(length(x$row.color) == 1) rep(x$row.column.names[1], n1) else paste("Row", 1:n1)
-        y.groups <- if(length(x$col.color) == 1) rep(x$row.column.names[2], n2) else paste("Column", 1:n2)
-        groups <- rep(x$row.column.names, c(n1, n2))
         colors <- c(x$row.color, x$col.color)
 
     } else
     {
         n1 <- nrow(x$x)/x$num.tables
         n2 <- nrow(x$column.coordinates)
-        groups <- c(rep(paste0("R", 1:n1), x$num.tables), paste0("C", 1:n2)) # legend hidden so names are arbitary
         colors <- ChartColors(n1+1, x$color.palette)
         colors <- colors[c((1:n1)+1, rep(1,n2))]
     }
@@ -557,10 +559,10 @@ print.CorrespondenceAnalysis <- function(x, ...)
         }
         print(LabeledScatter(X = coords[,1],
                              Y = coords[,2],
-                             Z = if (NCOL(coords) >= 3) coords[,3] else NULL,
+                             Z = if (NCOL(coords) > 3) coords[,3] else NULL,
                              label = lab,
                              label.alt = rownames(coords),
-                             group = groups,
+                             group = coords[,3 + (NCOL(coords) > 3)],
                              colors = colors,
                              labels.logo.scale = logo.size,
                              trend.lines.show = x$trend.lines,
@@ -575,7 +577,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              axis.font.size = x$axis.font.size,
                              labels.font.size = x$labels.font.size,
                              title.font.size = x$title.font.size,
-                             legend.show = (x$num.tables==1 && !x$square && any(nchar(groups) > 0)),
+                             legend.show = x$num.tables==1 && !x$square && NCOL(coords) > 3,
                              legend.font.size = x$legend.font.size,
                              y.title.font.size = x$y.title.font.size,
                              x.title.font.size = x$x.title.font.size,

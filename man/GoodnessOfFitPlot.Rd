@@ -8,8 +8,7 @@
 \usage{
 GoodnessOfFitPlot(object, ...)
 
-\method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000,
-  ...)
+\method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000, ...)
 
 \method{GoodnessOfFitPlot}{2Dreduction}(object, max.points = 1000, ...)
 }

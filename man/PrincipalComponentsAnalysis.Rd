@@ -9,10 +9,10 @@ PrincipalComponentsAnalysis(data, weights = NULL, subset = NULL,
   missing = "Exclude cases with missing data", use.correlation = TRUE,
   rotation = "none", oblimin.delta = 0, promax.kappa = 4,
   select.n.rule = "Number of factors", eigen.min = 1, n.factors = 1,
-  sort.coefficients.by.size = FALSE,
-  suppress.small.coefficients = FALSE, min.display.loading.value = 0.1,
-  print.type = "loadings", show.labels = TRUE, plot.labels = TRUE,
-  data.groups = NULL, tol = 1e-13)
+  sort.coefficients.by.size = FALSE, suppress.small.coefficients = FALSE,
+  min.display.loading.value = 0.1, print.type = "loadings",
+  show.labels = TRUE, plot.labels = TRUE, data.groups = NULL,
+  tol = 1e-13)
 
 \method{fitted}{flipFactorAnalysis}(object, ...)
 }
