@@ -480,7 +480,17 @@ ComponentPlot <- function(x, show.labels = TRUE)
 #' @export
 ExtractChartData.flipFactorAnalysis <- function(x)
 {
-    return(x$loadings)
+    if (x$print.type == "scree" || x$print.type == "Scree Plot")
+        return(sort(x$values, decreasing = TRUE))
+    if (x$print.type == "2d" || x$print.type == "2D Scatterplot")
+    {
+        tmp <- convertFactorAnalysisTo2D(x)
+        if (is.null(tmp$data.groups))
+            return(tmp$embedding)
+        return(data.frame(tmp$embedding, Group = tmp$data.groups, stringsAsFactors = FALSE,
+            check.names = FALSE, check.rows = FALSE))
+    }
+    return(x$loadings[,1:2])
 }
 
 
