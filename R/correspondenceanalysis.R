@@ -558,12 +558,13 @@ print.CorrespondenceAnalysis <- function(x, ...)
             warning("Some column labels have been hidden. Adjust 'Maximum column labels to plot' to show more labels.")
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
+        g.ind <- 3 + (NCOL(coords) > 3)
         print(LabeledScatter(X = coords[,1],
                              Y = coords[,2],
                              Z = if (NCOL(coords) > 3) coords[,3] else NULL,
                              label = lab,
                              label.alt = rownames(coords),
-                             group = coords[,3 + (NCOL(coords) > 3)],
+                             group = coords[, g.ind],
                              colors = colors,
                              labels.logo.scale = logo.size,
                              trend.lines.show = x$trend.lines,
@@ -578,7 +579,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              axis.font.size = x$axis.font.size,
                              labels.font.size = x$labels.font.size,
                              title.font.size = x$title.font.size,
-                             legend.show = x$num.tables==1 && !x$square && NCOL(coords) > 2,
+                             legend.show = x$num.tables==1 && !x$square && any(nchar(coords[,g.ind]) > 0),
                              legend.font.size = x$legend.font.size,
                              y.title.font.size = x$y.title.font.size,
                              x.title.font.size = x$x.title.font.size,
