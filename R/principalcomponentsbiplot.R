@@ -68,7 +68,22 @@ PrincipalComponentsBiplot <- function(x,
     res$col.color <- col.color
     res$output <- output
     class(res) <- "PCAbiplot"
+
+    evals <- res$d ^ 2
+    pvar <- evals/sum(evals) * 100
+    groups <- rep(row.column.names, c(nrow(res$rowcoords), nrow(res$colcoords)))
+    coords <- data.frame(rbind(res$rowcoords[,1:2], res$colcoords[,1:2]),
+                    Group = groups, stringsAsFactors = FALSE, 
+                    check.names = FALSE, check.rows = FALSE)
+    colnames(coords)[1:2] = sprintf("%s (%.1f%%)", colnames(coords)[1:2], pvar[1:2])
+    attr(res, "ChartData") <- coords
     return(res)
+}
+
+#' @export
+ExtractChartData.PCAbiplot <- function(x)
+{
+    return(attr(x, "ChartData"))
 }
 
 #' \code{print.PCAbiplot}
@@ -81,22 +96,18 @@ PrincipalComponentsBiplot <- function(x,
 #' @method print PCAbiplot
 print.PCAbiplot <- function(x, ...)
 {
-    evals <- x$d ^ 2
-    pvar <- evals/sum(evals) * 100
     if (x$output == "Scatterplot")
     {
-       coords <- rbind(x$rowcoords[,1:2],
-                       x$colcoords[,1:2])
-       groups <- rep(x$row.column.names, c(nrow(x$rowcoords), nrow(x$colcoords)))
-       print(LabeledScatter(X = coords[, 1],
-               Y = coords[, 2],
+       coords <- attr(x, "ChartData")
+       print(LabeledScatter(X = coords[,1],
+               Y = coords[,2],
                label = rownames(coords),
-               group = groups,
+               group = coords[,3],
                colors = c(x$row.color, x$col.color),
                fixed.aspect = TRUE,
                title = "Principal Components Analysis Biplot",
-               x.title = sprintf("%s (%.1f%%)", colnames(coords)[1], pvar[1]),
-               y.title = sprintf("%s (%.1f%%)", colnames(coords)[2], pvar[2]),
+               x.title = colnames(coords)[1],
+               y.title = colnames(coords)[2],
                axis.font.size = 10,
                labels.font.size = 12,
                title.font.size = 20,
@@ -108,6 +119,8 @@ print.PCAbiplot <- function(x, ...)
 
     } else
     {
+        evals <- x$d ^ 2
+        pvar <- evals/sum(evals) * 100
         etab <- cbind(Eigenvalue=evals,
                       'Percent variance' = pvar,
                       'Cumulative percent' = cumsum(pvar))
