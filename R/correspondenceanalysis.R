@@ -418,10 +418,10 @@ CorrespondenceAnalysis = function(x,
     if (output == "Bubble Chart")
         attr(result, "ChartData") <- data.frame(tmp.data,
             Size = c(bubble.size, rep(max(bubble.size)/75, length(original$colnames))),
-            Group = groups, check.names = FALSE, check.rows = FALSE)
+            Group = groups, check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
     else
         attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups, 
-            check.names = FALSE, check.rows = FALSE)
+            check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
 
     result
 }
