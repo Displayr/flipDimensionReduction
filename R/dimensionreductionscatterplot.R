@@ -189,13 +189,13 @@ ExtractChartData.2Dreduction <- function(x)
 {
     data <- x$embedding[,1:2]
     colnames(data) <- paste("Dimension", 1:2)
-    if (!is.null(x$label))
-        rownames(data) <- x$label
     if (!is.null(x$data.groups))
         data <- data.frame(data, Group = x$data.groups, stringsAsFactors = FALSE,
                     check.names = FALSE, check.rows = FALSE)
     if (!is.null(x$used.subset))
         data <- data[x$used.subset,]
+    if (!is.null(x$label))
+        rownames(data) <- x$label
     return(data)
 }
 
