@@ -420,7 +420,7 @@ CorrespondenceAnalysis = function(x,
             Size = c(bubble.size, rep(max(bubble.size)/75, length(original$colnames))),
             Group = groups, check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
     else
-        attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups, 
+        attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups,
             check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
 
     result
@@ -433,7 +433,12 @@ flipFormat::ExtractChartData
 #' @export
 ExtractChartData.CorrespondenceAnalysis <- function(x)
 {
-    return(attr(x, "ChartData"))
+    data <- attr(x, "ChartData")
+    if (NCOL(data) == 3)
+        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
+    if (!is.null(x$footer) && nchar(x$footer) > 0)
+        attr(data, "footer") <- x$footer
+    return(data)
 }
 
 

@@ -487,8 +487,10 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         tmp <- convertFactorAnalysisTo2D(x)
         if (is.null(tmp$data.groups))
             return(tmp$embedding)
-        return(data.frame(tmp$embedding, Group = tmp$data.groups, stringsAsFactors = FALSE,
-            check.names = FALSE, check.rows = FALSE))
+        data <- data.frame(tmp$embedding, Group = tmp$data.groups, stringsAsFactors = FALSE,
+            check.names = FALSE, check.rows = FALSE)
+        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
+        return(data)
     }
     if (NCOL(x$loadings) < 2)
         return(x$loadings)

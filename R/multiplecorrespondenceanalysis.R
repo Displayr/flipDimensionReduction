@@ -147,7 +147,10 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #' @export
 ExtractChartData.mcaObj <- function(x)
 {
-    return(attr(x, "ChartData"))
+    data <- attr(x, "ChartData")
+    if (NCOL(data) == 3)
+        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
+    return(data)
 }
 
 
@@ -195,7 +198,7 @@ print.mcaObj <- function(x, digits = 3, ...)
                        colors = gcolors,
                        fixed.aspect = TRUE,
                        title = x$chart.title,
-                       x.title = colnames(coords)[1], 
+                       x.title = colnames(coords)[1],
                        y.title = colnames(coords)[2],
                        axis.font.size = 10,
                        labels.font.size = 12,

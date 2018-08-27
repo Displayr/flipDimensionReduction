@@ -6,9 +6,10 @@
 \title{\code{MultipleCorrespondanenceAnalysis}}
 \usage{
 MultipleCorrespondenceAnalysis(formula, data = NULL, output = c("Text",
-  "Scatterplot")[1], scatter.palette = "Default colors", weights = NULL,
-  subset = NULL, missing = "Exclude cases with missing data",
-  auxiliary.data = NULL, chart.title = "Multiple correspondence analysis",
+  "Scatterplot")[1], scatter.palette = "Default colors",
+  weights = NULL, subset = NULL,
+  missing = "Exclude cases with missing data", auxiliary.data = NULL,
+  chart.title = "Multiple correspondence analysis",
   max.labels.plot = 200, show.labels = FALSE)
 
 \method{fitted}{mcaObj}(object, ...)

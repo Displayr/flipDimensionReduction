@@ -73,7 +73,7 @@ PrincipalComponentsBiplot <- function(x,
     pvar <- evals/sum(evals) * 100
     groups <- rep(row.column.names, c(nrow(res$rowcoords), nrow(res$colcoords)))
     coords <- data.frame(rbind(res$rowcoords[,1:2], res$colcoords[,1:2]),
-                    Group = groups, stringsAsFactors = FALSE, 
+                    Group = groups, stringsAsFactors = FALSE,
                     check.names = FALSE, check.rows = FALSE)
     colnames(coords)[1:2] = sprintf("%s (%.1f%%)", colnames(coords)[1:2], pvar[1:2])
     attr(res, "ChartData") <- coords
@@ -83,7 +83,10 @@ PrincipalComponentsBiplot <- function(x,
 #' @export
 ExtractChartData.PCAbiplot <- function(x)
 {
-    return(attr(x, "ChartData"))
+    data <- attr(x, "ChartData")
+    if (NCOL(data) == 3)
+        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
+    return(data)
 }
 
 #' \code{print.PCAbiplot}

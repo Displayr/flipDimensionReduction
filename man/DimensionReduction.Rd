@@ -5,9 +5,10 @@
 \alias{DimensionReduction}
 \title{\code{DimensionReductionScatterplot}}
 \usage{
-DimensionReductionScatterplot(algorithm, data = NULL, data.groups = NULL,
-  table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = FALSE, seed = 1066)
+DimensionReductionScatterplot(algorithm, data = NULL,
+  data.groups = NULL, table = NULL, raw.table = FALSE,
+  subset = NULL, perplexity = 10, binary = TRUE,
+  normalization = FALSE, seed = 1066)
 
 DimensionReduction(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
@@ -51,8 +52,6 @@ standard deviation of 1.}
 \code{"t-SNE"} or \code{"UMAP"}.}
 }
 \description{
-\code{DimensionReductionScatterplot}
-
 Produces as 2-dimensional embedding. Takes either a
     \code{\link{data.frame}} of variables and optionally another
     \code{\link{vector}} to be used as a grouping variable, or

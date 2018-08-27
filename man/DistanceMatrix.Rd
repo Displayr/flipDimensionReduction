@@ -5,9 +5,10 @@
 \title{\code{DistanceMatrix}}
 \usage{
 DistanceMatrix(input.data, compare = "Variables", case.labels = NULL,
-  variable.names = FALSE, binary = FALSE, measure = "Dissimilarities",
-  similarity.measure = "Correlation", distance.measure = "Euclidian",
-  minkowski = 2, standardization = "None", standardize.by = "Case",
+  variable.names = FALSE, binary = FALSE,
+  measure = "Dissimilarities", similarity.measure = "Correlation",
+  distance.measure = "Euclidian", minkowski = 2,
+  standardization = "None", standardize.by = "Case",
   measure.transformation = "None", show.cell.values = "Automatic",
   show.row.labels = "Yes", show.column.labels = "Yes", subset = NULL,
   weights = NULL)
