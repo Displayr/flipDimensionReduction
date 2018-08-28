@@ -257,3 +257,27 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
     }
 }
 
+
+wrapText <- function(x, n = 80)
+{
+    if (n <= 0)
+        stop("Wrap line length cannot be smaller than 1")
+
+    w.list <- strsplit(x, " ")[[1]]
+    final <- w.list[1]
+    c.len <- nchar(final)
+    for (ww in w.list[-1])
+    {
+        new.len <- c.len + nchar(ww) + 1
+        if (new.len > n)
+        {
+            final <- paste0(final, "<br>", ww)
+            c.len <- nchar(ww)
+        } else
+        {
+            final <- paste0(final, " ", ww)
+            c.len <- new.len
+        }
+    }
+    final
+}
