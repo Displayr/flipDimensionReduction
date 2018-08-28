@@ -19,7 +19,7 @@ CorrespondenceAnalysis(x, normalization = "Principal",
   max.labels.plot = NA, dim1.plot = 1, dim2.plot = 2,
   title.font.size = 20, x.title.font.size = 16,
   y.title.font.size = 16, labels.font.size = 14, axis.font.size = 10,
-  legend.font.size = 15, ...)
+  legend.font.size = 15, footer.wrap.length = 80, ...)
 }
 \arguments{
 \item{x}{A \code{\link{matrix}} or a list of matrices.}
@@ -98,6 +98,8 @@ in the calculation of the coordinate space but to be plotted.}
 \item{axis.font.size}{Font size of the labels on the x- and y-axis.}
 
 \item{legend.font.size}{Font size of the legend.}
+
+\item{footer.wrap.length}{Maximum number of characters in the footer. If longer, the text will be wrapped.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

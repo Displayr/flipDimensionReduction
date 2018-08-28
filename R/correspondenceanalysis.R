@@ -44,6 +44,7 @@
 #' @param labels.font.size Font size of the labels on the scatterplot.
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
 #' @param legend.font.size Font size of the legend.
+#' @param footer.wrap.length Maximum number of characters in the footer. If longer, the text will be wrapped.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
 #' @importFrom ca ca
@@ -81,6 +82,7 @@ CorrespondenceAnalysis = function(x,
                                   labels.font.size = 14,
                                   axis.font.size = 10,
                                   legend.font.size = 15,
+                                  footer.wrap.length = 80,
                                   ...)
 {
     # Backwards compatibility
@@ -385,6 +387,7 @@ CorrespondenceAnalysis = function(x,
                    dim1.plot = dim1.plot,
                    dim2.plot = dim2.plot,
                    footer = footer,
+                   footer.wrap.length = footer.wrap.length,
                    dim2.plot = 2,
                    title.font.size = title.font.size,
                    x.title.font.size = x.title.font.size,
@@ -588,7 +591,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                              legend.font.size = x$legend.font.size,
                              y.title.font.size = x$y.title.font.size,
                              x.title.font.size = x$x.title.font.size,
-                             footer = wrapText(x$footer),
+                             footer = wrapText(x$footer, x$footer.wrap.length),
                              footer.font.size = x$axis.font.size,
                              debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
