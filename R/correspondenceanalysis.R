@@ -301,6 +301,10 @@ CorrespondenceAnalysis = function(x,
         suprow <- seq(nrow(x))[is.na(match(rownames(x), rownames(reduced.x)))]
         supcol <- seq(ncol(x))[is.na(match(colnames(x), colnames(reduced.x)))]
         removed.labels <- c((rownames(x)[suprow]), (colnames(x)[supcol]))
+        if (square)
+            removed.labels <- unique(removed.labels)
+        else if (any(duplicated(removed.labels)))
+            warning("The following labels refer to multiple points: ", removed.labels[duplicated(removed.labels)])
 
         supp.labels <- unlist(strsplit(supplementary, split = ","))
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
