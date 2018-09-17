@@ -3,6 +3,7 @@ context("Dimension Reduction Scatterplot and GoodnessOfFit")
 data(hbatwithsplits, package = "flipExampleData")
 # numerical and factor inputs
 input.data <- hbatwithsplits[, c("x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12")]
+input.data$x4[1:5] <- NA
 subset <- hbatwithsplits$x3 != "Large (500+)"
 
 # distance matrices

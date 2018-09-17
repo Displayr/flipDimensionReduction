@@ -71,7 +71,7 @@ RotateLoadings <- function(loadings, rotation = "varimax", delta = 0, kappa = 4,
         iterations <- NULL
     } else
     {
-        stop("rotation not recognized")
+        stop("Rotation method of ", rotation, " is not supported.")
     }
 
     # Kaiser un-normalization step
