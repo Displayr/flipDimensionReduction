@@ -121,6 +121,9 @@ CorrespondenceAnalysis = function(x,
     if (!is.numeric(logo.size))
         stop("Logo size must be a numeric")
 
+    if (is.null(x))
+        stop("No table has been entered.")
+
     # Multiple tables
     # note that a dataframe is actually a list
     x.stat <- attr(x, "statistic")
