@@ -547,13 +547,20 @@ print.CorrespondenceAnalysis <- function(x, ...)
         {
             logo.required.length <- if (x$num.tables > 1) n1
                                     else              x.nrow
+            
+
             if (length(logo.urls) != logo.required.length)
-                stop(sprintf("Number of URLs supplied in logos must be equal to the number of %s in the table (%d)\n",
+                warning(sprintf("Number of URLs supplied in logos is not equal to the number of %s in the table (%d)\n",
                              ifelse(x$transpose, "columns", "rows"), logo.required.length))
-            if (any(nchar(logo.urls) == 0))
-                stop("Logos cannot be an empty string\n")
+            if (length(logo.urls) < logo.required.length)
+                logo.urls <- c(logo.urls, rep("", logo.required.length - length(logo.urls)))
+            if (length(logo.urls) > logo.required.length)
+                logo.urls <- logo.urls[1:logo.required.length]
             if (x$num.tables > 1)
                 logo.urls <- rep(logo.urls, x$num.tables)
+            ind <- which(nchar(logo.urls) == 0)
+            if (length(ind) > 0)
+                logo.urls[ind] <- lab[ind]
             lab[1:x.nrow] <- logo.urls
             logo.size <- rep(x$logo.size, length(lab))
         }

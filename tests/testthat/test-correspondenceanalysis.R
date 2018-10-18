@@ -120,21 +120,27 @@ test_that("Row and column labels",
 
 test_that("Logos",
           {
-              urls <- sprintf("https://dl.dropboxusercontent.com/u/539177224/%s_grey.svg",
+              urls <- sprintf("https://displayrcors.azureedge.net/images/%s_grey.svg",
                               c("apple","baby","car","stickman","stickwoman","chicken","cow","thumbsup","rocket","tools"))
               data("colas", package = "flipExampleData")
               z = xtabs(~d1 + d2, data = colas)
               z = z[rowSums(z) > 0, colSums(z) > 0]
               colnames(z) <- LETTERS[1:8]
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9]))), NA)
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T))))
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(z, logos=urls[1:4]))))
+              expect_error(CorrespondenceAnalysis(z, logos=urls[1:9]), NA)
+              expect_warning(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T)),
+                             "Number of URLs supplied in logos is not equal to the number of columns")
+              expect_warning(print(CorrespondenceAnalysis(z, logos=urls[1:4])),
+                             "Number of URLs supplied in logos is not equal to the number of rows in the table")
 
               z2 <- z + runif(72)
               zz <- list(z, z2)
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))), NA)
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9], transpose=T))))
-              expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:4]))))
+              expect_warning(CorrespondenceAnalysis(zz, logos=urls[1:9]), "Tables have been automatically assigned names")
+              attr(zz[[1]], "name") <- "T1"
+              attr(zz[[2]], "name") <- "T2"
+              expect_warning(print(CorrespondenceAnalysis(zz, logos=urls[1:9], transpose=T)),
+                             "Number of URLs supplied in logos is not equal to the number of columns in the table")
+              expect_warning(print(CorrespondenceAnalysis(zz, logos=urls[1:4])),
+                             "Number of URLs supplied in logos is not equal to the number of rows in the table")
 
               rownames(zz[[2]])[1] <- "Error"
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))))
