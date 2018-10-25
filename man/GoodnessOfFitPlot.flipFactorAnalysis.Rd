@@ -7,6 +7,13 @@
 \method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000,
   ...)
 }
+\arguments{
+\item{object}{An object for which a summary is desired.}
+
+\item{max.points}{The maximum numner of points to plot.}
+
+\item{...}{Additional arguments affecting the goodness-of-fit displayed.}
+}
 \description{
 Goodness-of-fit plot for a flipFactorAnalysis object
 }

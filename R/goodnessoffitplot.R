@@ -4,6 +4,9 @@ flipStatistics::GoodnessOfFitPlot
 
 
 #' Goodness-of-fit plot for a flipFactorAnalysis object
+#' @param object An object for which a summary is desired.
+#' @param max.points The maximum numner of points to plot.
+#' @param ... Additional arguments affecting the goodness-of-fit displayed.
 #' @export
 GoodnessOfFitPlot.flipFactorAnalysis = function(object, max.points = 1000, ...) {
     GoodnessOfFitPlot.2Dreduction(convertFactorAnalysisTo2D(object), max.points = max.points)
@@ -11,6 +14,9 @@ GoodnessOfFitPlot.flipFactorAnalysis = function(object, max.points = 1000, ...) 
 
 
 #' Goodness-of-fit plot for a 2Dreduction object
+#' @param object An object for which a summary is desired.
+#' @param max.points The maximum numner of points to plot.
+#' @param ... Additional arguments affecting the goodness-of-fit displayed.
 #' @importFrom flipStandardCharts Chart
 #' @importFrom stats cor complete.cases
 #' @importFrom utils combn
