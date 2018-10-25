@@ -119,7 +119,11 @@ DimensionReduction <- function(algorithm,
             warning("Subset will be ignored for distance matrix input.")
 
         distance.matrix <- if (raw.table) {
-            ParseUserEnteredTable(table)
+
+            # Always expect row and column names
+            as.matrix(ParseUserEnteredTable(table, want.data.frame = TRUE,
+            want.col.names = TRUE, want.row.names = TRUE))
+
         } else {
             table
         }
