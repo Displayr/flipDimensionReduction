@@ -1,27 +1,16 @@
-#' \code{GoodnessOfFitPlot}
-#' @description A generic function used to produce plots illustrating the goodness-of-fit of
-#' the model object.  The function invokes particular \code{\link{methods}}
-#' which depend on the \code{\link{class}} of the first argument.
-#'
-#' Reports the goodness-of-fit of an object.
-#' @param object An object for which a summary is desired.
-#' @param ... Additional arguments affecting the goodness-of-fit displayed.
-#' @param max.points The maximum numner of points to plot.
+#' @importFrom flipStatistics GoodnessOfFitPlot
 #' @export
-GoodnessOfFitPlot <- function(object, ...) {
-
-    UseMethod("GoodnessOfFitPlot")
-}
+flipStatistics::GoodnessOfFitPlot
 
 
-#' @describeIn GoodnessOfFitPlot  Goodness-of-fit plot for a flipFactorAnalysis object
+#' Goodness-of-fit plot for a flipFactorAnalysis object
 #' @export
 GoodnessOfFitPlot.flipFactorAnalysis = function(object, max.points = 1000, ...) {
     GoodnessOfFitPlot.2Dreduction(convertFactorAnalysisTo2D(object), max.points = max.points)
 }
 
 
-#' @describeIn GoodnessOfFitPlot  Goodness-of-fit plot for a 2Dreduction object
+#' Goodness-of-fit plot for a 2Dreduction object
 #' @importFrom flipStandardCharts Chart
 #' @importFrom stats cor complete.cases
 #' @importFrom utils combn
