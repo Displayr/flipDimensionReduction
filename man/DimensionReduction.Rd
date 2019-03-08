@@ -8,11 +8,12 @@
 DimensionReductionScatterplot(algorithm, data = NULL,
   data.groups = NULL, table = NULL, raw.table = FALSE,
   subset = NULL, perplexity = 10, binary = TRUE,
-  normalization = FALSE, seed = 1066)
+  normalization = FALSE, seed = 1066, ...)
 
 DimensionReduction(algorithm, data = NULL, data.groups = NULL,
   table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = FALSE, seed = 1066)
+  binary = TRUE, normalization = FALSE, seed = 1066,
+  print.type = "2d", ...)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},
@@ -50,6 +51,10 @@ standard deviation of 1.}
 
 \item{seed}{Random seed. Used only when \code{algorithm} is
 \code{"t-SNE"} or \code{"UMAP"}.}
+
+\item{...}{Other parameters passed to \link{PrincipalComponentsAnalysis}.}
+
+\item{print.type}{Specifies output produced if algorithm is PCA.}
 }
 \description{
 Produces as 2-dimensional embedding. Takes either a

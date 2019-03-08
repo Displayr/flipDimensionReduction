@@ -10,11 +10,13 @@ DimensionReductionScatterplot <- function(algorithm,
                                           perplexity = 10,
                                           binary = TRUE,
                                           normalization = FALSE,
-                                          seed = 1066) {
+                                          seed = 1066,
+                                          ...)
+{
 
     DimensionReduction(algorithm, data = data, data.groups = data.groups, table = table, raw.table = raw.table,
                        subset = subset, perplexity = perplexity, binary = binary, normalization = normalization,
-                       seed = seed)
+                       seed = seed, ...)
 }
 
 
@@ -49,6 +51,8 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     standard deviation of 1.
 #' @param seed Random seed. Used only when \code{algorithm} is
 #'     \code{"t-SNE"} or \code{"UMAP"}.
+#' @param print.type Specifies output produced if algorithm is PCA.
+#' @param ... Other parameters passed to \link{PrincipalComponentsAnalysis}.
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
@@ -66,7 +70,10 @@ DimensionReduction <- function(algorithm,
                                         perplexity = 10,
                                         binary = TRUE,
                                         normalization = FALSE,
-                                        seed = 1066) {
+                                        seed = 1066,
+                                        print.type = "2d",
+                                        ...)
+{
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
@@ -79,14 +86,12 @@ DimensionReduction <- function(algorithm,
     {
         if (is.null(data))
             stop("PCA requires variables as input but a distance matrix was supplied.")
-        pca <- PrincipalComponentsAnalysis(data = data, subset = subset,
-                                           missing = "Exclude cases with missing data",
+        pca <- PrincipalComponentsAnalysis(data = data, 
+                                           subset = subset,
                                            use.correlation = normalization,
-                                           rotation = "none",
-                                           select.n.rule = "Number of factors",
-                                           n.factors = 2,
-                                           print.type = "2d",
-                                           data.groups = data.groups)
+                                           data.groups = data.groups,
+                                           print.type = print.type,
+                                           ...)
         return(pca)
     }
 
