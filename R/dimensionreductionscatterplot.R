@@ -177,6 +177,8 @@ DimensionReduction <- function(algorithm,
         # Expand the output to be same size as data, filling with NA by default
         expanded.embedding <- matrix(nrow = length(subset), ncol = 2)
         expanded.embedding[used.subset] <- result$embedding
+        if (!is.null(rownames(data)))
+            rownames(expanded.embedding) <- rownames(data)
         result$embedding <- expanded.embedding
 
         if (algorithm == "t-SNE" || algorithm == "UMAP") {
