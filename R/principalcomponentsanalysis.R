@@ -55,7 +55,7 @@
 #' Includes handling of missing data, weighting, and filtering.
 #' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
-#' @importFrom psych principal factor.scores
+#' @importFrom psych principal factor.scores cor.smooth
 #' @export
 PrincipalComponentsAnalysis <- function(data,
                                weights = NULL,
@@ -79,8 +79,8 @@ PrincipalComponentsAnalysis <- function(data,
 {
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
-    if (show.labels)
-        colnames(data) <- Labels(data) #variable.labels
+    if (show.labels && !is.null(Labels(data)))
+        colnames(data) <- Labels(data)
     if (rotation != "Promax" && rotation != "promax") {
         promax.kappa = NULL
     }
@@ -131,9 +131,20 @@ PrincipalComponentsAnalysis <- function(data,
 
     # Any singular values near zero prevent components from being determined.
     singular.values <- svd(input.matrix)$d
-    if (any(singular.values < tol))
+    if (FALSE && any(singular.values < tol))
     {
-        stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
+        ind <- which(singular.values < tol)
+        if (length(ind) < length(singular.values))
+        {
+            warning("Variables '", paste(colnames(input.matrix)[ind], collapse = "', '"),
+                "' were removed to avoid structural correlation in your data")
+            input.matrix <- input.matrix[-ind,-ind]
+            correlation.matrix <- correlation.matrix[-ind,-ind]
+            stddevs <- stddevs[-ind]
+            scaled.data <- scaled.data[,-ind]
+        }
+        else
+            stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
     }
 
     # Compute eigenvalues for component selection
@@ -154,11 +165,13 @@ PrincipalComponentsAnalysis <- function(data,
     # Don't return all of the properties returned by
     # principal() as they are not designed to account
     # for weighting
-    initial.results <- principal(input.matrix,
+    initial.results <- try(suppressWarnings(principal(input.matrix,
                                  nfactors = n.factors,
                                  rotate = "none",
                                  covar = !use.correlation,
-                                 scores = FALSE)
+                                 scores = FALSE)), silent = TRUE)
+    if (inherits(initial.results, "try-error"))
+        stop("Could not perform PCA on the input matrix")
     unrotated.loadings <- initial.results$loadings
 
     # Flip eigenvectors so the largest loadings are positive
@@ -250,8 +263,7 @@ PrincipalComponentsAnalysis <- function(data,
     } else {
         S <- loadings
     }
-
-    score.weights <- solve(correlation.matrix, S)
+    score.weights <- try(solve(cor.smooth(correlation.matrix), S), silent = TRUE)
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
@@ -435,9 +447,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
     if (show.labels)
     {
         if (is.null(row.names(x$loadings)))
-        {
             warning("The loadings do not contain labels.")
-        }
         labels <- row.names(x$loadings)
     }
 
