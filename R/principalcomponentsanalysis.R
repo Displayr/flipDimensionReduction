@@ -263,7 +263,10 @@ PrincipalComponentsAnalysis <- function(data,
     } else {
         S <- loadings
     }
-    score.weights <- try(solve(cor.smooth(correlation.matrix), S), silent = TRUE)
+    cor <- try(cor.smooth(correlation.matrix), silent = TRUE)
+    score.weights <- try(solve(cor, S), silent = TRUE)
+    if (inherits(score.weights, "try-error"))
+        stop("Factor scores could not be computed as the correlation matrix is singular") 
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
