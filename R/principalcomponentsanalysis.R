@@ -263,10 +263,12 @@ PrincipalComponentsAnalysis <- function(data,
     } else {
         S <- loadings
     }
+
+    # Smooth non-positive definite correlation in the same way as psych::principal
     cor <- try(cor.smooth(correlation.matrix), silent = TRUE)
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
-        stop("Factor scores could not be computed as the correlation matrix is singular") 
+        stop("Component scores could not be computed as the correlation or correlation matrix is singular.") 
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
