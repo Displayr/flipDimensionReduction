@@ -103,12 +103,14 @@ PrincipalComponentsAnalysis <- function(data,
     # matrix by filtering and imputing if specified.
     prepared.data <- prepareDataForFactorAnalysis(data, weights, subset, missing)
 
-    # If any variables have a standard deviation of 0 the analysis cannot continue
+    # If any variables have a standard deviation of 0 remove from analysis
     stddevs <- StandardDeviation(prepared.data$subset.data, weights = prepared.data$subset.weights)
-    zero.variance <- names(stddevs[stddevs == 0])
-    if (length(zero.variance) > 0)
+    ind.zero.variance <- which(stddevs == 0)
+    if (length(ind.zero.variance) > 0)
     {
-        stop(paste0("Some of your variables have no variation and are not appropriate for principal components analysis: ", paste(zero.variance, sep = "", collapse = ", ")))
+        warning("Some of your variables have no variation and have been removed for principal components analysis: ", paste(names(stddevs)[ind.zero.variance], sep = "", collapse = ", "))
+        prepared.data$subset.data <- prepared.data$subset.data[,-ind.zero.variance]
+        stddevs <- stddevs[-ind.zero.variance]
     }
 
     correlation.matrix <- CovarianceAndCorrelationMatrix(data = prepared.data$subset.data,
