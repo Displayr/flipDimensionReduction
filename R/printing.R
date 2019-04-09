@@ -8,7 +8,7 @@ sortLoadings <- function(x) {
     mc <- max.col(abs(x))
     inds <- cbind(1:nrow(x), mc)
     vals <- abs(x)[inds] * 10^(-2*mc)
-    y <- x[order(vals, decreasing = TRUE),]
+    y <- x[order(vals, decreasing = TRUE),, drop = FALSE]
     return(y)
 }
 
