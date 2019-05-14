@@ -86,7 +86,7 @@ DimensionReduction <- function(algorithm,
     {
         if (is.null(data))
             stop("PCA requires variables as input but a distance matrix was supplied.")
-        pca <- PrincipalComponentsAnalysis(data = data, 
+        pca <- PrincipalComponentsAnalysis(data = data,
                                            subset = subset,
                                            use.correlation = normalization,
                                            data.groups = data.groups,
@@ -192,6 +192,7 @@ DimensionReduction <- function(algorithm,
     result$data.groups <- data.groups
     result$normalized <- normalization
     class(result) <- c("2Dreduction", class(result))
+    attr(result, "ChartData") <- ExtractChartData(result)
     return(result)
 }
 
