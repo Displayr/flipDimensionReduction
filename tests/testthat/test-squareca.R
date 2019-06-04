@@ -76,3 +76,7 @@ test_that("Supplementary",
               expect_error(print(CorrespondenceAnalysis(x1, square=T, supplementary = "optus, vodafone")), NA)
           })
 
+test_that("Bubble",
+{
+    expect_error(CorrespondenceAnalysis(x1, output="Bubble Chart", bubble.size = x1[,1], square = TRUE), NA)
+})
