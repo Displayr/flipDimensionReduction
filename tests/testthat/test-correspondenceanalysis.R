@@ -169,7 +169,7 @@ test_that("Bubble charts",
                 names(bsizes)[2] = "Dog"
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "The bubble sizes must contain the same names")
                 names(bsizes)[2] = names(bsizes)[1]
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "There are duplicate bubble size names.")
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "There are duplicate names in bubble sizes")
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))), "The bubble sizes need to be named")
 
                 expect_error(print(suppressWarnings(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]))))
