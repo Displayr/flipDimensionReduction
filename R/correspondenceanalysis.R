@@ -257,9 +257,9 @@ CorrespondenceAnalysis = function(x,
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
+            if(is.null(bubble.size))
+                stop("Bubble Charts require bubble sizes.")
             bubble.size <- matchTableNames(bubble.size, rownames(x), table.maindim)
-            #if(is.null(bubble.size))
-            #    stop("Bubble Charts require bubble sizes.")
             #bubble.names <- rownames(bubble.size)
          #   if (is.null(bubble.names) && !is.null(names(bubble.size)))
          #       bubble.names <- names(bubble.size)
