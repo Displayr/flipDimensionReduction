@@ -77,7 +77,7 @@ DimensionReduction <- function(algorithm,
 {
     if (!is.null(data) && !is.data.frame(data))
     {
-        show.labels <- list(...)["show.labels"]
+        show.labels <- list(...)[["show.labels"]]
         if (is.null(show.labels))
             show.labels <- TRUE
         data <- SplitFormQuestions(data, show.labels)
