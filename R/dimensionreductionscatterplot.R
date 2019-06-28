@@ -57,6 +57,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
 #'
+#' @importFrom flipData SplitFormQuestions
 #' @importFrom flipTransformations ParseUserEnteredTable AsNumeric StandardizeData
 #' @importFrom stats dist
 #' @export
@@ -74,6 +75,8 @@ DimensionReduction <- function(algorithm,
                                         print.type = "2d",
                                         ...)
 {
+    if (!is.null(data) && !is.data.frame(data))
+        data <- SplitFormQuestions(data, ...)
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
