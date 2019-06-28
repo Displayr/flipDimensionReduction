@@ -76,7 +76,12 @@ DimensionReduction <- function(algorithm,
                                         ...)
 {
     if (!is.null(data) && !is.data.frame(data))
-        data <- SplitFormQuestions(data, ...)
+    {
+        show.labels <- list(...)["show.labels"]
+        if (is.null(show.labels))
+            show.labels <- TRUE
+        data <- SplitFormQuestions(data, show.labels)
+    }
 
     if (!xor(is.null(data), is.null(table)))
         stop("One and only one of data and table must be supplied.")
