@@ -12,6 +12,12 @@ sortLoadings <- function(x) {
     return(y)
 }
 
+.tidy.loadings <- function(x, input.matrix)
+{
+    if (x$sort.coefficients.by.size)
+        input.matrix <- sortLoadings(input.matrix)
+    as.matrix(unclass(input.matrix))
+}
 
 
 #' @importFrom stats lm.fit setNames
@@ -21,13 +27,6 @@ sortLoadings <- function(x) {
 print.flipFactorAnalysis <- function(x, digits = 3,...)
 {
     min.display.loading.value <- if (x$suppress.small.coefficients) x$min.display.loading.value else 0
-
-    .tidy.loadings <- function(x, input.matrix)
-    {
-        if (x$sort.coefficients.by.size)
-            input.matrix <- sortLoadings(input.matrix)
-        as.matrix(unclass(input.matrix))
-    }
 
     .create.printed.loadings <- function(x, input.matrix, digits)
     {

@@ -510,6 +510,20 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
         return(data)
     }
+    if (x$print.type == "loadings" || x$print.type == "Loadings Table")
+        return(.tidy.loadings(x, input.matrix = x$loadings))
+    if (x$print.type == "structure" || x$print.type == "Structure Matrix")
+        return(.tidy.loadings(x, input.matrix = x$structure.matrix))
+    if (x$print.type =="variance" || x$print.type == "Variance Explained")
+    {
+        eigenvalues <- x$values
+        variance.proportions = eigenvalues / sum(eigenvalues)
+        cumulative.proportions = cumsum(variance.proportions)
+        return(cbind('Eigenvalue' = eigenvalues,
+                     '% of Variance' = variance.proportions,
+                     'Cumulative %' = cumulative.proportions))
+    }
+
     if (NCOL(x$loadings) < 2)
         return(x$loadings)
 
