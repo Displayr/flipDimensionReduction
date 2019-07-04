@@ -355,6 +355,7 @@ PrincipalComponentsAnalysis <- function(data,
 
 
     class(results) <- "flipFactorAnalysis"
+    attr(results, "ChartData") <- ExtractChartData(results)
     return(results)
 }
 
