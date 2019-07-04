@@ -530,6 +530,24 @@ test_that("Component Plot works for PCA objects created by princomp and psych", 
     expect_error(ComponentPlot(test.psych), NA)
 })
 
+test_that("PCA contains attribute data for exporting to Excel",
+{
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Loadings Table")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 7))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Structure Matrix")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 7))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Variance Explained")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 3))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "2D Scatterplot")
+    expect_equal(dim(attr(pca, "ChartData")), c(623, 2))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Scree Plot")
+    expect_equal(length(attr(pca, "ChartData")), 25)
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Component Plot")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 2))
+
+})
+
+
 
 
 #     # Comparisons with results from Applied Multivariate Statistics for the Social Sciences

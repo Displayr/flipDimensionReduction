@@ -519,9 +519,11 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         eigenvalues <- x$values
         variance.proportions = eigenvalues / sum(eigenvalues)
         cumulative.proportions = cumsum(variance.proportions)
-        return(cbind('Eigenvalue' = eigenvalues,
+        result <- cbind('Eigenvalue' = eigenvalues,
                      '% of Variance' = variance.proportions,
-                     'Cumulative %' = cumulative.proportions))
+                     'Cumulative %' = cumulative.proportions)
+        rownames(result) <- paste("Component", 1:length(eigenvalues))
+        return(result)
     }
 
     if (NCOL(x$loadings) < 2)
