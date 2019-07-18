@@ -20,6 +20,7 @@ before_install:
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
   - rcode+="write.csv(out, file='test_results.csv'); "
   - rcode+="quit(status = !identical(n.fail, 0), save='no');"
+  - Rscript tools/travis_run_before_install.R
 
 r_packages:
   - devtools
