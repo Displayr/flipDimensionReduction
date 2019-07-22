@@ -385,3 +385,27 @@ test_that("Reg. Test: Corr. Anal. of a Table - correspondence.analysis1",
 
     expect_warning(CorrespondenceAnalysis(x), "^Multiple statistics")
 })
+
+test_that("Duplicated labels are displayed nicely",
+{
+    dat <- structure(c(2.63157894736842, 0, 7.89473684210526, 13.1578947368421,
+            10.5263157894737, 10.5263157894737, 13.1578947368421, 13.1578947368421,
+            28.9473684210526, 100, 2.54237288135593, 4.23728813559322, 3.38983050847458,
+            11.0169491525424, 12.7118644067797, 11.0169491525424, 9.32203389830508,
+            17.7966101694915, 27.9661016949153, 100, 4.80769230769231, 1.92307692307692,
+            6.73076923076923, 10.5769230769231, 12.5, 11.5384615384615, 6.73076923076923,
+            15.3846153846154, 29.8076923076923, 100, 0, 1.49253731343284,
+            10.4477611940298, 14.9253731343284, 13.4328358208955, 7.46268656716418,
+            7.46268656716418, 16.4179104477612, 28.3582089552239, 100, 2.75229357798165,
+            2.44648318042813, 6.42201834862385, 11.9266055045872, 12.5382262996942,
+            10.3975535168196, 8.56269113149847, 16.2079510703364, 28.7461773700306,
+            100), statistic = "Column %", .Dim = c(10L, 5L), .Dimnames = list(
+                c("Every or nearly every day", "4 to 5 days a week", "2 to 3 days a week",
+                "Once a week", "Once every 2 weeks", "Once a month", "Once every 3 months",
+                "Once or twice a year", "Never", "NET"), c("Never", "Rarely (once or twice in a year)",
+                "Quite often (about once every month)", "Every chance I get (every week I look for new competitions t",
+                "NET")), name = "Q12. How  often do you drink cola with alcohol by Q13. Competition participation", questions = c("Q12. How  often do you drink cola with alcohol",
+            "Q13. Competition participation"))
+    ca <- CorrespondenceAnalysis(dat)
+    expect_equal(rownames(attr(ca, "ChartData"))[2], "4 to 5 days a week")
+})
