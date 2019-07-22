@@ -414,6 +414,9 @@ CorrespondenceAnalysis = function(x,
     # Store chart data - to use in print.CorrespondenceAnalysis
     plot.dims <- c(dim1.plot, dim2.plot)
     tmp.data <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
+    dup.ind <- which(duplicated(rownames(tmp.data)))
+    if (length(dup.ind) > 0)
+        rownames(tmp.data)[dup.ind] <- paste0(rownames(tmp.data)[dup.ind], " ")
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
