@@ -128,9 +128,9 @@ test_that("Logos",
               colnames(z) <- LETTERS[1:8]
               expect_error(CorrespondenceAnalysis(z, logos=urls[1:9]), NA)
               expect_warning(print(CorrespondenceAnalysis(z, logos=urls[1:9], transpose=T)),
-                             "Number of URLs supplied in logos is not equal to the number of columns")
+                             "Number of URLs supplied in logos (9) is not equal to the number of columns", fixed = TRUE)
               expect_warning(print(CorrespondenceAnalysis(z, logos=urls[1:4])),
-                             "Number of URLs supplied in logos is not equal to the number of rows in the table")
+                             "Number of URLs supplied in logos (4) is not equal to the number of rows in the table", fixed = TRUE)
 
               z2 <- z + runif(72)
               zz <- list(z, z2)
@@ -138,9 +138,9 @@ test_that("Logos",
               attr(zz[[1]], "name") <- "T1"
               attr(zz[[2]], "name") <- "T2"
               expect_warning(print(CorrespondenceAnalysis(zz, logos=urls[1:9], transpose=T)),
-                             "Number of URLs supplied in logos is not equal to the number of columns in the table")
+                             "Number of URLs supplied in logos (9) is not equal to the number of columns in the table", fixed = TRUE)
               expect_warning(print(CorrespondenceAnalysis(zz, logos=urls[1:4])),
-                             "Number of URLs supplied in logos is not equal to the number of rows in the table")
+                             "Number of URLs supplied in logos (4) is not equal to the number of rows in the table", fixed = TRUE)
 
               rownames(zz[[2]])[1] <- "Error"
               expect_error(suppressWarnings(print(CorrespondenceAnalysis(zz, logos=urls[1:9]))))

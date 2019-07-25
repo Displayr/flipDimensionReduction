@@ -562,9 +562,9 @@ print.CorrespondenceAnalysis <- function(x, ...)
                                     else              x.nrow
             
 
-            if (length(logo.urls) != logo.required.length)
-                warning(sprintf("Number of URLs supplied in logos is not equal to the number of %s in the table (%d)\n",
-                             ifelse(x$transpose, "columns", "rows"), logo.required.length))
+            if (sum(nchar(logo.urls)) && length(logo.urls) != logo.required.length)
+                warning(sprintf("Number of URLs supplied in logos (%d) is not equal to the number of %s in the table (%d)\n",
+                             length(logo.urls), ifelse(x$transpose, "columns", "rows"), logo.required.length))
             if (length(logo.urls) < logo.required.length)
                 logo.urls <- c(logo.urls, rep("", logo.required.length - length(logo.urls)))
             if (length(logo.urls) > logo.required.length)
