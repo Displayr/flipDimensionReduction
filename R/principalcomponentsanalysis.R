@@ -525,11 +525,51 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         rownames(result) <- paste("Component", 1:length(eigenvalues))
         return(result)
     }
+    if (x$print.type == "details" || x$print.type == "Detailed Output")
+    {
+        headings <- matrix("", nrow = 10, ncol = ncol(x$loadings) + 1)
+        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "", 
+                          "", "Communalities", "", "Score Cofficient Matrix")
+        
+        .print <- function(x, digits = 3)
+        {
+            n <- nrow(x)
+            m <- ncol(x)
+            res <- matrix("", nrow = n+1, ncol = m+1, dimnames = list(rep("", n+1), rep("", m+1)))
+            res[1,(1:m)+1] <- colnames(x)
+            res[(1:n)+1,1] <- rownames(x)
+            res[(1:n)+1,(1:m)+1] <- round(x, digits)
+            return(res)
+        }
 
-    if (NCOL(x$loadings) < 2)
-        return(x$loadings)
+        ss.loadings <- colSums(x$loadings ^ 2)
+        nvar <- ncol(x$original.data)
+        ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
+        ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
+        ve.table <- rbind(ve.table, `% of Variance` = ss.loadings/nvar*100)
+        if (ncol(x$loadings) > 1)
+            ve.table <- rbind(ve.table, `Cumulative %` = cumsum(ss.loadings/nvar*100))
+
+        if (x$use.correlation)
+            communality.table <- cbind("Initial" = x$initial.communalities, 
+                                       "Extraction" = x$extracted.communalities)
+        else
+            communality.table <- cbind("Initial" = x$rescaled.initial.communalities,
+                                       "Extraction" = x$rescaled.extracted.communalities)
+
+        empty.mat <- matrix("", nrow = length(x$initial.communalities) + 1, ncol = ncol(headings)-3)
+        colnames(empty.mat) <- rep("", ncol(headings) - 3)
+        all.tables <- rbind(headings[1:2,], .print(.tidy.loadings(x, input.matrix = x$loadings)),
+             headings[3:4,], .print(.tidy.loadings(x, input.matrix = x$structure.matrix)),
+             headings[5:6,], .print(ve.table),
+             headings[7:9,], cbind(.print(communality.table), empty.mat),
+             headings[9:10,], .print(x$score.weights))
+        return(all.tables)
+    }
 
     # Otherwise return data for a component plot
+    if (NCOL(x$loadings) < 2)
+        return(x$loadings)
     component.data <- x$loadings[,1:2]
     if (!(x$rotation %in% c("promax", "oblimin")))
     {

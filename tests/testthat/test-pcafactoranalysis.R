@@ -544,6 +544,8 @@ test_that("PCA contains attribute data for exporting to Excel",
     expect_equal(length(attr(pca, "ChartData")), 25)
     pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Component Plot")
     expect_equal(dim(attr(pca, "ChartData")), c(25, 2))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Detailed Output")
+    expect_equal(dim(attr(pca, "ChartData")), c(119, 8))
 
 })
 
