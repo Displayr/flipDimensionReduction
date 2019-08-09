@@ -1,5 +1,5 @@
 #' \code{DimensionReductionScatterplot}
-#' @rdname DimensionReduction
+#' @inherit DimensionReduction
 #' @export
 DimensionReductionScatterplot <- function(algorithm,
                                           data = NULL,
