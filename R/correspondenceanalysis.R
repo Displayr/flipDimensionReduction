@@ -176,8 +176,9 @@ CorrespondenceAnalysis = function(x,
             x[[i]] <- x[[i]][r.names,c.names]
         }
         x <- do.call(rbind, x)
-        rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
         row.column.names <- r.names
+        rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
+        checkEmptyRowsOrColumns(x, transpose)
 
     } else
     {
@@ -232,28 +233,8 @@ CorrespondenceAnalysis = function(x,
                              paste(r.names[which(is.na(c.ind))], collapse="', '")))
             x <- x[,c.ind]
         }
-
-        # Check for empty rows/columns
-        rSum <- rowSums(abs(x), na.rm=T)
-        cSum <- colSums(abs(x), na.rm=T)
-        if (any(rSum == 0) || any(cSum == 0))
-        {
-            empty.dim <- "Row"
-            empty.name <- ""
-            if (any(rSum == 0))
-            {
-                if (transpose)
-                    empty.dim <- "Column"
-                empty.name <- rownames(x)[which(rSum == 0)[1]]
-            } else if (any(cSum == 0))
-            {
-                if (!transpose)
-                    empty.dim <- "Column"
-                empty.name <- colnames(x)[which(cSum == 0)[1]]
-            }
-            stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
-        }
-
+        checkEmptyRowsOrColumns(x, transpose)
+        
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
@@ -289,14 +270,14 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
-
     if (sum(x < 0) > 0)
-        stop("Input tables must not contain negative values.")
+        stop("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
 
     suprow <- supcol <- integer(0)
-    if (!is.null(supplementary)) {
+    if (!is.null(supplementary))
+    {
 
         reduced.x <- RemoveRowsAndOrColumns(x, row.names.to.remove = supplementary,
                                             column.names.to.remove = supplementary)
@@ -319,6 +300,8 @@ CorrespondenceAnalysis = function(x,
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
 
     }
+    if (any(!is.finite(x)))
+        stop("Input table cannot contain missing or infinite values.")
 
     original <- ca(x, suprow = suprow, supcol = supcol, ...)
 
@@ -442,6 +425,31 @@ CorrespondenceAnalysis = function(x,
 
     result
 }
+
+checkEmptyRowsOrColumns <- function(x, transpose)
+{
+    rSum <- rowSums(abs(x), na.rm = TRUE)
+    cSum <- colSums(abs(x), na.rm = TRUE)
+    if (any(rSum == 0) || any(cSum == 0))
+    {
+        empty.dim <- "Row"
+        empty.name <- ""
+        if (any(rSum == 0))
+        {
+            if (transpose)
+                empty.dim <- "Column"
+            empty.name <- paste(rownames(x)[which(rSum == 0)], collapse = "', '")
+        } else if (any(cSum == 0))
+        {
+            if (!transpose)
+                empty.dim <- "Column"
+            empty.name <- paste(colnames(x)[which(cSum == 0)], collapse = "', '")
+        }
+        stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
+    }
+    return(NULL)
+}
+
 
 #' @importFrom flipFormat ExtractChartData
 #' @export
