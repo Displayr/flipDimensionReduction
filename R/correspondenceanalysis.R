@@ -234,7 +234,7 @@ CorrespondenceAnalysis = function(x,
             x <- x[,c.ind]
         }
         checkEmptyRowsOrColumns(x, transpose)
-        
+
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
@@ -270,7 +270,7 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
-    if (sum(x < 0) > 0)
+    if (sum(x < 0, na.rm = TRUE) > 0)
         stop("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
@@ -417,7 +417,7 @@ CorrespondenceAnalysis = function(x,
         if (!square)
             bubble.size <- c(bubble.size, rep(max(bubble.size)/75, length(original$colnames)))
         attr(result, "ChartData") <- data.frame(tmp.data,
-            Size = bubble.size, Group = groups, 
+            Size = bubble.size, Group = groups,
             check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
     } else
         attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups,
@@ -568,7 +568,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         {
             logo.required.length <- if (x$num.tables > 1) n1
                                     else              x.nrow
-            
+
 
             if (sum(nchar(logo.urls)) && length(logo.urls) != logo.required.length)
                 warning(sprintf("Number of URLs supplied in logos (%d) is not equal to the number of %s in the table (%d)\n",
@@ -749,7 +749,7 @@ CAQuality <- function(x)
     q
 }
 
-matchTableNames <- function(x, ref.names, ref.maindim = "rows", x.table.name = "bubble sizes") 
+matchTableNames <- function(x, ref.names, ref.maindim = "rows", x.table.name = "bubble sizes")
 {
     x.names <- rownames(x)
     if (is.null(x.names) && !is.null(names(x)))
