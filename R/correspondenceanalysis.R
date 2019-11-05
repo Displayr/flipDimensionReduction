@@ -175,10 +175,10 @@ CorrespondenceAnalysis = function(x,
 
             x[[i]] <- x[[i]][r.names,c.names]
         }
+        lapply(x, checkEmptyRowsOrColumns, transpose = transpose)
         x <- do.call(rbind, x)
         row.column.names <- r.names
         rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
-        checkEmptyRowsOrColumns(x, transpose)
 
     } else
     {

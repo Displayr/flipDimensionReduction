@@ -523,8 +523,11 @@ test_that("Missing values",
                 "Clean and well-kept restaurants", "NET")), name = "table.Q14.3", questions = c("Q14",
             "SUMMARY")))
 
-            expect_error(CorrespondenceAnalysis(xx), "Row 'table.Q14: Burger Shack', 'table.Q14: Nuovo Burger', 'table.Q14: Bread Basket', 'table.Q14.2: Burger Shack', 'table.Q14.2: Bread Basket' contains only zeros or NAs.", fixed = TRUE)
+            expect_error(CorrespondenceAnalysis(xx), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
+            expect_error(CorrespondenceAnalysis(xx, transpose = TRUE), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
+
             expect_error(CorrespondenceAnalysis(xx[[1]]), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
+            expect_error(CorrespondenceAnalysis(xx[[1]], transpose = TRUE), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
 
             expect_error(CorrespondenceAnalysis(xx, row.names.to.remove = "NET, Total, SUM, Burger Shack, Nuovo Burger, Bread Basket"), NA)
             expect_error(CorrespondenceAnalysis(xx[[1]], row.names.to.remove = "NET, Total, SUM, Burger Shack, Nuovo Burger, Bread Basket"), NA)
