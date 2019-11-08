@@ -527,6 +527,7 @@ test_that("Missing values",
             expect_error(CorrespondenceAnalysis(xx, transpose = TRUE), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
 
             expect_error(CorrespondenceAnalysis(xx[[1]]), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
+            expect_error(CorrespondenceAnalysis(t(xx[[1]])), "Column 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
             expect_error(CorrespondenceAnalysis(xx[[1]], transpose = TRUE), "Row 'Burger Shack', 'Nuovo Burger', 'Bread Basket' contains only zeros or NAs.", fixed = TRUE)
 
             expect_error(CorrespondenceAnalysis(xx, row.names.to.remove = "NET, Total, SUM, Burger Shack, Nuovo Burger, Bread Basket"), NA)
