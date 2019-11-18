@@ -77,27 +77,24 @@ PrincipalComponentsAnalysis <- function(data,
                                data.groups = NULL,
                                tol = 1e-13)
 {
+    if (is.null(rownames(data)))
+        rownames(data) <- 1:nrow(data)
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels && !is.null(Labels(data)))
         colnames(data) <- Labels(data)
-    if (rotation != "Promax" && rotation != "promax") {
+    if (rotation != "Promax" && rotation != "promax")
         promax.kappa = NULL
-    }
-
-    if (rotation != "Oblimin" && rotation != "oblimin") {
+    if (rotation != "Oblimin" && rotation != "oblimin")
         oblimin.delta = NULL
-    }
-
-    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained", "2D Scatterplot")) {
+    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained", "2D Scatterplot"))
+    {
         sort.coefficients.by.size = FALSE
         suppress.small.coefficients = FALSE
         min.display.loading.value = 0.1
     }
-
-    if (print.type != "Component Plot") {
+    if (print.type != "Component Plot")
         plot.labels = TRUE
-    }
 
     # Generate the data that will be input to the correlation/covariance
     # matrix by filtering and imputing if specified.
@@ -270,7 +267,7 @@ PrincipalComponentsAnalysis <- function(data,
     cor <- try(cor.smooth(correlation.matrix), silent = TRUE)
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
-        stop("Component scores could not be computed as the correlation or correlation matrix is singular.") 
+        stop("Component scores could not be computed as the correlation or correlation matrix is singular.")
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
@@ -528,9 +525,9 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     if (x$print.type == "details" || x$print.type == "Detailed Output")
     {
         headings <- matrix("", nrow = 10, ncol = ncol(x$loadings) + 1)
-        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "", 
+        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "",
                           "", "Communalities", "", "Score Cofficient Matrix")
-        
+
         .print <- function(x, digits = 3)
         {
             n <- nrow(x)
@@ -551,7 +548,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
             ve.table <- rbind(ve.table, `Cumulative %` = cumsum(ss.loadings/nvar*100))
 
         if (x$use.correlation)
-            communality.table <- cbind("Initial" = x$initial.communalities, 
+            communality.table <- cbind("Initial" = x$initial.communalities,
                                        "Extraction" = x$extracted.communalities)
         else
             communality.table <- cbind("Initial" = x$rescaled.initial.communalities,
