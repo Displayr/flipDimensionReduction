@@ -77,8 +77,6 @@ PrincipalComponentsAnalysis <- function(data,
                                data.groups = NULL,
                                tol = 1e-13)
 {
-    if (is.null(rownames(data)))
-        rownames(data) <- 1:nrow(data)
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels && !is.null(Labels(data)))
@@ -272,7 +270,7 @@ PrincipalComponentsAnalysis <- function(data,
     cor <- try(cor.smooth(correlation.matrix), silent = TRUE)
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
-        stop("Component scores could not be computed as the correlation or correlation matrix is singular.")
+        stop("Component scores could not be computed as the correlation or correlation matrix is singular.") 
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
@@ -289,7 +287,6 @@ PrincipalComponentsAnalysis <- function(data,
     # Fill out any additional cases with missing values, so that the size of the output scores
     # matches the number of respondents in the original data set, and that the cases are
     # matched up correctly
-
     new.data <- matrix(NA, nrow = nrow(data), ncol = ncol(scores))
     row.names(new.data) <- row.names(data)
     colnames(new.data) <- colnames(scores)
@@ -531,9 +528,9 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     if (x$print.type == "details" || x$print.type == "Detailed Output")
     {
         headings <- matrix("", nrow = 10, ncol = ncol(x$loadings) + 1)
-        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "",
+        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "", 
                           "", "Communalities", "", "Score Cofficient Matrix")
-
+        
         .print <- function(x, digits = 3)
         {
             n <- nrow(x)
@@ -554,7 +551,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
             ve.table <- rbind(ve.table, `Cumulative %` = cumsum(ss.loadings/nvar*100))
 
         if (x$use.correlation)
-            communality.table <- cbind("Initial" = x$initial.communalities,
+            communality.table <- cbind("Initial" = x$initial.communalities, 
                                        "Extraction" = x$extracted.communalities)
         else
             communality.table <- cbind("Initial" = x$rescaled.initial.communalities,
