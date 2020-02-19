@@ -4,10 +4,20 @@
 \alias{DimensionReduction}
 \title{\code{DimensionReduction}}
 \usage{
-DimensionReduction(algorithm, data = NULL, data.groups = NULL,
-  table = NULL, raw.table = FALSE, subset = NULL, perplexity = 10,
-  binary = TRUE, normalization = FALSE, seed = 1066,
-  print.type = "2d", ...)
+DimensionReduction(
+  algorithm,
+  data = NULL,
+  data.groups = NULL,
+  table = NULL,
+  raw.table = FALSE,
+  subset = NULL,
+  perplexity = 10,
+  binary = TRUE,
+  normalization = FALSE,
+  seed = 1066,
+  print.type = "2d",
+  ...
+)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},

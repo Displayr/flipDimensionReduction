@@ -4,8 +4,14 @@
 \alias{RotateLoadings}
 \title{\code{RotateLoadings}}
 \usage{
-RotateLoadings(loadings, rotation = "varimax", delta = 0, kappa = 4,
-  covar = FALSE, stds = NULL)
+RotateLoadings(
+  loadings,
+  rotation = "varimax",
+  delta = 0,
+  kappa = 4,
+  covar = FALSE,
+  stds = NULL
+)
 }
 \arguments{
 \item{loadings}{A matrix containing the un-rotated loadings from a PCA or factor analysis.}

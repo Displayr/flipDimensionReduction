@@ -702,6 +702,9 @@ CANormalization <- function(ca.object, normalization = "Principal")
 {
     .normalize = function(coords, power)
     {
+        if (!is.numeric(power))
+            stop("Normalization option '", power, "' is not recognized. ", 
+                 "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
         m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
             coords[,1, drop = FALSE] * ca.object$sv[1]^power
@@ -711,11 +714,11 @@ CANormalization <- function(ca.object, normalization = "Principal")
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
                                                   "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
                                                   "Column principal" = 0, "Column principal (scaled)" = 0,
-                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
                                                      "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
                                                      "Column principal" = 1, "Column principal (scaled)" = 1,
-                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
 
     if (normalization == "Row principal (scaled)")
         columns = columns * ca.object$sv[1]

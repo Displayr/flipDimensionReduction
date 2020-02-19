@@ -4,10 +4,19 @@
 \alias{DimensionReductionScatterplot}
 \title{\code{DimensionReductionScatterplot}}
 \usage{
-DimensionReductionScatterplot(algorithm, data = NULL,
-  data.groups = NULL, table = NULL, raw.table = FALSE,
-  subset = NULL, perplexity = 10, binary = TRUE,
-  normalization = FALSE, seed = 1066, ...)
+DimensionReductionScatterplot(
+  algorithm,
+  data = NULL,
+  data.groups = NULL,
+  table = NULL,
+  raw.table = FALSE,
+  subset = NULL,
+  perplexity = 10,
+  binary = TRUE,
+  normalization = FALSE,
+  seed = 1066,
+  ...
+)
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},

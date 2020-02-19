@@ -4,7 +4,7 @@
 \alias{print.2Dreduction}
 \title{\code{print.2Dreduction}}
 \usage{
-\method{print}{2Dreduction}(x, ...)
+\method{print}{`2Dreduction`}(x, ...)
 }
 \arguments{
 \item{x}{Object of class \code{"2Dreduction"}.}
