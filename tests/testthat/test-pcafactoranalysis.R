@@ -9,6 +9,10 @@ test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 data(cola, package = "flipExampleData")
 
+test_that("Duplicated variables", {
+    expect_error(PrincipalComponentsAnalysis(test.data.1[,c(1,3,5,1)]))
+})
+
 test_that("PCA: binary", {
     zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
     z1 <- suppressWarnings(flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE))

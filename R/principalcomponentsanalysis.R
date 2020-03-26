@@ -130,20 +130,9 @@ PrincipalComponentsAnalysis <- function(data,
 
     # Any singular values near zero prevent components from being determined.
     singular.values <- svd(input.matrix)$d
-    if (FALSE && any(singular.values < tol))
+    if (any(singular.values < tol))
     {
-        ind <- which(singular.values < tol)
-        if (length(ind) < length(singular.values))
-        {
-            warning("Variables '", paste(colnames(input.matrix)[ind], collapse = "', '"),
-                "' were removed to avoid structural correlation in your data")
-            input.matrix <- input.matrix[-ind,-ind]
-            correlation.matrix <- correlation.matrix[-ind,-ind]
-            stddevs <- stddevs[-ind]
-            scaled.data <- scaled.data[,-ind]
-        }
-        else
-            stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
+        stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
     }
 
     # Compute eigenvalues for component selection
