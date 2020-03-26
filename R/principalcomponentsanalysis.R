@@ -122,18 +122,9 @@ PrincipalComponentsAnalysis <- function(data,
     # covariance matrix which would be computed by the usual covariance
     # formula, but when there is missing data the two results will differ.
     if (!use.correlation)
-    {
         input.matrix <- correlation.matrix * stddevs %o% stddevs
-    } else {
+    else
         input.matrix <- correlation.matrix
-    }
-
-    # Any singular values near zero prevent components from being determined.
-    singular.values <- svd(input.matrix)$d
-    if (any(singular.values < tol))
-    {
-        stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
-    }
 
     # Compute eigenvalues for component selection
     if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))

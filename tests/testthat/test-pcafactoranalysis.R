@@ -10,7 +10,8 @@ test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 data(cola, package = "flipExampleData")
 
 test_that("Duplicated variables", {
-    expect_error(PrincipalComponentsAnalysis(test.data.1[,c(1,3,5,1)]))
+    expect_warning(PrincipalComponentsAnalysis(test.data.1[,c(1,3,5,1)]),
+                   "Matrix was not positive definite")
 })
 
 test_that("PCA: binary", {
