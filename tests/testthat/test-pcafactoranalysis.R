@@ -510,6 +510,28 @@ test_that("Filters", {
     expect_equal(all(!is.na(sc.pca[which(filt),1])), TRUE)
     expect_equal(all(is.na(sc.pca[which(!filt),1])), TRUE)
     expect_equal(nrow(sc.pca), nrow(test.data.1))
+
+    # check ambiguous rownames are handled correctly for use in TextPrincipalComponentAnalysis
+    ambiguous.row.name.data <- read.csv(system.file("extdata", "toy_encoding_example.csv",
+                                                    package = "flipDimensionReduction"),
+                                        header = TRUE)
+    ambiguous.rows <- ambiguous.row.name.data[, 1]
+    ambiguous.row.name.data <- ambiguous.row.name.data[, -1]
+    ambiguous.row.name.data <- as.matrix(ambiguous.row.name.data)
+    row.names(ambiguous.row.name.data) <- ambiguous.rows
+    expect_error(test.prep <- flipDimensionReduction:::prepareDataForFactorAnalysis(data = ambiguous.row.name.data,
+                                                                                    subset = NULL, weights = NULL,
+                                                                                    missing = "Exclude cases with missing data"),
+                 NA)
+    test.subset <- rep(FALSE, nrow(ambiguous.row.name.data))
+    test.subset[15:nrow(ambiguous.row.name.data)] <- TRUE
+    test.weights <- rnorm(nrow(ambiguous.row.name.data))
+    expect_error(test.prep <- flipDimensionReduction:::prepareDataForFactorAnalysis(data = ambiguous.row.name.data,
+                                                                                    subset = test.subset, weights = test.weights,
+                                                                                    missing = "Exclude cases with missing data"),
+                 NA)
+    expect_equal(ambiguous.row.name.data[test.subset, ], test.prep$subset.data)
+    expect_equal(test.weights[test.subset], test.prep$subset.weights)
 })
 
 

@@ -156,7 +156,8 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             else
                 paste(c(loadings.caption, unlist(caption.info), "*Rotation Sums of Squared Loadings",
                         eigenvalues.caption), collapse = "; ")
-            loadings <- .tidy.loadings(x, input.matrix = x$loadings)
+            input.mat <- if (inherits(x, "TextPCA")) x$generic.predictor.correlation else x$loadings
+            loadings <- .tidy.loadings(x, input.matrix = input.mat)
             extracted <- ExtractCommonPrefix(row.names(loadings))
             title <- "Principal Component Loadings"
             if (!is.na(extracted$common.prefix))

@@ -579,9 +579,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 
     # If no filter specified, create a subset containing all rows
     if (is.null(subset))
-    {
         subset <- rep(TRUE, nrow(data))
-    }
 
     # Check filtered rows for missing data
     subset.data <- data[subset, ]
@@ -607,9 +605,14 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
     subset.weights <- NULL
     if (!is.null(weights))
     {
-        subset.weights <- weights[row.names %in% rownames(subset.data)]
+        if (missing == "Exclude cases with missing data")
+            row.to.remove <- apply(data, 1, function(x) any(is.na(x)))
+        else if (missing == "Use partial data (pairwise correlations)")
+            row.to.remove <- apply(data, 1, function(x) all(is.na(x)))
+        else
+            row.to.remove <- rep(FALSE, nrow(data))
+        subset.weights <- weights[subset & !row.to.remove]
     }
-
     return(list(subset.data = subset.data,
                 subset.weights = subset.weights,
                 imputation.label = imputation.label))
