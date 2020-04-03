@@ -185,11 +185,9 @@ PrincipalComponentsAnalysis <- function(data,
 
         loadings <- rotated.loadings
         if (oblique.rotation)
-        {
             structure.matrix <- rotation.results$structure.matrix * sign.loadings
-        } else {
+        else
             structure.matrix <- rotated.loadings
-        }
         sign.matrix <- tcrossprod(sign.loadings[1,], sign.loadings[1,])
         component.correlations <- rotation.results$component.correlations
         if (!is.null(component.correlations))
@@ -197,7 +195,6 @@ PrincipalComponentsAnalysis <- function(data,
         colnames(structure.matrix) <- colnames(loadings)
 
     } else {
-
         sign.loadings <- apply(unrotated.loadings, 2,
                                  function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
         unrotated.loadings <- unrotated.loadings * sign.loadings
@@ -251,12 +248,9 @@ PrincipalComponentsAnalysis <- function(data,
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
-    {
         scaled.data <- scaleDataUsingWeights(data = prepared.data$subset.data, weights = prepared.data$subset.weights)
-    } else
-    {
+    else
         scaled.data <- scale(prepared.data$subset.data)
-    }
 
     # Multiply the scaled data by the weights to produce scores
     scores <- as.matrix(scaled.data) %*% score.weights
@@ -267,8 +261,14 @@ PrincipalComponentsAnalysis <- function(data,
     new.data <- matrix(NA, nrow = nrow(data), ncol = ncol(scores))
     row.names(new.data) <- row.names(data)
     colnames(new.data) <- colnames(scores)
-    common.names <- intersect(rownames(new.data), row.names(scores))
-    new.data[common.names,] <- scores[common.names,]
+    if (!any(duplicated(row.names(data))))
+    {
+        common.names <- intersect(rownames(new.data), row.names(scores))
+        new.data[common.names,] <- scores[common.names,]
+    } else if (nrow(prepared.data$subset.data) == nrow(data))
+        new.data <- scores
+    else # subset should always be non-null at this point.
+        new.data[subset, ] <- scores
     scores <- new.data
 
 
