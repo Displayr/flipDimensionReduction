@@ -636,6 +636,19 @@ test_that("Duplciate row-names handled", {
     expect_true(all(is.na(subset.pca$scores[1:16, ])))
     expect_true(all(!is.na(subset.pca$scores[17:34, ])))
     expect_true(all(is.numeric(subset.pca$scores[17:34, ])))
+    # Check edge case where there are unique row-names with a single rowname that is empty ("")
+    unique.name.with.empty.data <- structure(c(-0.514, -0.514, -0.514, -0.514, -0.541, -0.966, -0.966, -0.966,
+                                               -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.559,
+                                               -0.863, -0.756, -0.607, -0.618, -0.543, -0.54, -0.593, -0.554,
+                                               -0.544, -0.577, -0.523, -0.57, -0.472, -0.461, -0.353, -0.25,
+                                               -0.353, -0.353, -0.273, 0.196, 0.196, 0.196, 0.196, 0.196, 0.19,
+                                               0.196, 0.196, 0.196, 0.228, 0.111, 0.094, -0.085), .Dim = c(8L, 6L),
+                                             .Dimnames = list(c(LETTERS[1:7], ""), NULL))
+    expect_error(PrincipalComponentsAnalysis(unique.name.with.empty.data, select.n.rule = "Number of components",
+                                             n.factors = 4, rotation = "None"),
+                 NA)
+
+
 })
 
 #     # Comparisons with results from Applied Multivariate Statistics for the Social Sciences

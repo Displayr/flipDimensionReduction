@@ -261,7 +261,7 @@ PrincipalComponentsAnalysis <- function(data,
     new.data <- matrix(NA, nrow = nrow(data), ncol = ncol(scores))
     row.names(new.data) <- row.names(data)
     colnames(new.data) <- colnames(scores)
-    if (!any(duplicated(row.names(data))))
+    if (!any(duplicated(row.names(data))) && !"" %in% row.names(data))
     {
         common.names <- intersect(rownames(new.data), row.names(scores))
         new.data[common.names,] <- scores[common.names,]
