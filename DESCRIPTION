@@ -39,14 +39,14 @@ Imports:
     weights
 Remotes: 
     Displayr/flipChartBasics,
-    Displayr/flipTransformations,
+    Displayr/flipTransformations@DS-2702,
     Displayr/flipImputation,
     Displayr/flipFormat,
     Displayr/flipTables,
     Displayr/flipData,
     Displayr/flipStatistics,
     Displayr/flipStandardCharts,
-    Displayr/flipU,
+    Displayr/flipU@DS-2702,
     Displayr/rhtmlHeatmap,
     Displayr/rhtmlMoonPlot,
     Displayr/rhtmlLabeledScatter

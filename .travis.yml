@@ -30,6 +30,8 @@ r_packages:
 r_github_packages:
   - Displayr/flipDevTools
   - Displayr/flipExampleData
+  - Displayr/flipU@DS-2702
+  - Displayr/flipTransformations@DS-2702
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
@@ -50,6 +52,6 @@ notifications:
 # Warning notifications and downstream package builds are implemented
 # by calling R functions so they can be updated in this package without
 # committing a new change to .travis.yml in each repository
-after_success: 
+after_success:
   - Rscript -e "require(flipDevTools); NotifyWarnings(); TriggerDownstreamBuilds()"
   - travis_wait Rscript -e "flipDevTools::CheckCoverage()"
