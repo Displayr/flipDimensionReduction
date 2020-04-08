@@ -4,7 +4,7 @@
 \alias{fitted.2Dreduction}
 \title{\code{fitted.2Dreduction}}
 \usage{
-\method{fitted}{2Dreduction}(object, ...)
+\method{fitted}{`2Dreduction`}(object, ...)
 }
 \arguments{
 \item{object}{Object of class \code{"2Dreduction"}.}

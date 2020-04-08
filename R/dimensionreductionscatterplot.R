@@ -1,5 +1,5 @@
 #' \code{DimensionReductionScatterplot}
-#' @rdname DimensionReduction
+#' @inherit DimensionReduction
 #' @export
 DimensionReductionScatterplot <- function(algorithm,
                                           data = NULL,
@@ -75,7 +75,7 @@ DimensionReduction <- function(algorithm,
                                         print.type = "2d",
                                         ...)
 {
-    if (!is.null(data) && !is.data.frame(data))
+    if (!is.null(data) && !is.data.frame(data) && is.list(data))
     {
         show.labels <- list(...)[["show.labels"]]
         if (is.null(show.labels))

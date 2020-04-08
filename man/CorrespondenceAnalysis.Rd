@@ -4,22 +4,43 @@
 \alias{CorrespondenceAnalysis}
 \title{\code{CorrespondenceAnalysis}}
 \usage{
-CorrespondenceAnalysis(x, normalization = "Principal",
-  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text",
-  "Input Table")[1], focus = NULL, supplementary = NULL,
+CorrespondenceAnalysis(
+  x,
+  normalization = "Principal",
+  output = c("Scatterplot", "Bubble Chart", "Moonplot", "Text", "Input Table")[1],
+  focus = NULL,
+  supplementary = NULL,
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"),
-  mirror.horizontal = FALSE, mirror.vertical = FALSE,
-  color.palette = "Default colors", row.color = "#5B9BD5",
-  col.color = "#ED7D31", bubble.size = NULL, bubble.title = "",
-  chart.title = "Correspondence analysis", transpose = FALSE,
-  logos = NULL, logo.size = 0.5, trend.lines = FALSE,
-  show.gridlines = TRUE, multiple.tables = NA, square = FALSE,
-  max.row.labels.plot = 200, max.col.labels.plot = 200,
-  max.labels.plot = NA, dim1.plot = 1, dim2.plot = 2,
-  title.font.size = 20, x.title.font.size = 16,
-  y.title.font.size = 16, labels.font.size = 14, axis.font.size = 10,
-  legend.font.size = 15, footer.wrap.length = 80, ...)
+  mirror.horizontal = FALSE,
+  mirror.vertical = FALSE,
+  color.palette = "Default colors",
+  row.color = "#5B9BD5",
+  col.color = "#ED7D31",
+  bubble.size = NULL,
+  bubble.title = "",
+  chart.title = "Correspondence analysis",
+  transpose = FALSE,
+  logos = NULL,
+  logo.size = 0.5,
+  trend.lines = FALSE,
+  show.gridlines = TRUE,
+  multiple.tables = NA,
+  square = FALSE,
+  max.row.labels.plot = 200,
+  max.col.labels.plot = 200,
+  max.labels.plot = NA,
+  dim1.plot = 1,
+  dim2.plot = 2,
+  title.font.size = 20,
+  x.title.font.size = 16,
+  y.title.font.size = 16,
+  labels.font.size = 14,
+  axis.font.size = 10,
+  legend.font.size = 15,
+  footer.wrap.length = 80,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{\link{matrix}} or a list of matrices.}

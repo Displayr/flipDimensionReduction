@@ -9,6 +9,11 @@ test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 data(cola, package = "flipExampleData")
 
+test_that("Duplicated variables", {
+    expect_warning(PrincipalComponentsAnalysis(test.data.1[,c(1,3,5,1)]),
+                   "Matrix was not positive definite")
+})
+
 test_that("PCA: binary", {
     zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
     z1 <- suppressWarnings(flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE))
@@ -505,6 +510,28 @@ test_that("Filters", {
     expect_equal(all(!is.na(sc.pca[which(filt),1])), TRUE)
     expect_equal(all(is.na(sc.pca[which(!filt),1])), TRUE)
     expect_equal(nrow(sc.pca), nrow(test.data.1))
+
+    # check ambiguous rownames are handled correctly for use in TextPrincipalComponentAnalysis
+    ambiguous.row.name.data <- read.csv(system.file("extdata", "toy_encoding_example.csv",
+                                                    package = "flipDimensionReduction"),
+                                        header = TRUE)
+    ambiguous.rows <- ambiguous.row.name.data[, 1]
+    ambiguous.row.name.data <- ambiguous.row.name.data[, -1]
+    ambiguous.row.name.data <- as.matrix(ambiguous.row.name.data)
+    row.names(ambiguous.row.name.data) <- ambiguous.rows
+    expect_error(test.prep <- flipDimensionReduction:::prepareDataForFactorAnalysis(data = ambiguous.row.name.data,
+                                                                                    subset = NULL, weights = NULL,
+                                                                                    missing = "Exclude cases with missing data"),
+                 NA)
+    test.subset <- rep(FALSE, nrow(ambiguous.row.name.data))
+    test.subset[15:nrow(ambiguous.row.name.data)] <- TRUE
+    test.weights <- rnorm(nrow(ambiguous.row.name.data))
+    expect_error(test.prep <- flipDimensionReduction:::prepareDataForFactorAnalysis(data = ambiguous.row.name.data,
+                                                                                    subset = test.subset, weights = test.weights,
+                                                                                    missing = "Exclude cases with missing data"),
+                 NA)
+    expect_equal(ambiguous.row.name.data[test.subset, ], test.prep$subset.data)
+    expect_equal(test.weights[test.subset], test.prep$subset.weights)
 })
 
 
@@ -530,7 +557,99 @@ test_that("Component Plot works for PCA objects created by princomp and psych", 
     expect_error(ComponentPlot(test.psych), NA)
 })
 
+test_that("PCA contains attribute data for exporting to Excel",
+{
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Loadings Table")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 7))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Structure Matrix")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 7))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Variance Explained")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 3))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "2D Scatterplot")
+    expect_equal(dim(attr(pca, "ChartData")), c(623, 2))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Scree Plot")
+    expect_equal(length(attr(pca, "ChartData")), 25)
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Component Plot")
+    expect_equal(dim(attr(pca, "ChartData")), c(25, 2))
+    pca <- PrincipalComponentsAnalysis(test.data.2, n.factors = 7, print.type = "Detailed Output")
+    expect_equal(dim(attr(pca, "ChartData")), c(119, 8))
 
+})
+
+
+test_that("Duplciate row-names handled", {
+    duplicate.name.data <- structure(c(-0.514, -0.379, -0.514, -0.514, -0.514, -0.541, -0.966,
+                                       -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.966,
+                                       -0.966, -0.966, -0.559, -0.863, -0.756, -0.607, -0.618, -0.465,
+                                       -0.543, -0.54, -0.593, -0.554, -0.544, -0.577, -0.523, -0.256,
+                                       -0.57, -0.472, -0.461, -0.353, -0.25, -0.353, -0.353, -0.353,
+                                       -0.273, 0.196, 0.196, 0.196, 0.196, 0.196, 0.196, 0.196, 0.196,
+                                       0.196, 0.196, 0.196, 0.228, 0.111, 0.094, -0.085, -0.051, 0.11,
+                                       -0.092, -0.072, 0.003, -0.203, -0.141, -0.205, -0.2, -0.048,
+                                       -0.214, -0.25, -0.331, 0.502, 0.346, 0.502, 0.502, 0.502, 0.285,
+                                       -0.082, -0.082, -0.082, -0.082, -0.082, -0.082, -0.082, -0.082,
+                                       -0.082, -0.082, -0.082, -0.072, 0.045, 0.027, 0.016, -0.082,
+                                       -0.063, -0.183, -0.064, -0.237, 0.275, 0.336, 0.33, 0.385, 0.154,
+                                       0.21, 0.252, 0.164, -0.437, -0.34, -0.437, -0.437, -0.437, -0.137,
+                                       -0.114, -0.114, -0.114, -0.114, -0.114, -0.114, -0.114, -0.114,
+                                       -0.114, -0.114, -0.114, 0.001, 0.175, 0.303, 0.279, 0.336, 0.47,
+                                       0.093, 0.017, 0.102, 0.039, 0.058, 0.284, 0.363, 0.392, 0.201,
+                                       0.131, 0.085, 0.337, 0.28, 0.337, 0.337, 0.337, 0.149, -0.083,
+                                       -0.083, -0.083, -0.083, -0.083, -0.083, -0.083, -0.083, -0.083,
+                                       -0.083, -0.083, -0.06, 0.213, 0.245, 0.267, 0.287, 0.453, 0.288,
+                                       0.272, 0.232, -0.187, -0.255, -0.347, -0.268, -0.204, -0.045,
+                                       -0.182, 0.054, -0.066, -0.043, -0.066, -0.066, -0.066, 0.013,
+                                       -0.024, -0.024, -0.024, -0.024, -0.024, -0.024, -0.024, -0.024,
+                                       -0.024, -0.024, -0.024, -0.179, -0.138, -0.291, 0.027, 0.028,
+                                       -0.267, 0.494, 0.519, 0.427, 0.206, 0.222, 0.197, 0.213, -0.133,
+                                       -0.171, -0.225, -0.115, 0.111, 0.019, 0.111, 0.111, 0.111, 0.047,
+                                       0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001,
+                                       0.001, 0.001, 0.079, 0.059, 0.069, 0.112, 0.159, 0.181, -0.203,
+                                       -0.22, -0.148, 0.114, 0.143, 0.259, 0.216, 0.012, -0.401, -0.558,
+                                       -0.44, -0.095, -0.131, -0.095, -0.095, -0.095, -0.146, -0.009,
+                                       -0.009, -0.009, -0.009, -0.009, -0.009, -0.009, -0.009, -0.009,
+                                       -0.009, -0.009, -0.216, 0.069, 0.084, 0.131, 0.031, 0.049, -0.048,
+                                       -0.034, -0.139, 0.525, 0.382, -0.227, -0.225, -0.436, 0.033,
+                                       0.032, 0.083, 0.006, 0.016, 0.006, 0.006, 0.006, -0.163, -0.009,
+                                       -0.009, -0.009, -0.009, -0.009, -0.009, -0.009, -0.009, -0.009,
+                                       -0.009, -0.009, 0.247, -0.031, 0.105, -0.407, -0.314, 0.287,
+                                       -0.018, 0.196, 0.034, -0.049, 0.275, -0.03, 0.025, 0.221, -0.021,
+                                       -0.198, 0.224, 0.051, 0.002, 0.051, 0.051, 0.051, -0.053, -0.021,
+                                       -0.021, -0.021, -0.021, -0.021, -0.021, -0.021, -0.021, -0.021,
+                                       -0.021, -0.021, 0.048, 0.061, 0.165, -0.204, -0.004, -0.033,
+                                       0.026, 0.126, 0.079, 0.042, 0.136, -0.098, -0.112, 0.15, 0.1,
+                                       0.262, -0.584), .Dim = c(34L, 10L),
+                                     .Dimnames = list(c("na",
+                                                        "n a", "na", "na", "na", "nan", "cat", "cat", "cat", "cat", "cat",
+                                                        "cat", "cat", "cat", "cat", "cat", "cat", "i have a cat", "dog",
+                                                        "dogs", "hound", "poodle", "dogs rock", "giraffe", "zebra", "lemur",
+                                                        "cup", "plate", "stove", "oven", "i like to cook", "love", "like",
+                                                        "awesome"), NULL))
+    expect_error(pca <- PrincipalComponentsAnalysis(duplicate.name.data, select.n.rule = "Number of components",
+                                                    n.factors = 4, rotation = "None"),
+                 NA)
+    expect_false(any(is.na(pca$scores)))
+    subset <- c(rep(FALSE, 16), rep(TRUE, 18))
+    expect_error(subset.pca <- PrincipalComponentsAnalysis(duplicate.name.data, select.n.rule = "Number of components",
+                                                           n.factors = 4, rotation = "None", subset = subset),
+                 NA)
+    expect_true(all(is.na(subset.pca$scores[1:16, ])))
+    expect_true(all(!is.na(subset.pca$scores[17:34, ])))
+    expect_true(all(is.numeric(subset.pca$scores[17:34, ])))
+    # Check edge case where there are unique row-names with a single rowname that is empty ("")
+    unique.name.with.empty.data <- structure(c(-0.514, -0.514, -0.514, -0.514, -0.541, -0.966, -0.966, -0.966,
+                                               -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.966, -0.559,
+                                               -0.863, -0.756, -0.607, -0.618, -0.543, -0.54, -0.593, -0.554,
+                                               -0.544, -0.577, -0.523, -0.57, -0.472, -0.461, -0.353, -0.25,
+                                               -0.353, -0.353, -0.273, 0.196, 0.196, 0.196, 0.196, 0.196, 0.19,
+                                               0.196, 0.196, 0.196, 0.228, 0.111, 0.094, -0.085), .Dim = c(8L, 6L),
+                                             .Dimnames = list(c(LETTERS[1:7], ""), NULL))
+    expect_error(PrincipalComponentsAnalysis(unique.name.with.empty.data, select.n.rule = "Number of components",
+                                             n.factors = 4, rotation = "None"),
+                 NA)
+
+
+})
 
 #     # Comparisons with results from Applied Multivariate Statistics for the Social Sciences
 #

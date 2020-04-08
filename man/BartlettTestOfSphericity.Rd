@@ -4,8 +4,12 @@
 \alias{BartlettTestOfSphericity}
 \title{\code{BartlettTestOfSphericity}}
 \usage{
-BartlettTestOfSphericity(data, weights = NULL, subset = NULL,
-  missing = "Exclude cases with missing data")
+BartlettTestOfSphericity(
+  data,
+  weights = NULL,
+  subset = NULL,
+  missing = "Exclude cases with missing data"
+)
 }
 \arguments{
 \item{data}{A data frame containing the data to test.}

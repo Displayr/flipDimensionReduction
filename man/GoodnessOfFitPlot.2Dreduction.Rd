@@ -4,7 +4,7 @@
 \alias{GoodnessOfFitPlot.2Dreduction}
 \title{Goodness-of-fit plot for a 2Dreduction object}
 \usage{
-\method{GoodnessOfFitPlot}{2Dreduction}(object, max.points = 1000, ...)
+\method{GoodnessOfFitPlot}{`2Dreduction`}(object, max.points = 1000, ...)
 }
 \arguments{
 \item{object}{An object for which a summary is desired.}

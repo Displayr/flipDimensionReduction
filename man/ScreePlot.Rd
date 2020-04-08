@@ -4,8 +4,13 @@
 \alias{ScreePlot}
 \title{\code{ScreePlot}}
 \usage{
-ScreePlot(x, weights = NULL, subset = NULL,
-  missing = "Exclude cases with missing data", use.correlation = TRUE)
+ScreePlot(
+  x,
+  weights = NULL,
+  subset = NULL,
+  missing = "Exclude cases with missing data",
+  use.correlation = TRUE
+)
 }
 \arguments{
 \item{x}{Either a data frame, a numeric vector of eigenvalues, or the

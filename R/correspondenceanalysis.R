@@ -175,9 +175,10 @@ CorrespondenceAnalysis = function(x,
 
             x[[i]] <- x[[i]][r.names,c.names]
         }
+        lapply(x, checkEmptyRowsOrColumns, transpose = transpose)
         x <- do.call(rbind, x)
-        rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
         row.column.names <- r.names
+        rownames(x) <- sprintf("%s: %s", rep(x.names, each=length(r.names)), rownames(x))
 
     } else
     {
@@ -232,27 +233,7 @@ CorrespondenceAnalysis = function(x,
                              paste(r.names[which(is.na(c.ind))], collapse="', '")))
             x <- x[,c.ind]
         }
-
-        # Check for empty rows/columns
-        rSum <- rowSums(abs(x), na.rm=T)
-        cSum <- colSums(abs(x), na.rm=T)
-        if (any(rSum == 0) || any(cSum == 0))
-        {
-            empty.dim <- "Row"
-            empty.name <- ""
-            if (any(rSum == 0))
-            {
-                if (transpose)
-                    empty.dim <- "Column"
-                empty.name <- rownames(x)[which(rSum == 0)[1]]
-            } else if (any(cSum == 0))
-            {
-                if (!transpose)
-                    empty.dim <- "Column"
-                empty.name <- colnames(x)[which(cSum == 0)[1]]
-            }
-            stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
-        }
+        checkEmptyRowsOrColumns(x, transpose)
 
         if (output == "Bubble Chart")
         {
@@ -289,14 +270,14 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
-
-    if (sum(x < 0) > 0)
-        stop("Input tables must not contain negative values.")
+    if (sum(x < 0, na.rm = TRUE) > 0)
+        stop("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
 
     suprow <- supcol <- integer(0)
-    if (!is.null(supplementary)) {
+    if (!is.null(supplementary))
+    {
 
         reduced.x <- RemoveRowsAndOrColumns(x, row.names.to.remove = supplementary,
                                             column.names.to.remove = supplementary)
@@ -319,6 +300,8 @@ CorrespondenceAnalysis = function(x,
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
 
     }
+    if (any(!is.finite(x)))
+        stop("Input table cannot contain missing or infinite values.")
 
     original <- ca(x, suprow = suprow, supcol = supcol, ...)
 
@@ -414,6 +397,9 @@ CorrespondenceAnalysis = function(x,
     # Store chart data - to use in print.CorrespondenceAnalysis
     plot.dims <- c(dim1.plot, dim2.plot)
     tmp.data <- rbind(row.coordinates[,plot.dims], column.coordinates[,plot.dims])
+    dup.ind <- which(duplicated(rownames(tmp.data)))
+    if (length(dup.ind) > 0)
+        rownames(tmp.data)[dup.ind] <- paste0(rownames(tmp.data)[dup.ind], " ")
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
@@ -431,7 +417,7 @@ CorrespondenceAnalysis = function(x,
         if (!square)
             bubble.size <- c(bubble.size, rep(max(bubble.size)/75, length(original$colnames)))
         attr(result, "ChartData") <- data.frame(tmp.data,
-            Size = bubble.size, Group = groups, 
+            Size = bubble.size, Group = groups,
             check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
     } else
         attr(result, "ChartData") <-  data.frame(tmp.data, Group = groups,
@@ -439,6 +425,31 @@ CorrespondenceAnalysis = function(x,
 
     result
 }
+
+checkEmptyRowsOrColumns <- function(x, transpose)
+{
+    rSum <- rowSums(abs(x), na.rm = TRUE)
+    cSum <- colSums(abs(x), na.rm = TRUE)
+    if (any(rSum == 0) || any(cSum == 0))
+    {
+        empty.dim <- "Row"
+        empty.name <- ""
+        if (any(rSum == 0))
+        {
+            if (transpose)
+                empty.dim <- "Column"
+            empty.name <- paste(rownames(x)[which(rSum == 0)], collapse = "', '")
+        } else if (any(cSum == 0))
+        {
+            if (!transpose)
+                empty.dim <- "Column"
+            empty.name <- paste(colnames(x)[which(cSum == 0)], collapse = "', '")
+        }
+        stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
+    }
+    return(NULL)
+}
+
 
 #' @importFrom flipFormat ExtractChartData
 #' @export
@@ -557,11 +568,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
         {
             logo.required.length <- if (x$num.tables > 1) n1
                                     else              x.nrow
-            
 
-            if (length(logo.urls) != logo.required.length)
-                warning(sprintf("Number of URLs supplied in logos is not equal to the number of %s in the table (%d)\n",
-                             ifelse(x$transpose, "columns", "rows"), logo.required.length))
+
+            if (sum(nchar(logo.urls)) && length(logo.urls) != logo.required.length)
+                warning(sprintf("Number of URLs supplied in logos (%d) is not equal to the number of %s in the table (%d)\n",
+                             length(logo.urls), ifelse(x$transpose, "columns", "rows"), logo.required.length))
             if (length(logo.urls) < logo.required.length)
                 logo.urls <- c(logo.urls, rep("", logo.required.length - length(logo.urls)))
             if (length(logo.urls) > logo.required.length)
@@ -691,6 +702,9 @@ CANormalization <- function(ca.object, normalization = "Principal")
 {
     .normalize = function(coords, power)
     {
+        if (!is.numeric(power))
+            stop("Normalization option '", power, "' is not recognized. ", 
+                 "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
         m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
             coords[,1, drop = FALSE] * ca.object$sv[1]^power
@@ -700,11 +714,11 @@ CANormalization <- function(ca.object, normalization = "Principal")
     rows <- .normalize(ca.object$rowcoord, switch(normalization,
                                                   "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
                                                   "Column principal" = 0, "Column principal (scaled)" = 0,
-                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
     columns <- .normalize(ca.object$colcoord, switch(normalization,
                                                      "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
                                                      "Column principal" = 1, "Column principal (scaled)" = 1,
-                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1))
+                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
 
     if (normalization == "Row principal (scaled)")
         columns = columns * ca.object$sv[1]
@@ -738,7 +752,7 @@ CAQuality <- function(x)
     q
 }
 
-matchTableNames <- function(x, ref.names, ref.maindim = "rows", x.table.name = "bubble sizes") 
+matchTableNames <- function(x, ref.names, ref.maindim = "rows", x.table.name = "bubble sizes")
 {
     x.names <- rownames(x)
     if (is.null(x.names) && !is.null(names(x)))

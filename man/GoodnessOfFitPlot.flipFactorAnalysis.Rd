@@ -4,8 +4,7 @@
 \alias{GoodnessOfFitPlot.flipFactorAnalysis}
 \title{Goodness-of-fit plot for a flipFactorAnalysis object}
 \usage{
-\method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000,
-  ...)
+\method{GoodnessOfFitPlot}{flipFactorAnalysis}(object, max.points = 1000, ...)
 }
 \arguments{
 \item{object}{An object for which a summary is desired.}

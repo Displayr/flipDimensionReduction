@@ -77,27 +77,24 @@ PrincipalComponentsAnalysis <- function(data,
                                data.groups = NULL,
                                tol = 1e-13)
 {
+    if (is.null(rownames(data)))
+        rownames(data) <- 1:nrow(data)
     if (select.n.rule == "Kaiser rule")
         eigen.min <- 1.0
     if (show.labels && !is.null(Labels(data)))
         colnames(data) <- Labels(data)
-    if (rotation != "Promax" && rotation != "promax") {
+    if (rotation != "Promax" && rotation != "promax")
         promax.kappa = NULL
-    }
-
-    if (rotation != "Oblimin" && rotation != "oblimin") {
+    if (rotation != "Oblimin" && rotation != "oblimin")
         oblimin.delta = NULL
-    }
-
-    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained", "2D Scatterplot")) {
+    if (print.type %in% c("Component Plot", "Scree Plot", "Variance Explained", "2D Scatterplot"))
+    {
         sort.coefficients.by.size = FALSE
         suppress.small.coefficients = FALSE
         min.display.loading.value = 0.1
     }
-
-    if (print.type != "Component Plot") {
+    if (print.type != "Component Plot")
         plot.labels = TRUE
-    }
 
     # Generate the data that will be input to the correlation/covariance
     # matrix by filtering and imputing if specified.
@@ -125,29 +122,9 @@ PrincipalComponentsAnalysis <- function(data,
     # covariance matrix which would be computed by the usual covariance
     # formula, but when there is missing data the two results will differ.
     if (!use.correlation)
-    {
         input.matrix <- correlation.matrix * stddevs %o% stddevs
-    } else {
+    else
         input.matrix <- correlation.matrix
-    }
-
-    # Any singular values near zero prevent components from being determined.
-    singular.values <- svd(input.matrix)$d
-    if (FALSE && any(singular.values < tol))
-    {
-        ind <- which(singular.values < tol)
-        if (length(ind) < length(singular.values))
-        {
-            warning("Variables '", paste(colnames(input.matrix)[ind], collapse = "', '"),
-                "' were removed to avoid structural correlation in your data")
-            input.matrix <- input.matrix[-ind,-ind]
-            correlation.matrix <- correlation.matrix[-ind,-ind]
-            stddevs <- stddevs[-ind]
-            scaled.data <- scaled.data[,-ind]
-        }
-        else
-            stop("A problem has occured when computing the factor scores. In technical terms, one of the singular values of the correlation or covariance matrix is zero. Possible causes of this include: (a) there is structural correlation in the data (e.g. if the averages of the variables are equal for all respondents; (b) you have too few observations.")
-    }
 
     # Compute eigenvalues for component selection
     if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
@@ -208,11 +185,9 @@ PrincipalComponentsAnalysis <- function(data,
 
         loadings <- rotated.loadings
         if (oblique.rotation)
-        {
             structure.matrix <- rotation.results$structure.matrix * sign.loadings
-        } else {
+        else
             structure.matrix <- rotated.loadings
-        }
         sign.matrix <- tcrossprod(sign.loadings[1,], sign.loadings[1,])
         component.correlations <- rotation.results$component.correlations
         if (!is.null(component.correlations))
@@ -220,7 +195,6 @@ PrincipalComponentsAnalysis <- function(data,
         colnames(structure.matrix) <- colnames(loadings)
 
     } else {
-
         sign.loadings <- apply(unrotated.loadings, 2,
                                  function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
         unrotated.loadings <- unrotated.loadings * sign.loadings
@@ -270,16 +244,13 @@ PrincipalComponentsAnalysis <- function(data,
     cor <- try(cor.smooth(correlation.matrix), silent = TRUE)
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
-        stop("Component scores could not be computed as the correlation or correlation matrix is singular.") 
+        stop("Component scores could not be computed as the correlation or correlation matrix is singular.")
 
     # Original data is scaled befor generating scores
     if (!is.null(weights))
-    {
         scaled.data <- scaleDataUsingWeights(data = prepared.data$subset.data, weights = prepared.data$subset.weights)
-    } else
-    {
+    else
         scaled.data <- scale(prepared.data$subset.data)
-    }
 
     # Multiply the scaled data by the weights to produce scores
     scores <- as.matrix(scaled.data) %*% score.weights
@@ -290,8 +261,14 @@ PrincipalComponentsAnalysis <- function(data,
     new.data <- matrix(NA, nrow = nrow(data), ncol = ncol(scores))
     row.names(new.data) <- row.names(data)
     colnames(new.data) <- colnames(scores)
-    common.names <- intersect(rownames(new.data), row.names(scores))
-    new.data[common.names,] <- scores[common.names,]
+    if (!any(duplicated(row.names(data))) && !"" %in% row.names(data))
+    {
+        common.names <- intersect(rownames(new.data), row.names(scores))
+        new.data[common.names,] <- scores[common.names,]
+    } else if (nrow(prepared.data$subset.data) == nrow(data))
+        new.data <- scores
+    else # subset should always be non-null at this point.
+        new.data[subset, ] <- scores
     scores <- new.data
 
 
@@ -355,6 +332,7 @@ PrincipalComponentsAnalysis <- function(data,
 
 
     class(results) <- "flipFactorAnalysis"
+    attr(results, "ChartData") <- ExtractChartData(results)
     return(results)
 }
 
@@ -509,10 +487,66 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
         return(data)
     }
-    if (NCOL(x$loadings) < 2)
-        return(x$loadings)
+    if (x$print.type == "loadings" || x$print.type == "Loadings Table")
+        return(.tidy.loadings(x, input.matrix = x$loadings))
+    if (x$print.type == "structure" || x$print.type == "Structure Matrix")
+        return(.tidy.loadings(x, input.matrix = x$structure.matrix))
+    if (x$print.type =="variance" || x$print.type == "Variance Explained")
+    {
+        eigenvalues <- x$values
+        variance.proportions = eigenvalues / sum(eigenvalues)
+        cumulative.proportions = cumsum(variance.proportions)
+        result <- cbind('Eigenvalue' = eigenvalues,
+                     '% of Variance' = variance.proportions,
+                     'Cumulative %' = cumulative.proportions)
+        rownames(result) <- paste("Component", 1:length(eigenvalues))
+        return(result)
+    }
+    if (x$print.type == "details" || x$print.type == "Detailed Output")
+    {
+        headings <- matrix("", nrow = 10, ncol = ncol(x$loadings) + 1)
+        headings[,1] <- c("", "Loadings", "", "Structure matrix", "", "",
+                          "", "Communalities", "", "Score Cofficient Matrix")
+
+        .print <- function(x, digits = 3)
+        {
+            n <- nrow(x)
+            m <- ncol(x)
+            res <- matrix("", nrow = n+1, ncol = m+1, dimnames = list(rep("", n+1), rep("", m+1)))
+            res[1,(1:m)+1] <- colnames(x)
+            res[(1:n)+1,1] <- rownames(x)
+            res[(1:n)+1,(1:m)+1] <- round(x, digits)
+            return(res)
+        }
+
+        ss.loadings <- colSums(x$loadings ^ 2)
+        nvar <- ncol(x$original.data)
+        ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
+        ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
+        ve.table <- rbind(ve.table, `% of Variance` = ss.loadings/nvar*100)
+        if (ncol(x$loadings) > 1)
+            ve.table <- rbind(ve.table, `Cumulative %` = cumsum(ss.loadings/nvar*100))
+
+        if (x$use.correlation)
+            communality.table <- cbind("Initial" = x$initial.communalities,
+                                       "Extraction" = x$extracted.communalities)
+        else
+            communality.table <- cbind("Initial" = x$rescaled.initial.communalities,
+                                       "Extraction" = x$rescaled.extracted.communalities)
+
+        empty.mat <- matrix("", nrow = length(x$initial.communalities) + 1, ncol = ncol(headings)-3)
+        colnames(empty.mat) <- rep("", ncol(headings) - 3)
+        all.tables <- rbind(headings[1:2,], .print(.tidy.loadings(x, input.matrix = x$loadings)),
+             headings[3:4,], .print(.tidy.loadings(x, input.matrix = x$structure.matrix)),
+             headings[5:6,], .print(ve.table),
+             headings[7:9,], cbind(.print(communality.table), empty.mat),
+             headings[9:10,], .print(x$score.weights))
+        return(all.tables)
+    }
 
     # Otherwise return data for a component plot
+    if (NCOL(x$loadings) < 2)
+        return(x$loadings)
     component.data <- x$loadings[,1:2]
     if (!(x$rotation %in% c("promax", "oblimin")))
     {
@@ -545,9 +579,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 
     # If no filter specified, create a subset containing all rows
     if (is.null(subset))
-    {
         subset <- rep(TRUE, nrow(data))
-    }
 
     # Check filtered rows for missing data
     subset.data <- data[subset, ]
@@ -573,9 +605,14 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
     subset.weights <- NULL
     if (!is.null(weights))
     {
-        subset.weights <- weights[row.names %in% rownames(subset.data)]
+        if (missing == "Exclude cases with missing data")
+            row.to.remove <- apply(data, 1, function(x) any(is.na(x)))
+        else if (missing == "Use partial data (pairwise correlations)")
+            row.to.remove <- apply(data, 1, function(x) all(is.na(x)))
+        else
+            row.to.remove <- rep(FALSE, nrow(data))
+        subset.weights <- weights[subset & !row.to.remove]
     }
-
     return(list(subset.data = subset.data,
                 subset.weights = subset.weights,
                 imputation.label = imputation.label))
