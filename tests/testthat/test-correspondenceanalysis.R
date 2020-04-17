@@ -120,7 +120,7 @@ test_that("Row and column labels",
 
 test_that("Logos",
           {
-              urls <- sprintf("https://displayrcors.azureedge.net/images/%s_grey.svg",
+              urls <- sprintf("https://displayrcors.displayr.com/images/%s_grey.svg",
                               c("apple","baby","car","stickman","stickwoman","chicken","cow","thumbsup","rocket","tools"))
               data("colas", package = "flipExampleData")
               z = xtabs(~d1 + d2, data = colas)
