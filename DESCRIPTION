@@ -1,7 +1,7 @@
 Package: flipDimensionReduction
 Type: Package
 Title: Algorithms for dimension reduction
-Version: 1.1.9
+Version: 1.1.10
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Tools for dimension reduction (e.g. principal components analysis,
