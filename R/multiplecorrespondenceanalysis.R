@@ -89,11 +89,32 @@ MultipleCorrespondenceAnalysis <- function(formula,
         dd <- dim(datfreq)
         if (length(dd) <= 2 && min(dd) <= 2)
             stop("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
-        obj <- mjca(datfreq, nd=NA)
+        obj <- try(mjca(datfreq, nd=NA), silent = TRUE)
     }
     else
     {
-        obj <- mjca(data.used, nd=NA)
+        obj <- try(mjca(data.used, nd=NA), silent = TRUE)
+    }
+
+    # Try to make error message more informative if possible
+    if (inherits(obj, "try-error"))
+    {
+        tmp.dat <- if (!is.null(weights.used)) datfreq else data.used
+        tmp.obj <- try(mjca(tmp.dat, nd = NA, lambda = "Burt"), silent = TRUE)
+        err.msg <- "Could not perform Multiple Correspondence Analysis. "
+
+        # In the second case here, we still don't know exactly why the Burt matrix can
+        # be computed but the adjusted inertias can't but it is helpful to know that
+        # the data is not completely wrong
+        if (!inherits(tmp.obj, "try-error"))
+        {
+            if (sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max) <= 1)
+                stop (err.msg, "Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
+            else
+                stop(err.msg, "Could not compute adjusted inertia.")
+        }
+        # Error for some other reason
+        stop(err.msg)
     }
 
     # Label data output
