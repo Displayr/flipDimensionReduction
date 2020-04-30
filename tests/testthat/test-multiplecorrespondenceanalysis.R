@@ -61,4 +61,8 @@ test_that("Filters", {
           expect_equal(all(!is.na(filt.coord[which(fcond),1])), TRUE)
 })
 
-
+test_that("Error",
+{
+    expect_error(suppressWarnings(MultipleCorrespondenceAnalysis(~Q2 + Q3, data = cola)), fixed = TRUE,
+        "Could not perform Multiple Correspondence Analysis. Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
+})
