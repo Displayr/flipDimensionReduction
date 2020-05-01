@@ -51,13 +51,13 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     if (object$normalized)
         x.title <- paste0(x.title, " (normalized)")
     title <- paste0(object$title, " - Shepard Diagram - Rank correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
-    chart <- Chart(y = y,
-                   type = "Scatterplot",
-                   title = title,
-                   x.title = x.title,
-                   y.title = "Output distance",
-                   background.fill.opacity = 0,
-                   charting.area.fill.opacity = 0,
-                   legend.fill.opacity = 0)
+    Chart(y = y,
+        type = "Scatterplot",
+        title = title,
+        x.title = x.title,
+        y.title = "Output distance",
+        background.fill.opacity = 0,
+        charting.area.fill.opacity = 0,
+        legend.fill.opacity = 0)
 }
 

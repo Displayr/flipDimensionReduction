@@ -16,7 +16,7 @@ MultiDimesnsionalScaling <- function(distance.matrix, metric = TRUE) {
 
     output <- list(embedding = mds[, 1:2])
 
-    output$label <- if (class(distance.matrix) == "dist") {
+    output$label <- if (inherits(distance.matrix, "dist")) {
         attr(distance.matrix, "Labels")
     }
     else

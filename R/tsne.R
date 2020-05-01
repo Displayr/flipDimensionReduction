@@ -24,7 +24,7 @@ tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
     output$embedding <- Rtsne(data, perplexity = perplexity, is_distance = is.distance)$Y
 
     if (is.distance) {
-        output$label <- if (class(data) == "dist") {
+        output$label <- if (inherits(data, "dist")) {
             attr(data, "Labels")
         }
         else

@@ -662,7 +662,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             Percentage <- paste(as.character(round(100 * Value/sum(Value), 2)), "%", sep = "")
             eigenvalues <- rbind(Value = as.character(Value), Percentage = as.character(Percentage))
             colnames(eigenvalues) <- 1:length(x$focused$sv)
-            print.table(eigenvalues, width = 4)
+            print.table(eigenvalues)
             cat("\n  Rows in standard coordinates:\n")
             print(x$focused$rowcoord)
             cat("\n  Columns in standard coordinates:\n")
@@ -703,7 +703,7 @@ CANormalization <- function(ca.object, normalization = "Principal")
     .normalize = function(coords, power)
     {
         if (!is.numeric(power))
-            stop("Normalization option '", power, "' is not recognized. ", 
+            stop("Normalization option '", power, "' is not recognized. ",
                  "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
         m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
