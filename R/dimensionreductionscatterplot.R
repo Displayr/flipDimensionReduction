@@ -171,10 +171,6 @@ DimensionReduction <- function(algorithm,
     {
         result <- MultiDimesnsionalScaling(distance.matrix = distance.matrix, metric = FALSE)
     }
-    else if (algorithm == "UMAP")
-    {
-        result <- UMAP(data = processed.data, n.neighbours = perplexity, seed = seed)
-    }
     else
         stop("Algorithm not recognized.")
 

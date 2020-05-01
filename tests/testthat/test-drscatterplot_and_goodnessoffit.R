@@ -32,7 +32,7 @@ breakfast = breakfast.dissimilarities[[1]]
 
 
 test_that("Dimension Reduction Scatterplot and GoodnessOfFit: data.frame", {
-    for (algo in c("t-SNE", "MDS - Metric", "MDS - Non-metric", "PCA", "UMAP")) {
+    for (algo in c("t-SNE", "MDS - Metric", "MDS - Non-metric", "PCA")) {
         for (groups in list(hbatwithsplits$x1, hbatwithsplits$x19, NULL)) {
             for (norm in c(TRUE, FALSE)) {
                 expect_error(d <- DimensionReductionScatterplot(data = input.data, data.groups = groups, algorithm = algo,
