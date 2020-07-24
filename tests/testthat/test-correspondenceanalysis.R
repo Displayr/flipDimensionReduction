@@ -537,3 +537,12 @@ test_that("Missing values",
             expect_error(CorrespondenceAnalysis(xx[[1]], row.names.to.remove = "NET, Total, SUM, Burger Shack, Nuovo Burger, Bread Basket"), "Input table cannot contain missing or infinite values")
 
 })
+
+test_that("Output contains the right class for extension buttons", {
+  # NOTE: if any of the tests below fail due to class names changing, ALL
+  #       extension buttons in the wiki that refer to this class name should
+  #       be updated with the new class name.
+    result <- CorrespondenceAnalysis(x.with.labels)
+
+    expect_true(inherits(result, "CorrespondenceAnalysis"))
+})

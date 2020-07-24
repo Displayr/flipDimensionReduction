@@ -651,6 +651,16 @@ test_that("Duplciate row-names handled", {
 
 })
 
+test_that("Output contains the right class for extension buttons", {
+    # NOTE: if any of the tests below fail due to class names changing, ALL
+    #       extension buttons in the wiki that refer to this class name should
+    #       be updated with the new class name.
+
+    result <- suppressWarnings(PrincipalComponentsAnalysis(test.data.1))
+
+    expect_true(inherits(result, "flipFactorAnalysis"))
+})
+
 #     # Comparisons with results from Applied Multivariate Statistics for the Social Sciences
 #
 #     table.11.2.data <- c(1,0.467,0.681,0.447,0.61,0.236,0.401,0.214,-0.062,0.227,0.238,0.189,0.401,0.075,0.314,0.167,0.148,0.099,
