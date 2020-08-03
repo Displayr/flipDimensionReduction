@@ -356,13 +356,16 @@ fitted.flipFactorAnalysis <- function(object, ...)
 #'   \code{\link{PrincipalComponentsAnalysis}}, or \code{fa} or \code{principal} from package
 #'   psych. When x is a data frame, additional arguments can be supplied as to
 #'   how to compute the covariance or correlation matrix.
+#' @param trim.padding Logical; whether to remove extra padding around the htmlwidget.
+#'   By default this is set to \code{FALSE} to be the same as old charts
 #' @inheritParams PrincipalComponentsAnalysis
 #'
 #' @return An HTML widget object from plotly containing the Scree Plot.
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix
 #' @importFrom plotly plot_ly layout
 #' @export
-ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases with missing data", use.correlation = TRUE)
+ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases with missing data",
+    use.correlation = TRUE, trim.padding = FALSE)
 {
     if ("data.frame" %in% class(x))
     {
@@ -402,6 +405,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
                       title = "Scree Plot",
                       yaxis = list(range = c(0, max(input.values) + 1)),
                       xaxis = list(title = "Component Number"))
+    my.plot$sizingPolicy$browser$padding <- if (trim.padding) 0 else 40
     my.plot <- plotly::config(p = my.plot, displayModeBar = FALSE)
     return(my.plot)
 }

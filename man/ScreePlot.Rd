@@ -9,7 +9,8 @@ ScreePlot(
   weights = NULL,
   subset = NULL,
   missing = "Exclude cases with missing data",
-  use.correlation = TRUE
+  use.correlation = TRUE,
+  trim.padding = FALSE
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ estimates)"}.}
 
 \item{use.correlation}{A logical value specifying whether to use the
 correlation matrix (\code{TRUE}), or the covariance matrix (\code{FALSE}).}
+
+\item{trim.padding}{Logical; whether to remove extra padding around the htmlwidget.
+By default this is set to \code{FALSE} to be the same as old charts}
 }
 \value{
 An HTML widget object from plotly containing the Scree Plot.
