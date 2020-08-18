@@ -47,6 +47,7 @@
 #' @param footer.wrap.length Maximum number of characters in the footer. If longer, the text will be wrapped.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
+#' @importFrom flipChartBasics MatchTable
 #' @importFrom ca ca
 #' @export
 CorrespondenceAnalysis = function(x,
@@ -193,13 +194,7 @@ CorrespondenceAnalysis = function(x,
         row.column.names <- names(dimnames(x))[1:2]
 
         x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
-                        col.names.to.remove = column.names.to.remove)
-        if (transpose)
-        {
-            x <- t(x)
-            row.column.names <- rev(row.column.names)
-        }
-
+                        col.names.to.remove = column.names.to.remove, transpose = transpose)
         if (!is.null(row.column.names.attribute))
             row.column.names <- attr(x, "row.column.names")
         else if (is.null(row.column.names))
@@ -238,32 +233,25 @@ CorrespondenceAnalysis = function(x,
         if (output == "Bubble Chart")
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
-            if(is.null(bubble.size))
+            if (is.null(bubble.size))
                 stop("Bubble Charts require bubble sizes.")
-            bubble.size <- matchTableNames(bubble.size, rownames(x), table.maindim)
-            #bubble.names <- rownames(bubble.size)
-         #   if (is.null(bubble.names) && !is.null(names(bubble.size)))
-         #       bubble.names <- names(bubble.size)
-         #   if (is.null(bubble.names))
-         #       stop("The bubble sizes need to be named.")
-         #   bubble.size <- as.numeric(unlist(bubble.size))
-         #   if (length(table.names <- rownames(x)) != length(bubble.names))
-         #       stop("The number of bubble sizes does not match the number of ", table.maindim, " in the table.")
-         #   if (length(unique(bubble.names)) !=  length(bubble.names))
-         #       stop("There are duplicate bubble size names.")
-         #   if (!all(sort(bubble.names) == sort(table.names)))
-         #       if (!all(sort(tolower(bubble.names)) == sort(tolower(table.names))))
-         #       {
-         #           stop("The bubble sizes must contain the same names as in the ",
-         #                table.maindim, " of the input data table: ",
-         #                paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
-         #       }
-            # Sorting bubble sizes to match the row names of the table.
-            #order = match(rownames(x), bubble.names)
-            #if (sum(order, na.rm = TRUE) != sum(1:length(order)))
-            #    stop("The bubble sizes must contain the same names as in the rows of the input data table: ",
-            #         paste0(paste0(table.names, ":", bubble.names), collapse = ", "), ".")
-            #bubble.size = bubble.size[order]
+            bubble.size <- as.matrix(bubble.size)
+            if (is.null(rownames(bubble.size)))
+                stop("The bubble sizes need to be named to match the row labels of the input data.")
+            if (NCOL(bubble.size) > 1)
+            {
+                warning("Only first column of bubble sizes is used.")
+                bubble.size <- bubble.size[,1,drop = FALSE]
+            }
+            bubble.size <- TidyTabularData(bubble.size,
+                row.names.to.remove = row.names.to.remove)
+            b.orig.names <- rownames(bubble.size)
+            bubble.size <- MatchTable(bubble.size, ref.names = rownames(x),
+                x.table.name = "Bubble sizes")
+            extra.bnames <- setdiff(b.orig.names, rownames(bubble.size))
+            if (length(extra.bnames) > 0)
+                warning("Bubble sizes for '", paste(extra.bnames, collapse = "', '"),
+                        "' were ignored.")
         }
 
         # Expand square matrix after checking against bubble names
@@ -750,34 +738,5 @@ CAQuality <- function(x)
     rownames(q) <- paste(FormatAsPercent((q[, 1] + q[, 2])/100, decimals = 0, pad = TRUE, remove.leading.0 = TRUE), rownames(q))
     attr(q, "statistic") <- "Quality %"
     q
-}
-
-matchTableNames <- function(x, ref.names, ref.maindim = "rows", x.table.name = "bubble sizes")
-{
-    x.names <- rownames(x)
-    if (is.null(x.names) && !is.null(names(x)))
-        x.names <- names(x)
-
-    if (is.null(x.names))
-        stop("The ", x.table.name, " need to be named.")
-    x <- as.numeric(unlist(x))
-    if (length(ref.names) != length(x.names))
-        stop("The number of ", x.table.name, " does not match the number of ", ref.maindim, " in the table.")
-    if (any(duplicated(x.names)))
-        stop("There are duplicate names in ", x.table.name, ".")
-    if (!all(sort(x.names) == sort(ref.names)))
-        if (!all(sort(tolower(x.names)) == sort(tolower(ref.names))))
-        {
-            stop("The ", x.table.name, " must contain the same names as in the ",
-                 ref.maindim, " of the input data table: ",
-                 paste0(paste0(ref.names, ":", x.names), collapse = ", "), ".")
-        }
-    # Sorting bubble sizes to match the row names of the table.
-    order = match(ref.names, x.names)
-    if (sum(order, na.rm = TRUE) != sum(1:length(order)))
-        stop("The ", x.table.name, " must contain the same names as in the rows of the input data table: ",
-             paste0(paste0(ref.names, ":", x.names), collapse = ", "), ".")
-    x = x[order]
-    return(x)
 }
 
