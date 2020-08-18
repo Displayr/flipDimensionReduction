@@ -1,7 +1,7 @@
 Package: flipDimensionReduction
 Type: Package
 Title: Algorithms for dimension reduction
-Version: 1.1.16
+Version: 1.2.0
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Tools for dimension reduction (e.g. principal components analysis,
@@ -21,7 +21,7 @@ Imports:
     flipStatistics,
     flipStandardCharts,
     flipTables (>= 2.1.0),
-    flipTransformations,
+    flipTransformations (>= 1.9.0),
     flipU,
     GPArotation,
     MASS,
@@ -39,7 +39,7 @@ Imports:
     weights
 Remotes: 
     Displayr/flipChartBasics,
-    Displayr/flipTransformations,
+    Displayr/flipTransformations@mwm-DS2906,
     Displayr/flipImputation,
     Displayr/flipFormat,
     Displayr/flipTables,
