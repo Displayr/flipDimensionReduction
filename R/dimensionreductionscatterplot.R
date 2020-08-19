@@ -85,7 +85,7 @@ DimensionReduction <- function(algorithm,
         ## SplitFormQuestions(), which drops the attributes (variablevalues, etc.)
         ## needed by numbersFromCategoricalVariableSets()
         if (!binary)
-            data <- lapply(data, AsNumeric, binary = binary)
+            data <- lapply(data, function(x) CopyAttributes(AsNumeric(x, binary = FALSE), x))
         data <- SplitFormQuestions(data, show.labels)
     }
 
