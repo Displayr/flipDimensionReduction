@@ -47,6 +47,7 @@
 #' @param footer.wrap.length Maximum number of characters in the footer. If longer, the text will be wrapped.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
+#' @importFrom flipU InterceptExceptions
 #' @importFrom flipChartBasics MatchTable
 #' @importFrom ca ca
 #' @export
@@ -237,21 +238,32 @@ CorrespondenceAnalysis = function(x,
                 stop("Bubble Charts require bubble sizes.")
             bubble.size <- as.matrix(bubble.size)
             if (is.null(rownames(bubble.size)))
-                stop("The bubble sizes need to be named to match the row labels of the input data.")
+                stop("The table of bubble sizes need to be named to match the row labels of the input data.")
             if (NCOL(bubble.size) > 1)
             {
-                warning("Only first column of bubble sizes is used.")
-                bubble.size <- bubble.size[,1,drop = FALSE]
+                warning("The table of bubble sizes contains more than one column. Only the first column of bubble sizes was used.")
+                bubble.size <- bubble.size[,1,drop = FALSE] 
             }
             bubble.size <- TidyTabularData(bubble.size,
                 row.names.to.remove = row.names.to.remove)
             b.orig.names <- rownames(bubble.size)
-            bubble.size <- MatchTable(bubble.size, ref.names = rownames(x),
-                x.table.name = "Bubble sizes")
+
+            # Modify messages from MatchTable to inform users
+            # that the problem is in bubble.size
+            bubble.size <- InterceptExceptions(MatchTable(bubble.size, ref.names = rownames(x)),
+                error.handler = function(e){
+                    stop("To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. ", e$message)
+                },
+                warning.handler = function(w){
+                    warning("The table of bubble sizes contains duplicated row labels. ", w$message, ".")
+                })
+
             extra.bnames <- setdiff(b.orig.names, rownames(bubble.size))
-            if (length(extra.bnames) > 0)
+            if (length(extra.bnames) == 1)
+                warning("Bubble size for '", extra.bnames, "' was not used as it does not appear in the data used in the analysis")
+            else if (length(extra.bnames) > 1)
                 warning("Bubble sizes for '", paste(extra.bnames, collapse = "', '"),
-                        "' were ignored.")
+                        "' were not used as they do not appear in the data used in the analysis.")
         }
 
         # Expand square matrix after checking against bubble names

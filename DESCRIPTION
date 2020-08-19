@@ -14,7 +14,7 @@ Suggests:
 Imports:
     ca,
     class,
-    flipChartBasics (>= 2.1.4),
+    flipChartBasics (>= 2.1.5),
     flipData (>= 1.2.2),
     flipFormat,
     flipImputation,

@@ -197,24 +197,29 @@ test_that("Bubble charts",
                 expect_error(CorrespondenceAnalysis(t(x.with.labels), output = "Bubble Chart", transpose = TRUE,
                     bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes, transpose = TRUE),
-                    "Bubble sizes: Missing values for 'Kids', 'Teens'")
+                    "To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. The values for 'Kids', 'Teens', 'Enjoy life', 'Picks you up', 'Refreshes', 'Cheers you up', 'Energy', 'Up-to-date', 'Fun', 'When tired' and 'Relax' are missing.",
+                    fixed = TRUE)
 
                 expect_warning(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
-                    bubble.size = c(Extra = 1, More = 2, bsizes)), "Bubble sizes for 'Extra', 'More' were ignored.")
+                    bubble.size = c(Extra = 1, More = 2, bsizes)), "Bubble sizes for 'Extra', 'More' were not used as they do not appear in the data used in the analysis.")
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]),
-                    "Bubble sizes: Missing values for 'Coke'")
+                    "The value for 'Coke' is missing.")
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
                     bubble.size = c(bsizes[-1], 'coke ' = 2)), NA)
 
                 names(bsizes)[2] = "Dog"
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "Bubble sizes: Missing values for 'V'")
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "The value for 'V' is missing")
                 names(bsizes)[2] = names(bsizes)[1]
-                expect_warning(expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)),
-                        "Bubble sizes: Missing values for 'V'"), "duplicate names")
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))), "The bubble sizes need to be named")
+                expect_warning(expect_error((CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)),
+                        "The value for 'V' is missing"), "The table of bubble sizes contains duplicated row labels. Only the value from the first duplicate of 'Coke' was used.", fixed = TRUE)
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))),
+                    "The table of bubble sizes need to be named to match the row labels of the input data")
 
                 expect_error(print(suppressWarnings(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]))))
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels[,1] *10000, bubble.title = "Importance (%)")), NA)
+
+                expect_warning(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels),
+                    "The table of bubble sizes contains more than one column. Only the first column of bubble sizes was used.")
 
                 set.seed(12332)
                 x = matrix(round(runif(100)*100), 10, dimnames = list(letters[1:10], LETTERS[1:10]))
@@ -587,79 +592,4 @@ test_that("Output contains the right class for extension buttons", {
     result <- CorrespondenceAnalysis(x.with.labels)
 
     expect_true(inherits(result, "CorrespondenceAnalysis"))
-})
-
-test_that("Bubble sizes + rows removed",
-{
-    x <- structure(c(6.42201834862385, 57.4923547400612, 22.3241590214067,
-        8.56269113149847, 60.5504587155963, 10.0917431192661, 9.78593272171254,
-        100, 1.8348623853211, 58.7155963302752, 55.045871559633, 2.14067278287462,
-        57.7981651376147, 30.8868501529052, 17.4311926605505, 100, 9.1743119266055,
-        22.9357798165138, 12.8440366972477, 9.78593272171254, 43.4250764525994,
-        7.3394495412844, 29.9694189602446, 100, 65.1376146788991, 21.7125382262997,
-        4.58715596330275, 37.9204892966361, 9.1743119266055, 6.42201834862385,
-        8.56269113149847, 100, 22.6299694189602, 9.1743119266055, 51.9877675840979,
-        15.5963302752294, 16.2079510703364, 50.4587155963303, 11.9266055045872,
-        100, 26.2996941896024, 4.58715596330275, 31.4984709480122, 17.737003058104,
-        3.97553516819572, 44.6483180428135, 15.9021406727829, 100, 9.1743119266055,
-        23.5474006116208, 9.1743119266055, 14.3730886850153, 29.6636085626911,
-        6.42201834862385, 38.8379204892966, 100, 92.3547400611621, 14.6788990825688,
-        3.05810397553517, 53.822629969419, 3.36391437308868, 3.97553516819572,
-        2.75229357798165, 100, 0.611620795107034, 76.4525993883792, 64.5259938837921,
-        0, 76.4525993883792, 40.6727828746177, 5.5045871559633, 100,
-        98.1651376146789, 92.3547400611621, 90.8256880733945, 78.8990825688073,
-        95.1070336391437, 86.8501529051988, 57.4923547400612, 100), statistic = "%", .Dim = c(8L,
-        10L), .Dimnames = list(c("Coke", "Diet Coke", "Coke Zero", "Pepsi",
-        "Diet Pepsi", "Pepsi Max", "None of these", "NET"), c("Feminine",
-        "Health-conscious", "Innocent", "Older", "Open to new experiences",
-        "Rebellious", "Sleepy", "Traditional", "Weight-conscious", "NET"
-        )), basedescriptiontext = "sample size = 327", basedescription = list(
-        Minimum = 327L, Maximum = 327L, Range = FALSE, Total = 327L,
-        Missing = 0L, EffectiveSampleSize = 327L, EffectiveSampleSizeProportion = 100,
-        FilteredProportion = 0), questiontypes = "PickAnyGrid", span = list(
-        rows = structure(list(c("Coke", "Diet Coke", "Coke Zero",
-        "Pepsi", "Diet Pepsi", "Pepsi Max", "None of these", "NET"
-        )), class = "data.frame", .Names = "", row.names = c(NA,
-        8L)), columns = structure(list(c("Feminine", "Health-conscious",
-        "Innocent", "Older", "Open to new experiences", "Rebellious",
-        "Sleepy", "Traditional", "Weight-conscious", "NET")), class = "data.frame", .Names = "", row.names = c(NA,
-        10L))), name = "table.Q5", questions = c("Q5", "SUMMARY"))
-
-    b.size <- structure(c(6.42201834862385, 57.4923547400612, 22.3241590214067,
-        8.56269113149847, 60.5504587155963, 10.0917431192661, 9.78593272171254,
-        100, 1.8348623853211, 58.7155963302752, 55.045871559633, 2.14067278287462,
-        57.7981651376147, 30.8868501529052, 17.4311926605505, 100, 9.1743119266055,
-        22.9357798165138, 12.8440366972477, 9.78593272171254, 43.4250764525994,
-        7.3394495412844, 29.9694189602446, 100, 65.1376146788991, 21.7125382262997,
-        4.58715596330275, 37.9204892966361, 9.1743119266055, 6.42201834862385,
-        8.56269113149847, 100, 22.6299694189602, 9.1743119266055, 51.9877675840979,
-        15.5963302752294, 16.2079510703364, 50.4587155963303, 11.9266055045872,
-        100, 26.2996941896024, 4.58715596330275, 31.4984709480122, 17.737003058104,
-        3.97553516819572, 44.6483180428135, 15.9021406727829, 100, 9.1743119266055,
-        23.5474006116208, 9.1743119266055, 14.3730886850153, 29.6636085626911,
-        6.42201834862385, 38.8379204892966, 100, 92.3547400611621, 14.6788990825688,
-        3.05810397553517, 53.822629969419, 3.36391437308868, 3.97553516819572,
-        2.75229357798165, 100, 0.611620795107034, 76.4525993883792, 64.5259938837921,
-        0, 76.4525993883792, 40.6727828746177, 5.5045871559633, 100,
-        98.1651376146789, 92.3547400611621, 90.8256880733945, 78.8990825688073,
-        95.1070336391437, 86.8501529051988, 57.4923547400612, 100), statistic = "%", .Dim = c(8L,
-        10L), .Dimnames = list(c("Coke", "Diet Coke", "Coke Zero", "Pepsi",
-        "Diet Pepsi", "Pepsi Max", "None of these", "NET"), c("Feminine",
-        "Health-conscious", "Innocent", "Older", "Open to new experiences",
-        "Rebellious", "Sleepy", "Traditional", "Weight-conscious", "NET"
-        )), basedescriptiontext = "sample size = 327", basedescription = list(
-        Minimum = 327L, Maximum = 327L, Range = FALSE, Total = 327L,
-        Missing = 0L, EffectiveSampleSize = 327L, EffectiveSampleSizeProportion = 100,
-        FilteredProportion = 0), questiontypes = "PickAnyGrid", span = list(
-        rows = structure(list(c("Coke", "Diet Coke", "Coke Zero",
-        "Pepsi", "Diet Pepsi", "Pepsi Max", "None of these", "NET"
-        )), class = "data.frame", .Names = "", row.names = c(NA,
-        8L)), columns = structure(list(c("Feminine", "Health-conscious",
-        "Innocent", "Older", "Open to new experiences", "Rebellious",
-        "Sleepy", "Traditional", "Weight-conscious", "NET")), class = "data.frame", .Names = "", row.names = c(NA,
-        10L))), name = "table.Q5", questions = c("Q5", "SUMMARY"))
-
-    res <- CorrespondenceAnalysis(x, output = "Bubble Chart", bubble.size = b.size[,1])
-
-
 })
