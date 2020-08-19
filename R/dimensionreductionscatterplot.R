@@ -56,7 +56,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
-#'
+#' @importFrom flipU CopyAttributes
 #' @importFrom flipData SplitFormQuestions
 #' @importFrom flipTransformations ParseUserEnteredTable AsNumeric StandardizeData
 #' @importFrom stats dist
@@ -75,11 +75,17 @@ DimensionReduction <- function(algorithm,
                                         print.type = "2d",
                                         ...)
 {
-    if (!is.null(data) && !is.data.frame(data) && is.list(data))
+    data.from.dropbox <- !is.null(data) && !is.data.frame(data) && is.list(data)
+    if (data.from.dropbox)
     {
         show.labels <- list(...)[["show.labels"]]
         if (is.null(show.labels))
             show.labels <- TRUE
+        ## Need to call AsNumeric() on multi variable sets before
+        ## SplitFormQuestions(), which drops the attributes (variablevalues, etc.)
+        ## needed by numbersFromCategoricalVariableSets()
+        if (!binary)
+            data <- lapply(data, function(x) CopyAttributes(AsNumeric(x, binary = FALSE), x))
         data <- SplitFormQuestions(data, show.labels)
     }
 
@@ -87,7 +93,7 @@ DimensionReduction <- function(algorithm,
         stop("One and only one of data and table must be supplied.")
     if (!is.null(data.groups) && length(data.groups) != nrow(data))
         stop("Lengths of data and data.groups must the the same.")
-    if (!is.null(data))
+    if (!is.null(data) && !(data.from.dropbox && !binary))
         data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
 
     if (algorithm == "PCA")
