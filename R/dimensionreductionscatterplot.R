@@ -56,7 +56,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #'
 #' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
 #' any case with \code{NA} is ignored by all algorithms.
-#'
+#' @importFrom flipU CopyAttributes
 #' @importFrom flipData SplitFormQuestions
 #' @importFrom flipTransformations ParseUserEnteredTable AsNumeric StandardizeData
 #' @importFrom stats dist
