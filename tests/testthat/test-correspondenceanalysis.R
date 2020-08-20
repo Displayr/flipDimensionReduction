@@ -42,6 +42,28 @@ dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull","Lift Plus",'Diet.
 
 output = "Scatterplot"
 
+test_that("Transpose occurs before row names removed",
+{
+    x.mult <- list(A = x.with.labels, B = x.with.labels + 1)
+    attr(x.mult[[1]], "name") <- "A"
+    attr(x.mult[[2]], "name") <- "B"
+    res.mult <- CorrespondenceAnalysis(x.mult, transpose = TRUE, row.names.to.remove = "Fun")
+    expect_equal(rownames(attr(res.mult, "ChartData")),
+        c("A: Kids", "A: Teens", "A: Enjoy life", "A: Picks you up",
+            "A: Refreshes", "A: Cheers you up", "A: Energy", "A: Up-to-date",
+            "A: When tired", "A: Relax", "B: Kids", "B: Teens", "B: Enjoy life",
+            "B: Picks you up", "B: Refreshes", "B: Cheers you up", "B: Energy",
+            "B: Up-to-date", "B: When tired", "B: Relax", "Coke", "V", "Red Bull",
+            "Lift Plus", "Diet.Coke", "Fanta", "Lift", "Pepsi"))
+
+    res <- CorrespondenceAnalysis(x.with.labels, transpose = TRUE, row.names.to.remove = "Fun")
+    expect_equal(rownames(attr(res, "ChartData")),
+        c("Kids", "Teens", "Enjoy life", "Picks you up", "Refreshes",
+            "Cheers you up", "Energy", "Up-to-date", "When tired", "Relax",
+            "Coke", "V", "Red Bull", "Lift Plus", "Diet.Coke", "Fanta", "Lift",
+            "Pepsi"))
+})
+
 test_that("Row/column names",
         {
             res0 <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET")
@@ -166,14 +188,38 @@ test_that("Bubble charts",
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", show.gridlines = FALSE))
                 bsizes = x.with.labels[,1]
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), NA)
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
+                expect_error(CorrespondenceAnalysis(t(x.with.labels), output = "Bubble Chart", transpose = TRUE,
+                    bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
+
+                expect_error(CorrespondenceAnalysis(t(x.with.labels), output = "Bubble Chart", transpose = TRUE,
+                    bubble.size = bsizes, column.names.to.remove = "Coke"), NA)
+                expect_error(CorrespondenceAnalysis(t(x.with.labels), output = "Bubble Chart", transpose = TRUE,
+                    bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes, transpose = TRUE),
+                    "To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. The values for 'Kids', 'Teens', 'Enjoy life', 'Picks you up', 'Refreshes', 'Cheers you up', 'Energy', 'Up-to-date', 'Fun', 'When tired' and 'Relax' are missing.",
+                    fixed = TRUE)
+
+                expect_warning(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
+                    bubble.size = c(Extra = 1, More = 2, bsizes)), "Bubble sizes for 'Extra', 'More' were not used as they do not appear in the data used in the analysis.")
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]),
+                    "The value for 'Coke' is missing.")
+                expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
+                    bubble.size = c(bsizes[-1], 'coke ' = 2)), NA)
+
                 names(bsizes)[2] = "Dog"
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "The bubble sizes must contain the same names")
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "The value for 'V' is missing")
                 names(bsizes)[2] = names(bsizes)[1]
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)), "There are duplicate names in bubble sizes")
-                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))), "The bubble sizes need to be named")
+                expect_warning(expect_error((CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)),
+                        "The value for 'V' is missing"), "The table of bubble sizes contains duplicated row labels. Only the value from the first duplicate of 'Coke' was used.", fixed = TRUE)
+                expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))),
+                    "The table of bubble sizes need to be named to match the row labels used in the analysis.")
 
                 expect_error(print(suppressWarnings(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]))))
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels[,1] *10000, bubble.title = "Importance (%)")), NA)
+
+                expect_warning(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels),
+                    "The table of bubble sizes contains more than one column. Only the first column of bubble sizes was used.")
 
                 set.seed(12332)
                 x = matrix(round(runif(100)*100), 10, dimnames = list(letters[1:10], LETTERS[1:10]))
@@ -181,8 +227,9 @@ test_that("Bubble charts",
                 names(sizes) = letters[1:10]
                 sizes = sample(sizes, length(sizes))
                 expect_error(print(CorrespondenceAnalysis(x, output = "Bubble Chart", bubble.size = sizes)), NA)
+                # ignore case
                 names(sizes) = LETTERS[1:10]
-                expect_error(print(CorrespondenceAnalysis(x, output = "Bubble Chart", bubble.size = sizes)))
+                expect_error(print(CorrespondenceAnalysis(x, output = "Bubble Chart", bubble.size = sizes)), NA)
 })
 
 
