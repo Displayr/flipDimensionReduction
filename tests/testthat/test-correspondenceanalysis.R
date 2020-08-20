@@ -213,7 +213,7 @@ test_that("Bubble charts",
                 expect_warning(expect_error((CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes)),
                         "The value for 'V' is missing"), "The table of bubble sizes contains duplicated row labels. Only the value from the first duplicate of 'Coke' was used.", fixed = TRUE)
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = 1:length(bsizes))),
-                    "The table of bubble sizes need to be named to match the row labels of the input data")
+                    "The table of bubble sizes need to be named to match the row labels used in the analysis.")
 
                 expect_error(print(suppressWarnings(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]))))
                 expect_error(print(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = x.with.labels[,1] *10000, bubble.title = "Importance (%)")), NA)

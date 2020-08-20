@@ -238,11 +238,11 @@ CorrespondenceAnalysis = function(x,
                 stop("Bubble Charts require bubble sizes.")
             bubble.size <- as.matrix(bubble.size)
             if (is.null(rownames(bubble.size)))
-                stop("The table of bubble sizes need to be named to match the row labels of the input data.")
+                stop("The table of bubble sizes need to be named to match the row labels used in the analysis.")
             if (NCOL(bubble.size) > 1)
             {
                 warning("The table of bubble sizes contains more than one column. Only the first column of bubble sizes was used.")
-                bubble.size <- bubble.size[,1,drop = FALSE] 
+                bubble.size <- bubble.size[,1,drop = FALSE]
             }
             bubble.size <- TidyTabularData(bubble.size,
                 row.names.to.remove = row.names.to.remove)
@@ -252,10 +252,16 @@ CorrespondenceAnalysis = function(x,
             # that the problem is in bubble.size
             bubble.size <- InterceptExceptions(MatchTable(bubble.size, ref.names = rownames(x)),
                 error.handler = function(e){
-                    stop("To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. ", e$message)
+                    if (grepl("missing", e$message))
+                        stop("To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. ", e$message)
+                    else
+                        stop(e$message)
                 },
                 warning.handler = function(w){
-                    warning("The table of bubble sizes contains duplicated row labels. ", w$message, ".")
+                    if (grepl("duplicate", w$message))
+                        warning("The table of bubble sizes contains duplicated row labels. ", w$message, ".")
+                    else
+                        warning(w$message)
                 })
 
             extra.bnames <- setdiff(b.orig.names, rownames(bubble.size))
