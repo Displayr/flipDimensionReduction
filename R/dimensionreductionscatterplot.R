@@ -44,24 +44,26 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     extent of the locality of the dimension reduction. Used only
 #'     when \code{algorithm} is \code{t-SNE} or \code{UMAP}.
 #' @param binary If \code{TRUE}, unordered factors are converted to
-#'     dummy variables. Otherwise, they are treated as sequential
-#'     integers. Ignored if input is provided by \code{table}.
+#'     dummy variables. Otherwise, their value attributes/levels are
+#'     used to coerce each factor to a single numeric variable. See
+#'     the Details of \code{\link{AsNumeric}}.
 #' @param normalization If \code{data} is supplied, whether to
 #'     standardize the data so each variable has a mean of 0 and
 #'     standard deviation of 1.
 #' @param seed Random seed. Used only when \code{algorithm} is
 #'     \code{"t-SNE"} or \code{"UMAP"}.
 #' @param print.type Specifies output produced if algorithm is PCA.
-#' @param ... Other parameters passed to \link{PrincipalComponentsAnalysis}.
-#'
-#' @details For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
-#' any case with \code{NA} is ignored by all algorithms.
+#' @param ... Other parameters passed to
+#'     \link{PrincipalComponentsAnalysis}.
+#' @details For \code{data} input, all algorithms apart from
+#'     \code{PCA} remove duplicated data and any case with \code{NA}
+#'     is ignored by all algorithms.
 #' @importFrom flipU CopyAttributes
 #' @importFrom flipData SplitFormQuestions
-#' @importFrom flipTransformations ParseUserEnteredTable AsNumeric StandardizeData
+#' @importFrom flipTransformations ParseUserEnteredTable AsNumeric
+#'     StandardizeData
 #' @importFrom stats dist
 #' @export
-
 DimensionReduction <- function(algorithm,
                                         data = NULL,
                                         data.groups = NULL,

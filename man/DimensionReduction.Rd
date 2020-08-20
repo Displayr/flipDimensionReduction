@@ -46,8 +46,9 @@ extent of the locality of the dimension reduction. Used only
 when \code{algorithm} is \code{t-SNE} or \code{UMAP}.}
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to
-dummy variables. Otherwise, they are treated as sequential
-integers. Ignored if input is provided by \code{table}.}
+dummy variables. Otherwise, their value attributes/levels are
+used to coerce each factor to a single numeric variable. See
+the Details of \code{\link{AsNumeric}}.}
 
 \item{normalization}{If \code{data} is supplied, whether to
 standardize the data so each variable has a mean of 0 and
@@ -58,7 +59,8 @@ standard deviation of 1.}
 
 \item{print.type}{Specifies output produced if algorithm is PCA.}
 
-\item{...}{Other parameters passed to \link{PrincipalComponentsAnalysis}.}
+\item{...}{Other parameters passed to
+\link{PrincipalComponentsAnalysis}.}
 }
 \description{
 Produces as 2-dimensional embedding. Takes either a
@@ -67,6 +69,7 @@ Produces as 2-dimensional embedding. Takes either a
     takes a distance \code{\link{matrix}}.
 }
 \details{
-For \code{data} input, all algorithms apart from \code{PCA} remove duplicated data and
-any case with \code{NA} is ignored by all algorithms.
+For \code{data} input, all algorithms apart from
+    \code{PCA} remove duplicated data and any case with \code{NA}
+    is ignored by all algorithms.
 }

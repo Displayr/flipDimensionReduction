@@ -39,7 +39,7 @@ Imports:
     weights
 Remotes: 
     Displayr/flipChartBasics,
-    Displayr/flipTransformations,
+    Displayr/flipTransformations@mwm-DS2906,
     Displayr/flipImputation,
     Displayr/flipFormat,
     Displayr/flipTables,
