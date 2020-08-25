@@ -117,8 +117,9 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
                 structure.caption <- "Rescaled structure matrix"
             }
         }
-
-        nvar <- ncol(x$original.data)
+        # original.data element is removed from TextPCA by default due to its potential to be too big.
+        # In that case, check the number of eigenvalues directly.
+        nvar <- if (!is.null(x$original.data)) ncol(x$original.data) else length(x$values)
         eigenvalues.caption <- paste("Unrotated eigenvalues:",
                                      paste0(paste0(rep("(", nvar), 1:nvar, rep(") ", nvar), FormatAsReal(x$values, decimals = 2)), collapse = ", "))
 
