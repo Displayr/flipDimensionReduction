@@ -201,7 +201,7 @@ test_that("Bubble charts",
                     fixed = TRUE)
 
                 expect_warning(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
-                    bubble.size = c(Extra = 1, More = 2, bsizes)), "Bubble sizes for 'Extra', 'More' were not used as they do not appear in the data used in the analysis.")
+                    bubble.size = c(Extra = 1, More = 2, bsizes)), "Bubble sizes for 'Extra', 'More' were not used as they do not appear in the row labels used in the analysis.")
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes[-1]),
                     "The value for 'Coke' is missing.")
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart",
