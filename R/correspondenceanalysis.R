@@ -266,10 +266,10 @@ CorrespondenceAnalysis = function(x,
 
             extra.bnames <- setdiff(b.orig.names, rownames(bubble.size))
             if (length(extra.bnames) == 1)
-                warning("Bubble size for '", extra.bnames, "' was not used as it does not appear in the data used in the analysis")
+                warning("Bubble size for '", extra.bnames, "' was not used as it does not appear in the row labels used in the analysis")
             else if (length(extra.bnames) > 1)
                 warning("Bubble sizes for '", paste(extra.bnames, collapse = "', '"),
-                        "' were not used as they do not appear in the data used in the analysis.")
+                        "' were not used as they do not appear in the row labels used in the analysis.")
         }
 
         # Expand square matrix after checking against bubble names
