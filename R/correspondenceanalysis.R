@@ -259,7 +259,7 @@ CorrespondenceAnalysis = function(x,
                 },
                 warning.handler = function(w){
                     if (grepl("duplicate", w$message))
-                        warning("The table of bubble sizes contains duplicated row labels. ", w$message, ".")
+                        warning("The table of bubble sizes contains duplicated row labels. ", w$message)
                     else
                         warning(w$message)
                 })
