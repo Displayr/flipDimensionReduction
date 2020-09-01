@@ -798,7 +798,9 @@ cor.smooth2 <- function (x, eig.tol = 10^-12)
             eigens$values <- eigens$values * nvar/tot
             cnames <- colnames(x)
             rnames <- rownames(x)
-            x <- eigens$vectors %*% diag(eigens$values) %*% t(eigens$vectors)
+            ## MDM^T = (MD^.5)(MD^.5)^T
+            ## x <- eigens$vectors %*% diag(eigens$values) %*% t(eigens$vectors)
+            x <- crossprod(t(eigens$vectors)*sqrt(eigens$values))
             x <- cov2cor(x)
             colnames(x) <- cnames
             rownames(x) <- rnames
