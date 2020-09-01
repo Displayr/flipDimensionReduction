@@ -798,7 +798,8 @@ cor.smooth2 <- function (x, eig.tol = 10^-12)
             eigens$values <- eigens$values * nvar/tot
             cnames <- colnames(x)
             rnames <- rownames(x)
-            ## MDM^T = (MD^.5)(MD^.5)^T
+            ## For dense M, diagonal matrix D=diag(d): MDM^T = (MD^.5)(MD^.5)^T
+            ## MD = t(t(M)*d)
             ## x <- eigens$vectors %*% diag(eigens$values) %*% t(eigens$vectors)
             x <- crossprod(t(eigens$vectors)*sqrt(eigens$values))
             x <- cov2cor(x)
