@@ -777,8 +777,7 @@ convertVariableForFactorAnalysis <- function(variable, include.question.name = T
 # In the original function, the smoothing is applied if any of the eigenvalues
 # are smaller than .Machine$double.eps. But we found examples where eigenvalues
 # are slightly larger than this threshold but still require smoothing.
-# Here, we apply the smoothing if any of the eigenvalues are on the
-# same order of magnitude as .Machine$double.eps
+# Here, we increase the threshold to sqrt(.Machine$double.eps) consistent with mgcv etc
 
 #' @importFrom stats cov2cor
 cor.smooth2 <- function (x, eig.tol = 10^-12)
@@ -788,7 +787,7 @@ cor.smooth2 <- function (x, eig.tol = 10^-12)
         warning("I am sorry, there is something seriously wrong with the correlation matrix,\ncor.smooth failed to  smooth it because some of the eigen values are NA.  \nAre you sure you specified the data correctly?")
     }
     else {
-        if (min(eigens$values) < 10 * .Machine$double.eps) {
+        if (min(eigens$values) < sqrt(.Machine$double.eps)) {
             warning("Matrix was not positive definite, smoothing was done")
             eigens$values[eigens$values < eig.tol] <- 100 * eig.tol
             nvar <- dim(x)[1]
