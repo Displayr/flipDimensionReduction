@@ -10,30 +10,18 @@ label.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, sho
 
 test_that("Attributes for charting", {
     expect_equal(attr(default.res, "ChartType"), "X Y Scatter")
-    expect_equal(attr(default.res, "ChartData"),
-                 structure(list(`Dimension 1 (42.4%)` = c(0.229897544745244, 0.489577115527352,
-                    0.0299694565465756, 0.135359694366915, -0.0361801431005296, 0.0922410013858042,
-                    -0.00178665113291533, -0.123829363169976, -0.0737649701593521,
-                    0.16079588600786, 0.017425452400396, -0.0518742732727303, -0.0413660094206187,
-                    0.431759235446547, -0.060175503198125, -0.0200795636559426, 0.111240782653922,
-                    0.518575919754892, -0.0266791469970362), `Dimension 2 (12.3%)` = c(-0.188848870632389,
-                    0.172685637154292, -0.112704450766059, 0.0860330180978322, -0.00258087847909523,
-                    0.0732298559215832, 0.0121108161324338, 0.111366520900892, -0.0988922026001848,
-                    -0.0457144307717477, 0.0452486878877055, -0.0252893485414556,
-                    -0.0145090231807679, 0.0394345624086789, -0.00549610625904932,
-                    0.0367136405461155, -0.20339356862548, -0.0329415776993558, 0.00169474354723375
-                    ), Group = c("Q12", "Q12", "Q12", "Q12", "Q12", "Q12", "Q12",
-                    "Q12", "Q12", "Q13", "Q13", "Q13", "Q13", "Q14", "Q14", "Q15",
-                    "Q15", "Q16", "Q16")), class = "data.frame", row.names = c("Q12:Every or nearly every day",
-                    "Q12:4 to 5 days a week", "Q12:2 to 3 days a week", "Q12:Once a week",
-                    "Q12:Once every 2 weeks", "Q12:Once a month", "Q12:Once every 3 months",
-                    "Q12:Once or twice a year", "Q12:Never", "Q13:Never",
-                    "Q13:Rarely (once or twice in a year)",
+    expect_equal(dimnames(attr(default.res, "ChartData")),
+                 list(c("Q12:Every or nearly every day", "Q12:4 to 5 days a week",
+                    "Q12:2 to 3 days a week", "Q12:Once a week", "Q12:Once every 2 weeks",
+                    "Q12:Once a month", "Q12:Once every 3 months", "Q12:Once or twice a year",
+                    "Q12:Never", "Q13:Never", "Q13:Rarely (once or twice in a year)",
                     "Q13:Quite often (about once every month)",
                     "Q13:Every chance I get (every week I look for new competitions t",
                     "Q14:To be admired", "Q14:To be appreciated", "Q15:To be selfish",
-                    "Q15:To be dependent", "Q16:To be in charge", "Q16:To be successful"
-                    ), scatter.variable.indices = c(x = 1, y = 1, sizes = NA, colors = 3)))
+                    "Q15:To be dependent", "Q16:To be in charge", "Q16:To be successful"),
+                    c("Dimension 1 (42.4%)", "Dimension 2 (12.3%)", "Group")))
+    expect_equal(attr(attr(default.res, "ChartData"), "scatter.variable.indices"),
+        c(x = 1, y = 2, sizes = NA, colors = 3))
 })
 
 test_that("MCA canonical correlation with no weighting", {
