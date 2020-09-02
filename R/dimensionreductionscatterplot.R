@@ -205,6 +205,7 @@ DimensionReduction <- function(algorithm,
     result$normalized <- normalization
     class(result) <- c("2Dreduction", class(result))
     attr(result, "ChartData") <- ExtractChartData(result)
+    attr(result, "ChartType") <- "X Y Scatter"
     return(result)
 }
 
@@ -214,15 +215,15 @@ ExtractChartData.2Dreduction <- function(x)
     data <- x$embedding[,1:2]
     colnames(data) <- paste("Dimension", 1:2)
     if (!is.null(x$data.groups))
-    {
         data <- data.frame(data, Group = x$data.groups, stringsAsFactors = FALSE,
                     check.names = FALSE, check.rows = FALSE)
-        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
-    }
+
     if (!is.null(x$used.subset))
         data <- data[x$used.subset,]
     if (!is.null(x$label))
         rownames(data) <- x$label
+    attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA,
+                                                colors = if (is.null(x$data.groups)) NA else 3)
     return(data)
 }
 

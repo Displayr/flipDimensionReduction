@@ -76,17 +76,12 @@ PrincipalComponentsBiplot <- function(x,
                     Group = groups, stringsAsFactors = FALSE,
                     check.names = FALSE, check.rows = FALSE)
     colnames(coords)[1:2] = sprintf("%s (%.1f%%)", colnames(coords)[1:2], pvar[1:2])
-    attr(res, "ChartData") <- coords
+    cdat <- coords
+    attr(cdat, "scatter.variable.indices") <- if (NCOL(cdat) == 3) c(x = 1, y = 2, sizes = NA, colors = 3)
+                                              else                 c(x = 1, y = 2, sizes = NA, colors = NA)
+    attr(res, "ChartData") <- cdat
+    attr(res, "ChartType") <- "X Y Scatter"
     return(res)
-}
-
-#' @export
-ExtractChartData.PCAbiplot <- function(x)
-{
-    data <- attr(x, "ChartData")
-    if (NCOL(data) == 3)
-        attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
-    return(data)
 }
 
 #' \code{print.PCAbiplot}

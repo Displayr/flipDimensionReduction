@@ -37,6 +37,10 @@ test_that("Dimension Reduction Scatterplot and GoodnessOfFit: data.frame", {
             for (norm in c(TRUE, FALSE)) {
                 expect_error(d <- DimensionReductionScatterplot(data = input.data, data.groups = groups, algorithm = algo,
                                                            perplexity = 10, normalization = norm, subset = subset), NA)
+                expect_equal(attr(d, "ChartType"), "X Y Scatter")
+                expect_equal(ncol(attr(d, "ChartData")), if (is.null(groups)) 2 else 3)
+                expect_equal(names(attr(attr(d, "ChartData"), "scatter.variable.indices")),
+                             c("x", "y", "sizes", "colors"))
                 expect_error(GoodnessOfFitPlot(d, max.points = 100), NA)
                 expect_error(fitted(d), NA)
             }

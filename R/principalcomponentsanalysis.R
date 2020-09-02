@@ -333,6 +333,9 @@ PrincipalComponentsAnalysis <- function(data,
 
     class(results) <- "flipFactorAnalysis"
     attr(results, "ChartData") <- ExtractChartData(results)
+    if (results$print.type == "2d" || results$print.type == "2D Scatterplot" ||
+        results$print.type == "Component Plot")
+        attr(results, "ChartType") <- "X Y Scatter"
     return(results)
 }
 
@@ -490,7 +493,11 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     {
         tmp <- convertFactorAnalysisTo2D(x)
         if (is.null(tmp$data.groups))
-            return(tmp$embedding)
+        {
+            data <- tmp$embedding
+            attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = NA)
+            return(data)
+        }
         data <- data.frame(tmp$embedding, Group = tmp$data.groups, stringsAsFactors = FALSE,
             check.names = FALSE, check.rows = FALSE)
         attr(data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
@@ -563,6 +570,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
         colnames(component.data) <- sprintf("Component %d (%.1f%% variance explained)",
                                             1:2, var.exp[1:2] * 100)
     }
+    attr(component.data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = NA)
     return(component.data)
 }
 
