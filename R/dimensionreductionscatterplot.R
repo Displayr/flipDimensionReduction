@@ -240,6 +240,8 @@ fitted.2Dreduction <- function(object, ...)
 # Converts a PCA output of class flipFactorAnalysis to an object of class 2Dreduction
 convertFactorAnalysisTo2D <- function(x) {
 
+    if (inherits(x, "TextPCA"))
+        stop("2D plot representations are not supported for Text PCA outputs.")
     if (ncol(x$loadings) < 2)
         stop("There must be at least 2 components to produce 2-D output.")
     if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
