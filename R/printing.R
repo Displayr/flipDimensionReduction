@@ -119,9 +119,17 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         }
         # original.data element is removed from TextPCA by default due to its potential to be too big.
         # In that case, check the number of eigenvalues directly.
-        nvar <- if (!is.null(x$original.data)) ncol(x$original.data) else length(x$values)
+        # neigen is only used to print the eigen values in the footer and some will be removed due
+        # to being negligible. nvar is used to compute the variance explained.
+        if (!is.null(x$original.data))
+            nvar <- neigen <- ncol(x$original.data)
+        else
+        {
+            neigen <- length(x$values)
+            nvar <- nrow(x$raw.loadings)
+        }
         eigenvalues.caption <- paste("Unrotated eigenvalues:",
-                                     paste0(paste0(rep("(", nvar), 1:nvar, rep(") ", nvar), FormatAsReal(x$values, decimals = 2)), collapse = ", "))
+                                     paste0(paste0(rep("(", neigen), 1:neigen, rep(") ", neigen), FormatAsReal(x$values, decimals = 2)), collapse = ", "))
 
         oblique.rotation <- x$rotation == "oblimin" || x$rotation == "promax"
         if (print.type == "structure" && !oblique.rotation)
