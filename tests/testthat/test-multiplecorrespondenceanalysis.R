@@ -4,9 +4,25 @@ data("cola", package="flipExampleData")
 output = "Scatterplot"
 wg <- as.numeric(cola$LastResp)/4
 
-default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola)
+default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, output = "Scatterplot")
 weighted.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, weights=wg)
 label.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, show.labels=T)
+
+test_that("Attributes for charting", {
+    expect_equal(attr(default.res, "ChartType"), "X Y Scatter")
+    expect_equal(dimnames(attr(default.res, "ChartData")),
+                 list(c("Q12:Every or nearly every day", "Q12:4 to 5 days a week",
+                    "Q12:2 to 3 days a week", "Q12:Once a week", "Q12:Once every 2 weeks",
+                    "Q12:Once a month", "Q12:Once every 3 months", "Q12:Once or twice a year",
+                    "Q12:Never", "Q13:Never", "Q13:Rarely (once or twice in a year)",
+                    "Q13:Quite often (about once every month)",
+                    "Q13:Every chance I get (every week I look for new competitions t",
+                    "Q14:To be admired", "Q14:To be appreciated", "Q15:To be selfish",
+                    "Q15:To be dependent", "Q16:To be in charge", "Q16:To be successful"),
+                    c("Dimension 1 (42.4%)", "Dimension 2 (12.3%)", "Group")))
+    expect_equal(attr(attr(default.res, "ChartData"), "scatter.variable.indices"),
+        c(x = 1, y = 2, sizes = NA, colors = 3))
+})
 
 test_that("MCA canonical correlation with no weighting", {
           expect_equal(round(default.res$sv[1:6], 3),

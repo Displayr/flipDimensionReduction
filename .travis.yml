@@ -5,6 +5,7 @@ dist: bionic
 sudo: required
 cache: packages
 warnings_are_errors: false
+dist: bionic
 
 # install debian libraries to match R-servers
 # update pre-installed packages to latest versions

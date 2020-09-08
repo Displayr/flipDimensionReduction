@@ -35,6 +35,8 @@ dimnames(x.with.labels) <- list(Brand=c('Coke','V',"Red Bull",
 test_that("Row and column labels",
           {
                 res0 <- PrincipalComponentsBiplot(x.with.labels, row.names.to.remove = "NET",  column.names.to.remove = "NET")
+                expect_equal(attr(res0, "ChartType"), "X Y Scatter")
+                expect_equal(length(attr(attr(res0, "ChartData"), "scatter.variable.indices")), 4)
                 expect_equal(res0$row.column.names, c("Brand",  "Attribute"))
 
                 xd <- array(runif(9), dim = c(3, 3, 3), dimnames = list(A = c("a","a","a"), B = c("a","a","a"), C = c("a","a","a")))
