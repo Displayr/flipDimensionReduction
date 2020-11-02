@@ -1,11 +1,10 @@
 language: r
 r:
   - release
-dist: bionic
+dist: xenial
 sudo: required
 cache: packages
 warnings_are_errors: false
-dist: bionic
 
 # install debian libraries to match R-servers
 # update pre-installed packages to latest versions
@@ -14,7 +13,8 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev libnlopt-dev
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
-  - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
+  - rcode+="tmp <- unlist(strsplit(split='[[:space:]]+', tail(out, 1))); "
+  - rcode+="pos.fail <- grep('FAIL', tmp); n.fail <- as.numeric(tmp[pos.fail+1]); "
   - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
   - rcode+="write.csv(out, file='test_results.csv'); "
   - rcode+="quit(status = !identical(n.fail, 0), save='no');"
@@ -28,7 +28,6 @@ r_packages:
 r_github_packages:
   - Displayr/flipDevTools
   - Displayr/flipExampleData
-  - Displayr/flipTransformations
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
