@@ -213,7 +213,7 @@ sortLoadingsByComponents <- function(rotated.loadings) {
 # Second axis maximises variance whilst being orthogonal.
 #' @importFrom nloptr nloptr nl.jacobian
 #' @importFrom GPArotation targetT
-#' @importFrom utils head tail
+#' @importFrom verbs First Last
 setFocus <- function(original, focus.i) {
 
     if (length(original$rownames) <= 2 || length(original$colnames) <= 2)
@@ -270,8 +270,8 @@ setFocus <- function(original, focus.i) {
     rotated.eigenvalues <- sqrt(diag(new.eigen.mat))
 
     # Convert back to standard coordinates
-    rotated.principal <- list(rowcoord = head(head(rotated$loadings, -1), nrow(original$rowcoord)),
-                              colcoord = tail(head(rotated$loadings, -1), nrow(original$colcoord)),
+    rotated.principal <- list(rowcoord = First(First(rotated$loadings, -1), nrow(original$rowcoord)),
+                              colcoord = Last(First(rotated$loadings, -1), nrow(original$colcoord)),
                               sv = rotated.eigenvalues)
     rotated.standard <- CANormalization(rotated.principal, "Inverse")
 

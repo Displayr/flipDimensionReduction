@@ -1,7 +1,7 @@
 Package: flipDimensionReduction
 Type: Package
 Title: Algorithms for dimension reduction
-Version: 1.2.5
+Version: 1.2.6
 Author: Displayr <opensource@displayr.com>, William Revelle (cor.smooth code)
 Maintainer: Displayr <opensource@displayr.com>
 Description: Tools for dimension reduction (e.g. principal components analysis,
@@ -36,7 +36,8 @@ Imports:
     Rtsne,
     stats,
     utils,
-    weights
+    weights,
+    verbs
 Remotes: 
     Displayr/flipChartBasics,
     Displayr/flipTransformations,
@@ -49,6 +50,7 @@ Remotes:
     Displayr/flipU,
     Displayr/rhtmlHeatmap,
     Displayr/rhtmlMoonPlot,
-    Displayr/rhtmlLabeledScatter
+    Displayr/rhtmlLabeledScatter,
+    Displayr/verbs
 RoxygenNote: 7.1.1
 Encoding: UTF-8
