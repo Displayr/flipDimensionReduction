@@ -15,6 +15,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install libgit2-dev
   - rcode="options('testthat.progress.max_fails' = Inf); "
+  - export R_REMOTES_NO_ERRORS_FROM_WARNINGS="true"
   - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="line.fail <- max(grep('FAIL', out)); "
   - rcode+="tmp <- unlist(strsplit(split='[[:space:]]+', out[line.fail])); "
