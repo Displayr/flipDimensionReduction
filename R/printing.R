@@ -22,6 +22,7 @@ sortLoadings <- function(x) {
 
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
+#' @importFrom verbs Sum
 #' @export
 #' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
@@ -87,7 +88,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         print(ComponentPlot(x, show.labels = x$plot.labels))
     } else if (print.type == "variance") {
         eigenvalues <- x$values
-        variance.proportions = eigenvalues / sum(eigenvalues)
+        variance.proportions = eigenvalues / Sum(eigenvalues, remove.missing = FALSE)
         cumulative.proportions = cumsum(variance.proportions)
         # Don't mention the rotation as this information is relevant to the unrotated components
         caption.info$rotation <- NULL
@@ -154,7 +155,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         if (print.type == "loadings") {
             if (!oblique.rotation) {
                 subtitle <- paste(ncol(x$loadings), ifelse(ncol(x$loadings) == 1, "component", "components"),
-                                  "explaining", FormatAsPercent(sum(ss.loadings) / nvar, 3), "of the variance")
+                                  "explaining", FormatAsPercent(Sum(ss.loadings, remove.missing = FALSE) / nvar, 3), "of the variance")
                 variance.explained <- ss.loadings / nvar
             } else {
                 subtitle <- ""

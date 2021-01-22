@@ -15,6 +15,7 @@
 #' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
 #' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
 #' @importFrom flipTables TidyTabularData
+#' @importFrom verbs Sum
 #' @examples
 #' x2 <- cbind(Glance=c(0.016, 0.058, 0.061, 0.038, 0.01),
 #'            FairlyThorough=c(0.022, 0.147, 0.093, 0.128, 0.022),
@@ -70,7 +71,7 @@ PrincipalComponentsBiplot <- function(x,
     class(res) <- "PCAbiplot"
 
     evals <- res$d ^ 2
-    pvar <- evals/sum(evals) * 100
+    pvar <- evals/Sum(evals, remove.missing = FALSE) * 100
     groups <- rep(row.column.names, c(nrow(res$rowcoords), nrow(res$colcoords)))
     coords <- data.frame(rbind(res$rowcoords[,1:2], res$colcoords[,1:2]),
                     Group = groups, stringsAsFactors = FALSE,
@@ -90,6 +91,7 @@ PrincipalComponentsBiplot <- function(x,
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlMoonPlot moonplot
+#' @importFrom verbs Sum
 #' @export
 #' @method print PCAbiplot
 print.PCAbiplot <- function(x, ...)
@@ -118,7 +120,7 @@ print.PCAbiplot <- function(x, ...)
     } else
     {
         evals <- x$d ^ 2
-        pvar <- evals/sum(evals) * 100
+        pvar <- evals/Sum(evals, remove.missing = FALSE) * 100
         etab <- cbind(Eigenvalue=evals,
                       'Percent variance' = pvar,
                       'Cumulative percent' = cumsum(pvar))

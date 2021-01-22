@@ -279,6 +279,7 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
+#' @importFrom verbs Sum
 #' @export
 #' @method print 2Dreduction
 print.2Dreduction <- function(x, ...) {
@@ -314,7 +315,7 @@ print.2Dreduction <- function(x, ...) {
                 scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
                 scatter.group.labels <- paste(levels(groups), collapse = ", ")
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
-                same.category <- sum(nearest == factor(groups, ordered = FALSE)) / length(groups)
+                same.category <- Sum(nearest == factor(groups, ordered = FALSE), remove.missing = FALSE) / length(groups)
                 title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
@@ -324,7 +325,7 @@ print.2Dreduction <- function(x, ...) {
                 scatter.group.indices <- paste(indices, collapse = ", ")
                 colors <- "Reds, light to dark"
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
-                same.category <- sum(nearest == groups) / length(groups)
+                same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else {       # numeric: create 20 buckets and treat as factors

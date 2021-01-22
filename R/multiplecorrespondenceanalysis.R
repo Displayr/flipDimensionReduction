@@ -20,6 +20,7 @@
 #' @importFrom flipTransformations Factor
 #' @importFrom flipStatistics WeightedTable
 #' @importFrom ca mjca
+#' @importFrom verbs Sum
 #' @export
 
 MultipleCorrespondenceAnalysis <- function(formula,
@@ -108,7 +109,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
         # the data is not completely wrong
         if (!inherits(tmp.obj, "try-error"))
         {
-            if (sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max) <= 1)
+            if (Sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max, remove.missing = FALSE) <= 1)
                 stop (err.msg, "Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
             else
                 stop(err.msg, "Could not compute adjusted inertia.")

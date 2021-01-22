@@ -6,6 +6,7 @@
 # Here, we increase the threshold to sqrt(.Machine$double.eps) consistent with mgcv etc
 
 #' @importFrom stats cov2cor
+#' @importFrom verbs Sum
 cor.smooth2 <- function (x, eig.tol = 10^-12)
 {
     eigens <- try(eigen(x), TRUE)
@@ -20,7 +21,7 @@ cor.smooth2 <- function (x, eig.tol = 10^-12)
             warning("Matrix was not positive definite, smoothing was done")
             eigens$values[eigens$values < eig.tol] <- 100 * eig.tol
             nvar <- dim(x)[1]
-            tot <- sum(eigens$values)
+            tot <- Sum(eigens$values, remove.missing = FALSE)
             eigens$values <- eigens$values * nvar/tot
             cnames <- colnames(x)
             rnames <- rownames(x)
