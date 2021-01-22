@@ -438,9 +438,10 @@ CorrespondenceAnalysis = function(x,
     result
 }
 
+#' @importFrom verbs SumRows
 checkEmptyRowsOrColumns <- function(x, transpose)
 {
-    rSum <- rowSums(abs(x), na.rm = TRUE)
+    rSum <- SumRows(abs(x))
     cSum <- colSums(abs(x), na.rm = TRUE)
     if (any(rSum == 0) || any(cSum == 0))
     {

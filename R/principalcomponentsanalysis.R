@@ -56,7 +56,7 @@
 #' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
 #' @importFrom psych principal factor.scores
-#' @importFrom verbs Sum
+#' @importFrom verbs Sum SumRows
 #' @export
 PrincipalComponentsAnalysis <- function(data,
                                weights = NULL,
@@ -279,7 +279,7 @@ PrincipalComponentsAnalysis <- function(data,
     if (!use.correlation)
     {
         rescaled.initial.communalities <- rep(1, nrow(input.matrix))
-        rescaled.extracted.communalities <- rowSums(as.matrix(unrotated.loadings)^2)
+        rescaled.extracted.communalities <- SumRows(as.matrix(unrotated.loadings)^2, remove.missing = FALSE)
     }
 
     # Variance explained by factors

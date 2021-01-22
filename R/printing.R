@@ -22,7 +22,7 @@ sortLoadings <- function(x) {
 
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
-#' @importFrom verbs Sum
+#' @importFrom verbs Sum SumRows
 #' @export
 #' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
@@ -73,7 +73,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
     if (x$missing == "Use partial data (pairwise correlations)" || x$missing == "pairwise")
     {
-        min.sample <- length(which(!is.na(rowSums(x$data.used$subset.data))))
+        min.sample <- length(which(!is.na(SumRows(x$data.used$subset.data, remove.missing = FALSE))))
         max.sample <- nrow(x$data.used$subset.data)
         caption.info$sample <- paste0("Sample size: ", min.sample, " to ", max.sample)
 
