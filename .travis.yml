@@ -15,7 +15,6 @@ before_install:
   - sudo add-apt-repository -y ppa:cran/libgit2
   - sudo apt-get -qq update
   - sudo apt-get install libgit2-dev
-  - export verbs_BRANCH_NAME=DS-3136-higher-dim
   - rcode="options('testthat.progress.max_fails' = Inf); "
   - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="line.fail <- max(grep('FAIL', out)); "
