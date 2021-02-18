@@ -277,7 +277,7 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
-    if (Sum(x < 0) > 0)
+    if (any(x < 0, na.rm = TRUE))
         stop("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
@@ -551,7 +551,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     } else if (x$num.tables == 1)
     {
-        if (Sum(nchar(x$row.column.names), remove.missing = FALSE) > 0 && x$row.column.names[1] == x$row.column.names[2])
+        if (any(nzchar(x$row.column.names, keepNA = TRUE), na.rm = TRUE) && x$row.column.names[1] == x$row.column.names[2])
             warning("Row and column titles are identical which will cause the same label to be used for both.")
         n1 <- nrow(x$row.coordinates)
         n2 <- nrow(x$column.coordinates)
@@ -582,7 +582,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                                     else              x.nrow
 
 
-            if (Sum(nchar(logo.urls), remove.missing = FALSE) && length(logo.urls) != logo.required.length)
+            if (any(nzchar(logo.urls, keepNA = TRUE), na.rm = TRUE) && length(logo.urls) != logo.required.length)
                 warning(sprintf("Number of URLs supplied in logos (%d) is not equal to the number of %s in the table (%d)\n",
                              length(logo.urls), ifelse(x$transpose, "columns", "rows"), logo.required.length))
             if (length(logo.urls) < logo.required.length)

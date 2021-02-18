@@ -9,10 +9,8 @@ gpa.normalizing.weight <- function (A, normalize = FALSE)
         normalize <- normalize(A)
     if (is.logical(normalize)) {
         if (normalize)
-        {
-            colnames(A) <- NULL
             normalize <- sqrt(SumRows(A^2, remove.missing = FALSE))
-        } else return(array(1, dim(A)))
+        else return(array(1, dim(A)))
     }
     if (is.vector(normalize)) {
         if (nrow(A) != length(normalize))
