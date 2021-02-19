@@ -231,7 +231,7 @@ setFocus <- function(original, focus.i) {
     # Find the direction of most variance that is perpendicular to the focus direction
     # Minimise negative of length of vector d
     objective <- function(d) {
-        return(-Sum(d^2, remove.missing = FALSE))
+        return(-sum(d^2))
     }
 
     grad_objective <- function(d) {
@@ -241,7 +241,7 @@ setFocus <- function(original, focus.i) {
     # d must be perpendicular to focus direction and on variance ellipsoid
     constraint <- function(d) {
         perp <- d %*% coords[focus.i, ]
-        ellipse <- Sum((d / original$sv)^2, remove.missing = FALSE) - 1
+        ellipse <- sum((d / original$sv)^2) - 1
         return(rbind(perp, ellipse))
     }
 
