@@ -56,6 +56,7 @@
 #' @importFrom flipFormat Labels
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix StandardDeviation
 #' @importFrom psych principal factor.scores
+#' @importFrom verbs Sum SumRows
 #' @export
 PrincipalComponentsAnalysis <- function(data,
                                weights = NULL,
@@ -155,7 +156,7 @@ PrincipalComponentsAnalysis <- function(data,
 
     # Flip eigenvectors so the largest loadings are positive
     unrotated.loadings <- apply(unrotated.loadings, 2,
-                               function(x){sg=sign(x); ss=sum(sg*x^2); return(x*sign(ss))})
+                               function(x){sg=sign(x); ss=Sum(sg*x^2, remove.missing = FALSE); return(x*sign(ss))})
     loadings <- unrotated.loadings
 
     # Work out which rotation to use
@@ -180,7 +181,7 @@ PrincipalComponentsAnalysis <- function(data,
                                            covar = !use.correlation,
                                            stds = stddevs)
         sign.loadings <- apply(rotation.results$rotated.loadings, 2,
-                                 function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
+                                 function(x){sg=sign(x); ss=Sum(sg*x^2, remove.missing = FALSE); return(rep(sign(ss), length(x)))})
         rotated.loadings <- rotation.results$rotated.loadings * sign.loadings
 
         loadings <- rotated.loadings
@@ -196,7 +197,7 @@ PrincipalComponentsAnalysis <- function(data,
 
     } else {
         sign.loadings <- apply(unrotated.loadings, 2,
-                                 function(x){sg=sign(x); ss=sum(sg*x^2); return(rep(sign(ss), length(x)))})
+                                 function(x){sg=sign(x); ss=Sum(sg*x^2, remove.missing = FALSE); return(rep(sign(ss), length(x)))})
         unrotated.loadings <- unrotated.loadings * sign.loadings
         loadings <- unrotated.loadings
         rotated.loadings <- unrotated.loadings
@@ -278,7 +279,7 @@ PrincipalComponentsAnalysis <- function(data,
     if (!use.correlation)
     {
         rescaled.initial.communalities <- rep(1, nrow(input.matrix))
-        rescaled.extracted.communalities <- rowSums(as.matrix(unrotated.loadings)^2)
+        rescaled.extracted.communalities <- SumRows(as.matrix(unrotated.loadings)^2, remove.missing = FALSE)
     }
 
     # Variance explained by factors
@@ -422,6 +423,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom verbs SumColumns
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
@@ -453,7 +455,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
 
     if (add.ve)
     {
-        ss.loadings <- colSums(x$loadings^2)
+        ss.loadings <- SumColumns(x$loadings^2, remove.missing = FALSE)
         variance.explained <- ss.loadings/nrow(x$loadings)
         x.label <- sprintf("%s (%.1f%% variance explained)", x.label, variance.explained[1]*100)
         y.label <- sprintf("%s (%.1f%% variance explained)", y.label, variance.explained[2]*100)
@@ -484,6 +486,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
 
 }
 
+#' @importFrom verbs Sum SumColumns
 #' @export
 ExtractChartData.flipFactorAnalysis <- function(x)
 {
@@ -510,7 +513,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     if (x$print.type =="variance" || x$print.type == "Variance Explained")
     {
         eigenvalues <- x$values
-        variance.proportions = eigenvalues / sum(eigenvalues)
+        variance.proportions = eigenvalues / Sum(eigenvalues, remove.missing = FALSE)
         cumulative.proportions = cumsum(variance.proportions)
         result <- cbind('Eigenvalue' = eigenvalues,
                      '% of Variance' = variance.proportions,
@@ -535,7 +538,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
             return(res)
         }
 
-        ss.loadings <- colSums(x$loadings ^ 2)
+        ss.loadings <- SumColumns(x$loadings ^ 2, remove.missing = FALSE)
         nvar <- ncol(x$original.data)
         ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
         ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
@@ -566,7 +569,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     component.data <- x$loadings[,1:2]
     if (!(x$rotation %in% c("promax", "oblimin")))
     {
-        var.exp <- colSums(x$loadings^2)/nrow(x$loadings)
+        var.exp <- SumColumns(x$loadings^2, remove.missing = FALSE)/nrow(x$loadings)
         colnames(component.data) <- sprintf("Component %d (%.1f%% variance explained)",
                                             1:2, var.exp[1:2] * 100)
     }
@@ -652,6 +655,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
 #'   variables. This is consistent with SPSS.
 #' @importFrom flipStatistics CovarianceAndCorrelationMatrix
 #' @importFrom psych cortest.bartlett
+#' @importFrom verbs Sum
 #' @export
 
 # For the sample size, use the min sample size of the correlation matrix
@@ -677,7 +681,7 @@ BartlettTestOfSphericity <- function(data,
         sample.size <- min(sample.size.matrix)
     }
     else if (!is.null(weights))
-        sample.size <- sum(prepared.data$subset.weights)
+        sample.size <- Sum(prepared.data$subset.weights, remove.missing = FALSE)
     else
         sample.size <- nrow(prepared.data$subset.data)
     test.results <- cortest.bartlett(correlation.matrix, n = sample.size)
@@ -689,16 +693,17 @@ BartlettTestOfSphericity <- function(data,
 }
 
 # Scale and center data using the weighted mean and standard deviation
+#' @importFrom verbs Sum
 scaleDataUsingWeights <- function(data, weights)
 {
     .weightedMeanAndSD <- function(x, weights)
     {
         complete.cases <- !is.na(x) & weights > 0
         wx <- x * weights
-        weighted.mean <- sum(wx[complete.cases]) / sum(weights[complete.cases])
+        weighted.mean <- Sum(wx[complete.cases], remove.missing = FALSE) / Sum(weights[complete.cases], remove.missing = FALSE)
         sx <- x - weighted.mean
         wsx2 <- weights * sx * sx
-        weighted.variance <- sum(wsx2[complete.cases]) / (sum(weights[complete.cases]) - 1)
+        weighted.variance <- Sum(wsx2[complete.cases], remove.missing = FALSE) / (Sum(weights[complete.cases], remove.missing = FALSE) - 1)
         return(list(weighted.mean = weighted.mean, weighted.sd = sqrt(weighted.variance)))
     }
 
@@ -712,6 +717,7 @@ scaleDataUsingWeights <- function(data, weights)
 
 
 # Calculate the (effective) sample size for each pair of variables in data
+#' @importFrom verbs Sum
 sampleSizeMatrix <- function(data, weights)
 {
     if (is.null(weights))
@@ -725,12 +731,12 @@ sampleSizeMatrix <- function(data, weights)
         for (col in 1L:numvars)
         {
             if (row == col) {
-                sample.size.matrix[row, row] <- sum(weights[!is.na(data[, row])])
+                sample.size.matrix[row, row] <- Sum(weights[!is.na(data[, row])], remove.missing = FALSE)
             }
             else
             {
                 indicator <- !is.na(data[, row] * data[, col])
-                sample.size <- sum(weights[indicator])
+                sample.size <- Sum(weights[indicator], remove.missing = FALSE)
                 sample.size.matrix[row, col] <- sample.size
                 sample.size.matrix[col, row] <- sample.size
             }

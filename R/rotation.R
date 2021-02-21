@@ -213,7 +213,7 @@ sortLoadingsByComponents <- function(rotated.loadings) {
 # Second axis maximises variance whilst being orthogonal.
 #' @importFrom nloptr nloptr nl.jacobian
 #' @importFrom GPArotation targetT
-#' @importFrom verbs First Last
+#' @importFrom verbs First Last Sum
 setFocus <- function(original, focus.i) {
 
     if (length(original$rownames) <= 2 || length(original$colnames) <= 2)
@@ -253,12 +253,12 @@ setFocus <- function(original, focus.i) {
                   eval_jac_g_eq = grad_constraint, opts = list("algorithm" = "NLOPT_LD_SLSQP", "xtol_rel" = 1e-6))
 
     # Add new point to coords perpendicular to focus and in plane of most variance
-    coords <- rbind(coords, opt$solution / sqrt(sum(opt$solution^2)))
+    coords <- rbind(coords, opt$solution / sqrt(Sum(opt$solution^2, remove.missing = FALSE)))
 
     tgt <- coords
     tgt[, ] <- NA
     tgt[focus.i, ] <- 0
-    tgt[focus.i, 1] <- sqrt(sum(coords[focus.i, ]^2))    # rotate focus point to x-axis
+    tgt[focus.i, 1] <- sqrt(Sum(coords[focus.i, ]^2, remove.missing = FALSE))    # rotate focus point to x-axis
     tgt[nrow(tgt), ] <- 0
     tgt[nrow(tgt), 2] <- 1    # rotate max variance dirn (perp to focus point) to y-axis
     rotated <- targetT(coords, Target = tgt, eps = 1e-5, maxit = 1000)

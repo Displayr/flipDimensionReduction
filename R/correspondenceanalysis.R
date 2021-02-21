@@ -50,6 +50,7 @@
 #' @importFrom flipU InterceptExceptions
 #' @importFrom flipChartBasics MatchTable
 #' @importFrom ca ca
+#' @importFrom verbs Sum
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
@@ -276,7 +277,7 @@ CorrespondenceAnalysis = function(x,
         if (square)
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
-    if (sum(x < 0, na.rm = TRUE) > 0)
+    if (any(x < 0, na.rm = TRUE))
         stop("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
@@ -409,7 +410,7 @@ CorrespondenceAnalysis = function(x,
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
-        n2 <- sum(nrow(column.coordinates))
+        n2 <- Sum(nrow(column.coordinates), remove.missing = FALSE)
         groups <- rep(row.column.names, c(n1, n2))
     } else
     {
@@ -437,10 +438,11 @@ CorrespondenceAnalysis = function(x,
     result
 }
 
+#' @importFrom verbs SumRows SumColumns
 checkEmptyRowsOrColumns <- function(x, transpose)
 {
-    rSum <- rowSums(abs(x), na.rm = TRUE)
-    cSum <- colSums(abs(x), na.rm = TRUE)
+    rSum <- SumRows(abs(x))
+    cSum <- SumColumns(abs(x))
     if (any(rSum == 0) || any(cSum == 0))
     {
         empty.dim <- "Row"
@@ -485,6 +487,7 @@ ExtractChartData.CorrespondenceAnalysis <- function(x)
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom flipTransformations TextAsVector
 #' @importFrom flipChartBasics ChartColors
+#' @importFrom verbs Sum
 #' @export
 #' @method print CorrespondenceAnalysis
 print.CorrespondenceAnalysis <- function(x, ...)
@@ -533,7 +536,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             if (x$dim2.plot < 1 || x$dim2.plot > n.sv)
                 stop("Dimension 2 should be between 1 and ", n.sv, ".")
 
-            num.asym <- sum(c(x$dim1.plot, x$dim2.plot)%in% ind.asym)
+            num.asym <- Sum(c(x$dim1.plot, x$dim2.plot)%in% ind.asym, remove.missing = FALSE)
             if (num.asym > 0  && tmp.sv[x$dim1.plot] != tmp.sv[x$dim2.plot])
             {
                 asym.pair <- sapply(ind.asym, function(ii){which(tmp.sv == tmp.sv[ii])})
@@ -548,7 +551,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
 
     } else if (x$num.tables == 1)
     {
-        if (sum(nchar(x$row.column.names)) > 0 && x$row.column.names[1] == x$row.column.names[2])
+        if (any(nzchar(x$row.column.names, keepNA = TRUE), na.rm = TRUE) && x$row.column.names[1] == x$row.column.names[2])
             warning("Row and column titles are identical which will cause the same label to be used for both.")
         n1 <- nrow(x$row.coordinates)
         n2 <- nrow(x$column.coordinates)
@@ -579,7 +582,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                                     else              x.nrow
 
 
-            if (sum(nchar(logo.urls)) && length(logo.urls) != logo.required.length)
+            if (any(nzchar(logo.urls, keepNA = TRUE), na.rm = TRUE) && length(logo.urls) != logo.required.length)
                 warning(sprintf("Number of URLs supplied in logos (%d) is not equal to the number of %s in the table (%d)\n",
                              length(logo.urls), ifelse(x$transpose, "columns", "rows"), logo.required.length))
             if (length(logo.urls) < logo.required.length)
@@ -650,7 +653,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         cat("\nInertia(s):\n")
         res.summary <- cbind('Canonical Correlation' = x$original$sv,
                              'Inertia' = inertia,
-                             'Proportion explained' = inertia/sum(inertia))
+                             'Proportion explained' = inertia/Sum(inertia, remove.missing = FALSE))
         rownames(res.summary) <- sprintf("Dimension %d", 1:nrow(res.summary))
         print(res.summary)
         cat("\nStandard coordinates:\n")
@@ -658,7 +661,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
         cat("\nPrincipal coordinates:\n")
         print(coords)
 
-        prop.sym <- sum(inertia[ind.sym]/sum(inertia)) * 100
+        prop.sym <- Sum(inertia[ind.sym]/Sum(inertia, remove.missing = FALSE), remove.missing = FALSE) * 100
         cat(sprintf("\n%.1f%% symmetrical\n", prop.sym))
         cat("\nScores of symmetric dimensions:\n")
         print(coords[,ind.sym])
@@ -668,7 +671,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             cat("**** AFTER FOCUS ROTATION ****\n")
             cat("\n Principal inertias (eigenvalues):\n")
             Value <- round(x$focused$sv^2, 6)
-            Percentage <- paste(as.character(round(100 * Value/sum(Value), 2)), "%", sep = "")
+            Percentage <- paste(as.character(round(100 * Value/Sum(Value, remove.missing = FALSE), 2)), "%", sep = "")
             eigenvalues <- rbind(Value = as.character(Value), Percentage = as.character(Percentage))
             colnames(eigenvalues) <- 1:length(x$focused$sv)
             print.table(eigenvalues)
@@ -742,6 +745,7 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' @param x The object to compute quality for.
 #' @importFrom methods is
 #' @importFrom flipFormat FormatAsPercent
+#' @importFrom verbs SumColumns
 #' @export
 CAQuality <- function(x)
 {
@@ -751,7 +755,7 @@ CAQuality <- function(x)
     n <- CANormalization(or, "Principal")
     row.masses <- x$original$rowmass
     row.masses[is.na(row.masses)] <- 0
-    e <- colSums(sweep(n$row.coordinates^2, 1, row.masses, "*"))
+    e <- SumColumns(sweep(n$row.coordinates^2, 1, row.masses, "*"), remove.missing = FALSE)
     e <- FormatAsPercent(prop.table(e), decimals = 1, remove.leading.0 = TRUE)
     q <- rbind(n$row.coordinates, n$column.coordinates)
     q <- prop.table(q ^ 2, 1) * 100

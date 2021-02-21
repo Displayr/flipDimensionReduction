@@ -22,6 +22,7 @@ sortLoadings <- function(x) {
 
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
+#' @importFrom verbs Sum SumRows SumColumns
 #' @export
 #' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
@@ -72,7 +73,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
     if (x$missing == "Use partial data (pairwise correlations)" || x$missing == "pairwise")
     {
-        min.sample <- length(which(!is.na(rowSums(x$data.used$subset.data))))
+        min.sample <- length(which(!is.na(SumRows(x$data.used$subset.data, remove.missing = FALSE))))
         max.sample <- nrow(x$data.used$subset.data)
         caption.info$sample <- paste0("Sample size: ", min.sample, " to ", max.sample)
 
@@ -87,7 +88,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
         print(ComponentPlot(x, show.labels = x$plot.labels))
     } else if (print.type == "variance") {
         eigenvalues <- x$values
-        variance.proportions = eigenvalues / sum(eigenvalues)
+        variance.proportions = eigenvalues / Sum(eigenvalues, remove.missing = FALSE)
         cumulative.proportions = cumsum(variance.proportions)
         # Don't mention the rotation as this information is relevant to the unrotated components
         caption.info$rotation <- NULL
@@ -136,25 +137,25 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
 
         ss.loadings <- if (oblique.rotation)
-            colSums(x$structure.matrix ^ 2)
+            SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
         else
-            colSums(x$loadings ^ 2)
+            SumColumns(x$loadings ^ 2, remove.missing = FALSE)
 
         if (!oblique.rotation)
         {
-            ss.loadings <- colSums(x$loadings ^ 2)
+            ss.loadings <- SumColumns(x$loadings ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue"
         }
         else
         {
-            ss.loadings <- colSums(x$structure.matrix ^ 2)
+            ss.loadings <- SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue*"
         }
 
         if (print.type == "loadings") {
             if (!oblique.rotation) {
                 subtitle <- paste(ncol(x$loadings), ifelse(ncol(x$loadings) == 1, "component", "components"),
-                                  "explaining", FormatAsPercent(sum(ss.loadings) / nvar, 3), "of the variance")
+                                  "explaining", FormatAsPercent(Sum(ss.loadings, remove.missing = FALSE) / nvar, 3), "of the variance")
                 variance.explained <- ss.loadings / nvar
             } else {
                 subtitle <- ""

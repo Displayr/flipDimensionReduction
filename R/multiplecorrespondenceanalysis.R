@@ -20,6 +20,7 @@
 #' @importFrom flipTransformations Factor
 #' @importFrom flipStatistics WeightedTable
 #' @importFrom ca mjca
+#' @importFrom verbs Sum
 #' @export
 
 MultipleCorrespondenceAnalysis <- function(formula,
@@ -108,7 +109,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
         # the data is not completely wrong
         if (!inherits(tmp.obj, "try-error"))
         {
-            if (sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max) <= 1)
+            if (Sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max, remove.missing = FALSE) <= 1)
                 stop (err.msg, "Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
             else
                 stop(err.msg, "Could not compute adjusted inertia.")
@@ -228,6 +229,7 @@ print.mcaObj <- function(x, digits = 3, ...)
 #' @param ... Not used.
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
+#' @importFrom verbs SumRows SumColumns
 #' @export
 
 fitted.mcaObj <- function(object, ...)
@@ -239,7 +241,7 @@ fitted.mcaObj <- function(object, ...)
     colnames(tab.newdata) <- sprintf("%s:%s", rep(make.names(colnames(newdata)), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
     extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
-    if (length(extra.levels) > 0 && rowSums(tab.newdata[,extra.levels]) > 0)
+    if (length(extra.levels) > 0 && SumRows(tab.newdata[,extra.levels], remove.missing = FALSE) > 0)
         warning("Factor levels of new data contains levels not in estimation data: ",
              paste(extra.levels, collapse=", "), "\n")
     tab.newdata <- tab.newdata[,object$levelnames.ord]
@@ -247,7 +249,7 @@ fitted.mcaObj <- function(object, ...)
     ndim <- ncol(object$colcoord)
     ndata <- nrow(tab.newdata)
     nq <- ncol(newdata)
-    csum <- colSums(tab.newdata)
+    csum <- SumColumns(tab.newdata, remove.missing = FALSE)
     denom <- sqrt(csum * nq)
     zx <- sweep(tab.newdata, 2, denom, "/")
     x.svd <- svd(zx)
