@@ -511,3 +511,27 @@ test_that("Dimension Reduction Scatterplot works with matrices",
 })
 
 
+test_that("Dimension Reduction Scatterplot gives informative messages", {
+    captured.warning <- capture_warnings(PrincipalComponentsAnalysis(text.matrix[, 1:2],
+                                                                     select.n.rule = "Kaiser rule",
+                                                                     eigen.min = 1.1,
+                                                                     print.type = "2D Scatterplot"))
+    expected.warning <- capture_warnings(throwWarningAbout2DScatterplotNotPossible(select.n.rule = "Kaiser rule",
+                                                                                   eigenvalues = c(1.1, 0.9),
+                                                                                   eigen.min = 1L))
+    expect_setequal(captured.warning, expected.warning)
+    captured.warning <- capture_warnings(PrincipalComponentsAnalysis(text.matrix[, 1:2],
+                                                                     select.n.rule = "Number of components",
+                                                                     n.factors = 1L,
+                                                                     print.type = "2D Scatterplot"))
+    expected.warning <- capture_warnings(throwWarningAbout2DScatterplotNotPossible(select.n.rule = "Number of components"))
+    expect_setequal(captured.warning, expected.warning)
+    captured.warning <- capture_warnings(pca.out <- PrincipalComponentsAnalysis(text.matrix[, 1:5],
+                                                                                select.n.rule = "Eigenvalues over",
+                                                                                eigen.min = 1.1,
+                                                                                print.type = "2D Scatterplot"))
+    expected.warning <- capture_warnings(throwWarningAbout2DScatterplotNotPossible(select.n.rule = "Eigenvalues over", eigenvalues = pca.out$values, eigen.min = 1.1))
+    expect_setequal(captured.warning, expected.warning)
+})
+
+

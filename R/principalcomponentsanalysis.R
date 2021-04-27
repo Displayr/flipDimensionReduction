@@ -94,6 +94,11 @@ PrincipalComponentsAnalysis <- function(data,
         suppress.small.coefficients = FALSE
         min.display.loading.value = 0.1
     }
+    if (print.type == "2D Scatterplot" && select.n.rule == "Number of components" && n.factors < 2L)
+    {
+        throwWarningAbout2DScatterplotNotPossible(select.n.rule)
+        n.factors <- 2L
+    }
     if (print.type != "Component Plot")
         plot.labels = TRUE
 
@@ -130,14 +135,20 @@ PrincipalComponentsAnalysis <- function(data,
     # Compute eigenvalues for component selection
     if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
     {
-        eigens <- eigen(input.matrix, only.values=T)
+        eigens <- eigen(input.matrix, only.values = TRUE)
         if (!use.correlation)
         {
             warning("Select components with eigenvalues > ",
                     eigen.min, " times mean of eigenvalues as we are using unscaled covariance matrix\n")
             eigen.min <- mean(eigens$values)
         }
-        n.factors <- length(which(eigens$values > eigen.min))
+        values.above.threshold <- eigens$values > eigen.min
+        if (print.type == "2D Scatterplot" && sum(values.above.threshold, na.rm = TRUE) < 2L)
+        {
+            throwWarningAbout2DScatterplotNotPossible(select.n.rule, eigens$values, eigen.min)
+            eigen.min <- eigens$values[2] - .Machine$double.eps
+        }
+        n.factors <- sum(eigens$values > eigen.min, na.rm = TRUE)
     }
     stdmat <- matrix(rep(stddevs, n.factors), ncol = n.factors)
 
@@ -785,4 +796,32 @@ convertVariableForFactorAnalysis <- function(variable, include.question.name = T
         colnames(indicator.matrix) <- cn
     }
     return(indicator.matrix)
+}
+
+#' @param select.n.rule Same parameter used in PrincipalComponentsAnalysis to determine the number of components
+#' @param eigenvalues The eigenvalues of the PCA before component selection
+#' @param eigen.min The boundary for selection used in the Kaiser rule and Eigenvalues over specifications
+#' @noRd
+throwWarningAbout2DScatterplotNotPossible <- function(select.n.rule, eigenvalues, eigen.min)
+{
+    if (select.n.rule == "Number of components")
+    {
+        warn.prefix <- "Only a single component was requested in the PCA. "
+    }
+    if (select.n.rule %in% c("Kaiser rule", "Eigenvalues over"))
+    {
+        n.eigen <- sum(eigenvalues > eigen.min, na.rm = TRUE)
+        if (select.n.rule == "Kaiser rule")
+        {
+            warn.prefix <- "The Kaiser rule was specified to "
+        } else
+        {
+            warn.prefix <- "The eigenvalue selection rule was chosen to "
+        }
+        warn.prefix <- paste0(warn.prefix,
+                              "keep a component when its Eigenvalue is larger than ", eigen.min,
+                              ". With this setting, only ", n.eigen, " component was chosen. ")
+    }
+    warning(warn.prefix, "However, two components are required to create a 2D Scatterplot. ",
+            "Consequently, the first two components were computed and used to create the 2D Scatterplot.")
 }
