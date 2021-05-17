@@ -508,6 +508,8 @@ print.CorrespondenceAnalysis <- function(x, ...)
         return(print(x.data))
     } else if (x$output == "Moonplot")
     {
+        if (x$square)
+            stop("Moonplots cannot be shown for Correspondence Analysis of a Square Table.")
         if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         return(print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2])))
