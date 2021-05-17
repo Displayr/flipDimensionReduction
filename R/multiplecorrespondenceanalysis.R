@@ -164,7 +164,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     attr(coords, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
     attr(obj, "ChartType") <- "X Y Scatter"
     attr(obj, "ChartData") <- coords
-    class(obj) <- "mcaObj"
+    class(obj) <- c("mcaObj", "visualization-selector")
     return(obj)
 }
 

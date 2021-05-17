@@ -394,7 +394,7 @@ CorrespondenceAnalysis = function(x,
                    axis.font.size = axis.font.size,
                    legend.font.size = legend.font.size
     )
-    class(result) <- c("CorrespondenceAnalysis")
+    class(result) <- c("CorrespondenceAnalysis", "visualization-selector")
     nc <- min(ncol(row.coordinates), ncol(column.coordinates))
     if (dim1.plot < 0 || dim1.plot > nc)
         stop(sprintf("Dimension 1 should be between 1 and %d.", nc))

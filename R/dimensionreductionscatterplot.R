@@ -203,7 +203,7 @@ DimensionReduction <- function(algorithm,
 
     result$data.groups <- data.groups
     result$normalized <- normalization
-    class(result) <- c("2Dreduction", class(result))
+    class(result) <- c("2Dreduction", "visualization-selector", class(result))
     attr(result, "ChartData") <- ExtractChartData(result)
     attr(result, "ChartType") <- "X Y Scatter"
     return(result)
