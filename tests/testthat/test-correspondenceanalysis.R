@@ -643,3 +643,15 @@ test_that("Output contains the right class for extension buttons", {
 
     expect_true(inherits(result, "CorrespondenceAnalysis"))
 })
+
+test_that("BANNER table", {
+  test <- array(abs(rnorm(23*7)), dim = c(27L, 7L),
+                dimnames = list(c(LETTERS, "NET"), c(letters[1:6], "SUM")))
+  attr(test, "span") <- list(row = unname(data.frame(LETTERS)),
+                             columns = unname(data.frame(c(rep("Segments", 26), NA),
+                                                         c(LETTERS, "NET"))))
+  expect_error(CorrespondenceAnalysis(test,
+                                      rows.to.remove = "NET",
+                                      columns.to.remove = "NET"),
+               NA)
+})
