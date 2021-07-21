@@ -253,12 +253,19 @@ PrincipalComponentsAnalysis <- function(data,
     }
 
     # Smooth non-positive definite correlation in the same way as psych::principal
-    cor <- try(cor.smooth2(correlation.matrix), silent = TRUE)
+    cor <- InterceptExceptions(try(cor.smooth2(correlation.matrix), silent = TRUE),
+                               warning.handler = function(w) {
+                                 smoothing.done <- grepl("^The analysis has failed to satisfy a technical assumption of PCA", w$message)
+                                 if (smoothing.done)
+                                     warning(w$message, checkDataAfterCorrelationSmoothing(data, prepared.data, missing))
+                                 else
+                                     warning(w$message)
+                               })
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
         stop("Component scores could not be computed as the correlation or correlation matrix is singular.")
 
-    # Original data is scaled befor generating scores
+    # Original data is scaled before generating scores
     if (!is.null(weights))
         scaled.data <- scaleDataUsingWeights(data = prepared.data$subset.data, weights = prepared.data$subset.weights)
     else

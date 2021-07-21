@@ -9,9 +9,26 @@ test.weight <- pcaPhoneTestData$weight
 test.calibrated.weight <- pcaPhoneTestData$calibrated.weight
 data(cola, package = "flipExampleData")
 
-test_that("Duplicated variables", {
+test_that("Smoothing of correlation matrix warnings", {
+    # Generic smoothing warning
     expect_warning(PrincipalComponentsAnalysis(test.data.1[,c(1,3,5,1)]),
-                   "Matrix was not positive definite")
+                   "at least one variable is perfectly correlated with a combination")
+    # Missing data removal warning
+    expect_warning(PrincipalComponentsAnalysis(test.data.1),
+                   "after removing the cases with missing data")
+    # More variables than there are cases
+    expect_warning(PrincipalComponentsAnalysis(replicate(10, runif(5))),
+                   "more observations than the number of variables to be positive definite")
+    # Pairwise missing data calculation
+    set.seed(12321)
+    x <- rnorm(30)
+    y <- rnorm(30)
+    z <- x + y + rnorm(30)/50
+    dat <- data.frame(x, y, z)
+    # Set 5 missing at random
+    dat <- as.data.frame(lapply(dat, function(x) { is.na(x) <- sample.int(30L, size = 5L); x}))
+    expect_warning(PrincipalComponentsAnalysis(dat, missing = "Use partial data (pairwise correlations)"),
+                   "Consider using an alternative missing data option instead")
 })
 
 test_that("PCA: binary", {
