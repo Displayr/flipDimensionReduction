@@ -43,7 +43,7 @@ checkDataAfterCorrelationSmoothing <- function(data, prepared.data, missing)
 {
     known.problem <- " There seems to be a problem with the input data where"
     p.bigger.n.msg <- paste0(" there are more variables than there are cases. ",
-                             "The input matrix needs at more observations than the number ",
+                             "The input matrix needs more observations than the number ",
                              "of variables to be positive definite. To fix this, consider ",
                              "reducing the number of input variables")
     # If p > n, the number of variables is larger than the number of cases
@@ -57,9 +57,9 @@ checkDataAfterCorrelationSmoothing <- function(data, prepared.data, missing)
     if (missing == "Use partial data (pairwise correlations)")
         return(paste0(output.msg, " (e.g. Using partial data (partial correlations) to handle ",
                       "missing data can sometimes lead to non positive definite matrices. Consider using ",
-                      "an alternative missing data option instead)."))
+                      "an alternative Missing data option instead)."))
     paste0(output.msg,
-           " (e.g., the same variable is included twice or maybe the data has been transformed ",
+           " (e.g., the same variable is included twice, or the data has been transformed ",
            "to have a mean of 0, which is not appropriate, as it means ",
            "that at least one variable is perfectly correlated with a combination ",
            "of the other variables).")
