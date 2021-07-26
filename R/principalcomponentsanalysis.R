@@ -253,9 +253,14 @@ PrincipalComponentsAnalysis <- function(data,
     }
 
     # Smooth non-positive definite correlation in the same way as psych::principal
-    cor <- InterceptExceptions(try(cor.smooth2(correlation.matrix), silent = TRUE),
+    cor <- InterceptExceptions(cor.smooth2(correlation.matrix),
+                               error.handler = function(e) {
+                                   warning("I am sorry, there is something seriously wrong with the correlation matrix,",
+                                           "\ncor.smooth failed to smooth it because some of the eigen values are NA.",
+                                           "\nAre you sure you specified the data correctly?")
+                               },
                                warning.handler = function(w) {
-                                 smoothing.done <- grepl("^The analysis has failed to satisfy a technical assumption of PCA", w$message)
+                                 smoothing.done <- startsWith(w$message, "The analysis has failed to satisfy a technical assumption of PCA")
                                  if (smoothing.done)
                                      warning(w$message, checkDataAfterCorrelationSmoothing(data, prepared.data, missing))
                                  else

@@ -9,34 +9,27 @@
 #' @importFrom verbs Sum
 cor.smooth2 <- function (x, eig.tol = 10^-12)
 {
-    eigens <- try(eigen(x), TRUE)
-    if (inherits(eigens, as.character("try-error")))
+    eigens <- eigen(x)
+    if (min(eigens$values) < sqrt(.Machine$double.eps))
     {
-        warning("I am sorry, there is something seriously wrong with the correlation matrix,",
-                "\ncor.smooth failed to  smooth it because some of the eigen values are NA.",
-                "\nAre you sure you specified the data correctly?")
-    }else
-    {
-        if (min(eigens$values) < sqrt(.Machine$double.eps)) {
-            warning("The analysis has failed to satisfy a technical assumption of PCA ",
-                    "(i.e., that the input matrix is positive definite). We've solved this ",
-                    "by smoothing the input matrix into a positive definite one.")
-            eigens$values[eigens$values < eig.tol] <- 100 * eig.tol
-            nvar <- dim(x)[1]
-            tot <- Sum(eigens$values, remove.missing = FALSE)
-            eigens$values <- eigens$values * nvar/tot
-            cnames <- colnames(x)
-            rnames <- rownames(x)
-            ## For dense M, diagonal matrix D=diag(d): MDM^T = (MD^.5)(MD^.5)^T
-            ## MD = t(t(M)*d)
-            ## x <- eigens$vectors %*% diag(eigens$values) %*% t(eigens$vectors)
-            x <- crossprod(t(eigens$vectors)*sqrt(eigens$values))
-            x <- cov2cor(x)
-            colnames(x) <- cnames
-            rownames(x) <- rnames
-        }
+        warning("The analysis has failed to satisfy a technical assumption of PCA ",
+                "(i.e., that the input matrix is positive definite). We've solved this ",
+                "by smoothing the input matrix into a positive definite one.")
+        eigens$values[eigens$values < eig.tol] <- 100 * eig.tol
+        nvar <- dim(x)[1]
+        tot <- Sum(eigens$values, remove.missing = FALSE)
+        eigens$values <- eigens$values * nvar/tot
+        cnames <- colnames(x)
+        rnames <- rownames(x)
+        ## For dense M, diagonal matrix D=diag(d): MDM^T = (MD^.5)(MD^.5)^T
+        ## MD = t(t(M)*d)
+        ## x <- eigens$vectors %*% diag(eigens$values) %*% t(eigens$vectors)
+        x <- crossprod(t(eigens$vectors)*sqrt(eigens$values))
+        x <- cov2cor(x)
+        colnames(x) <- cnames
+        rownames(x) <- rnames
     }
-    return(x)
+    x
 }
 
 checkDataAfterCorrelationSmoothing <- function(data, prepared.data, missing)
