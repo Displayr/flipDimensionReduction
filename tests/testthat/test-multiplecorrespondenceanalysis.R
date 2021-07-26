@@ -51,14 +51,24 @@ test_that("Show names", {
                        "Q12. How  often do you drink cola with alcohol:Every or nearly every day")
 })
 
-miss.res <- suppressWarnings(MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola))
-miss.coord <- fitted(miss.res)
 test_that("Missing data", {
-          expect_equal(nrow(miss.res$data.used), 13)
-          expect_equal(nrow(miss.res$colpcoord), 23)
-          expect_equal(unname(round(miss.res$colpcoord[23,1],3)), -0.943)
-          expect_equal(nrow(miss.coord), 327)
-          expect_equal(sum(!is.na(miss.coord[,1])), 13)
+    captured.warnings <- capture_warnings(miss.res <- MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola))
+    expect_setequal(captured.warnings,
+                    c(paste0("Some categories do not appear in the data: 'Q7. [Pref 2] Specify preference (Q7_1): ",
+                             "Coke Zero'. This may be because they are empty in the raw data, or because they are ",
+                             "empty after any weights, filters/subsets, or missing data settings are applied. ",
+                             "This may cause an error. It is recommended that you merge categories prior to ",
+                             "estimating the model, use an alternative missing data method, filter the data, or ",
+                             "make the data numeric."),
+                      paste0("96% of the data is missing and has been excluded from the analysis. Consider either ",
+                             "filters to ensure that the data that is missing is in-line with your expectations, ",
+                             "or, set 'Missing Data' to another option.")))
+    miss.coord <- fitted(miss.res)
+    expect_equal(nrow(miss.res$data.used), 13)
+    expect_equal(nrow(miss.res$colpcoord), 23)
+    expect_true(abs(unname(round(miss.res$colpcoord[23,1],3))/0.943) - 1L < sqrt(.Machine$double.eps))
+    expect_equal(nrow(miss.coord), 327)
+    expect_equal(sum(!is.na(miss.coord[,1])), 13)
 })
 
 impute.res <- suppressWarnings(MultipleCorrespondenceAnalysis(~Q7_1+Q7_2+Q7_3+Q7_4, data=cola,
