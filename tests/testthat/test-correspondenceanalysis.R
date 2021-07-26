@@ -75,31 +75,48 @@ test_that("Row/column names",
             expect_equal(res2$row.column.names, c("ABC", "DEF"))
         })
 
+chartDataEquivalent <- function(result, expected.chart.data)
+{
+    expect_equal(names(result), names(expected.chart.data))
+    expect_equal(attributes(result), attributes(expected.chart.data))
+    # PCA unique up to sign, i.e. direction not important
+    numeric.result <- Filter(is.numeric, result)
+    expected.numeric.result <- Filter(is.numeric, expected.chart.data)
+    expect_true(length(numeric.result) == length(expected.numeric.result))
+    expect_true(all(mapply(function(x, y) all(x/y - 1 < sqrt(.Machine$double.eps)) ||
+                             all(x/y + 1 < sqrt(.Machine$double.eps)),
+                           numeric.result, expected.numeric.result)))
+    # Grouping the same
+    cat.result <- Filter(is.factor, result)
+    expected.cat.result <- Filter(is.factor, expected.chart.data)
+    expect_equal(cat.result, expected.cat.result)
+}
+
+expected.chart.data <- list(c(-0.242824578883389, 0.447982869795063, 0.471121043396925, 0.464537497309872,
+                              -0.0913332694950237,  -1.2733742886416, -0.500402183998914, -0.27373105043976,
+                              -1.31538815485031, 0.037206733329165, -0.0787671942486661, 0.488530282325173,
+                              -0.29457007350688, -0.235625518884957, 0.601327833549599, 0.287370010414348,
+                              -0.923056165508813, 0.453772049498003, -0.25000257344162),
+                            c(-0.202539757759669, -0.112245635990019, 0.132030273935906, 0.146363526885915,
+                              -0.537816212784355, 0.466468539885024, -0.497665196949348, -0.261639180363143,
+                              0.368144823830639, -0.23730729602076, -0.293995121319046, 0.176112525700419,
+                              -0.419761150156407, -0.0573900558313915, 0.274787466614528, 0.0802524115772252,
+                              0.233157762736366, 0.122368362334109, -0.454640909480694),
+                            c(rep("Brand", 8L), rep("Attribute", 11L)))
+attributes(expected.chart.data) <- list(names = c("Dimension 1 (77.5%)", "Dimension 2 (17.0%)", "Group"),
+                                        class = "data.frame",
+                                        row.names = c("Coke", "V", "Red Bull",  "Lift Plus", "Diet.Coke",
+                                                      "Fanta", "Lift", "Pepsi", "Kids", "Teens",
+                                                      "Enjoy life", "Picks you up", "Refreshes",
+                                                      "Cheers you up", "Energy", "Up-to-date", "Fun",
+                                                      "When tired", "Relax"),
+                                        scatter.variable.indices = c(x = 1, y = 2, sizes = NA, colors = 3))
 for (output in c("Scatterplot", "Moonplot", "Text"))
     test_that(paste0("CorrespondenceAnalysis is OK (mainly GetTidyTwoDimensionalArray) with ", output),
               {
         expect_error(res <- CorrespondenceAnalysis(x.with.labels, output = output, row.names.to.remove = "NET",  column.names.to.remove = "NET"), NA)
-        expect_equal(attr(res, "ChartType"), "X Y Scatter")
-        expect_equal(attr(res, "ChartData"),
-                     structure(list(`Dimension 1 (77.5%)` = c(-0.242824578883389,
-                      0.447982869795063, 0.471121043396925, 0.464537497309872, -0.0913332694950237,
-                      -1.2733742886416, -0.500402183998914, -0.27373105043976, -1.31538815485031,
-                      0.037206733329165, -0.0787671942486661, 0.488530282325173, -0.29457007350688,
-                      -0.235625518884957, 0.601327833549599, 0.287370010414348, -0.923056165508813,
-                      0.453772049498003, -0.25000257344162), `Dimension 2 (17.0%)` = c(-0.202539757759669,
-                      0.112245635990019, 0.132030273935906, 0.146363526885915, -0.537816212784355,
-                      0.466468539885024, -0.497665196949348, -0.261639180363143, 0.368144823830639,
-                      -0.23730729602076, -0.293995121319046, 0.176112525700419, -0.419761150156407,
-                      -0.0573900558313915, 0.274787466614528, 0.0802524115772252, 0.233157762736366,
-                      0.122368362334109, -0.454640909480694), Group = c("Brand", "Brand",
-                      "Brand", "Brand", "Brand", "Brand", "Brand", "Brand", "Attribute",
-                      "Attribute", "Attribute", "Attribute", "Attribute", "Attribute",
-                      "Attribute", "Attribute", "Attribute", "Attribute", "Attribute"
-                      )), class = "data.frame", row.names = c("Coke", "V", "Red Bull",
-                      "Lift Plus", "Diet.Coke", "Fanta", "Lift", "Pepsi", "Kids", "Teens",
-                      "Enjoy life", "Picks you up", "Refreshes", "Cheers you up", "Energy",
-                      "Up-to-date", "Fun", "When tired", "Relax"), scatter.variable.indices = c(x = 1,
-                      y = 2, sizes = NA, colors = 3)))
+        expect_equivalent(attr(res, "ChartType"), "X Y Scatter")
+        chartDataEquivalent(attr(res, "ChartData"), expected.chart.data)
 
         expect_error(CorrespondenceAnalysis(x, output=output), NA)
         # 3D array with no names
@@ -205,39 +222,19 @@ test_that("Empty rows/columns",
           })
 
 
+expected.chart.data[["Size"]] <- c(0.3004, 0.0198, 0.01114, 0.01114, 0.0198, 0.4543, 0.06807, 0.08168,
+                                    rep(0.00605733333333333, 11L))
+expected.chart.data <- expected.chart.data[, c("Dimension 1 (77.5%)", "Dimension 2 (17.0%)",
+                                               "Size", "Group")]
+attr(expected.chart.data, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = 3, colors = 4)
+
 test_that("Bubble charts",
           {
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", show.gridlines = FALSE))
                 bsizes = x.with.labels[,1]
                 expect_error(res <- CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes), NA)
                 expect_equal(attr(res, "ChartType"), "Bubble")
-                expect_equal(attr(res, "ChartData"),
-                             structure(list(`Dimension 1 (77.5%)` = c(-0.242824578883389,
-                              0.447982869795063, 0.471121043396925, 0.464537497309872, -0.0913332694950237,
-                              -1.2733742886416, -0.500402183998914, -0.27373105043976, -1.31538815485031,
-                              0.037206733329165, -0.0787671942486661, 0.488530282325173, -0.29457007350688,
-                              -0.235625518884957, 0.601327833549599, 0.287370010414348, -0.923056165508813,
-                              0.453772049498003, -0.25000257344162),
-                              `Dimension 2 (17.0%)` = c(-0.202539757759669,
-                              0.112245635990019, 0.132030273935906, 0.146363526885915, -0.537816212784355,
-                              0.466468539885024, -0.497665196949348, -0.261639180363143, 0.368144823830639,
-                              -0.23730729602076, -0.293995121319046, 0.176112525700419, -0.419761150156407,
-                              -0.0573900558313915, 0.274787466614528, 0.0802524115772252, 0.233157762736366,
-                              0.122368362334109, -0.454640909480694), Size = c(0.3004, 0.0198,
-                              0.01114, 0.01114, 0.0198, 0.4543, 0.06807, 0.08168, 0.00605733333333333,
-                              0.00605733333333333, 0.00605733333333333, 0.00605733333333333,
-                              0.00605733333333333, 0.00605733333333333, 0.00605733333333333,
-                              0.00605733333333333, 0.00605733333333333, 0.00605733333333333,
-                              0.00605733333333333), Group = c("Brand", "Brand", "Brand", "Brand",
-                              "Brand", "Brand", "Brand", "Brand", "Attribute", "Attribute",
-                              "Attribute", "Attribute", "Attribute", "Attribute", "Attribute",
-                              "Attribute", "Attribute", "Attribute", "Attribute")),
-                              class = "data.frame", row.names = c("Coke",
-                              "V", "Red Bull", "Lift Plus", "Diet.Coke", "Fanta", "Lift", "Pepsi",
-                              "Kids", "Teens", "Enjoy life", "Picks you up", "Refreshes", "Cheers you up",
-                              "Energy", "Up-to-date", "Fun", "When tired", "Relax"),
-                              scatter.variable.indices = c(x = 1, y = 2, sizes = 3, colors = 4)))
-
+                chartDataEquivalent(attr(res, "ChartData"), expected.chart.data)
                 expect_error(CorrespondenceAnalysis(x.with.labels, output = "Bubble Chart", bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
                 expect_error(CorrespondenceAnalysis(t(x.with.labels), output = "Bubble Chart", transpose = TRUE,
                     bubble.size = bsizes, row.names.to.remove = "Coke"), NA)
