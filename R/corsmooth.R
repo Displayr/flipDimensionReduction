@@ -32,6 +32,8 @@ cor.smooth2 <- function (x, eig.tol = 10^-12)
     x
 }
 
+#' @importFrom flipU IsRServer
+#' @noRd
 checkDataAfterCorrelationSmoothing <- function(data, prepared.data, missing)
 {
     known.problem <- " There seems to be a problem with the input data where"
@@ -49,8 +51,11 @@ checkDataAfterCorrelationSmoothing <- function(data, prepared.data, missing)
     # If partial data as missing data option used
     if (missing == "Use partial data (pairwise correlations)")
         return(paste0(output.msg, " (e.g. Using partial data (partial correlations) to handle ",
-                      "missing data can sometimes lead to non positive definite matrices. Consider using ",
-                      "an alternative Missing data option instead)."))
+                      "missing data can sometimes lead to non-positive definite matrices. ",
+                      "Consider using an alternative ",
+                      ifelse(IsRServer(), "'Missing data' option",
+                             paste0(sQuote("missing"), " argument")),
+                             " instead)."))
     paste0(output.msg,
            " (e.g., the same variable is included twice, or the data has been transformed ",
            "to have a mean of 0, which is not appropriate, as it means ",
