@@ -28,7 +28,8 @@ test_that("Smoothing of correlation matrix warnings", {
     # Set 5 missing at random
     dat <- as.data.frame(lapply(dat, function(x) { is.na(x) <- sample.int(30L, size = 5L); x}))
     expect_warning(PrincipalComponentsAnalysis(dat, missing = "Use partial data (pairwise correlations)"),
-                   "Consider using an alternative 'Missing data' option instead")
+                   paste0("Consider using an alternative ", sQuote("missing"),
+                          " argument instead"))
 })
 
 test_that("PCA: binary", {
