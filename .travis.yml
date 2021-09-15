@@ -12,7 +12,6 @@ before_install:
   - mkdir -p ~/.R/
   - echo "CXXFLAGS += -w" >> ~/.R/Makevars
   - echo "CXX14FLAGS = -w" >> ~/.R/Makevars
-  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev libnlopt-dev
   - sudo add-apt-repository -y ppa:cran/libgit2
