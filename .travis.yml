@@ -1,7 +1,7 @@
 language: r
 r:
   - release
-dist: bionic
+dist: focal
 cache: packages
 warnings_are_errors: false
 
