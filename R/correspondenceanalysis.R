@@ -50,7 +50,7 @@
 #' @importFrom flipU InterceptExceptions
 #' @importFrom flipChartBasics MatchTable
 #' @importFrom ca ca
-#' @importFrom verbs Sum
+#' @importFrom verbs Sum SumEmptyHandling
 #' @export
 CorrespondenceAnalysis = function(x,
                                   normalization = "Principal",
@@ -410,7 +410,10 @@ CorrespondenceAnalysis = function(x,
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
-        n2 <- Sum(nrow(column.coordinates), remove.missing = FALSE)
+        # column.coordinates can be NULL for CA of square table
+        n2 <- SumEmptyHandling(nrow(column.coordinates),
+                               return.zero.if.null = TRUE,
+                               return.zero.if.all.NA = TRUE)
         groups <- rep(row.column.names, c(n1, n2))
     } else
     {
@@ -537,7 +540,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             if (x$dim2.plot < 1 || x$dim2.plot > n.sv)
                 stop("Dimension 2 should be between 1 and ", n.sv, ".")
 
-            num.asym <- Sum(c(x$dim1.plot, x$dim2.plot)%in% ind.asym, remove.missing = FALSE)
+            num.asym <- Sum(c(x$dim1.plot, x$dim2.plot) %in% ind.asym, remove.missing = FALSE)
             if (num.asym > 0  && tmp.sv[x$dim1.plot] != tmp.sv[x$dim2.plot])
             {
                 asym.pair <- sapply(ind.asym, function(ii){which(tmp.sv == tmp.sv[ii])})
