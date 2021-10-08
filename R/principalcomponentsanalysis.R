@@ -740,7 +740,7 @@ scaleDataUsingWeights <- function(data, weights)
 
 
 # Calculate the (effective) sample size for each pair of variables in data
-#' @importFrom verbs Sum
+#' @importFrom verbs Sum SumEmptyHandling
 sampleSizeMatrix <- function(data, weights)
 {
     if (is.null(weights))
@@ -754,12 +754,16 @@ sampleSizeMatrix <- function(data, weights)
         for (col in 1L:numvars)
         {
             if (row == col) {
-                sample.size.matrix[row, row] <- Sum(weights[!is.na(data[, row])], remove.missing = FALSE)
+                # Sample size would be zero if
+                # length of summand is zero
+                sample.size.matrix[row, row] <- SumEmptyHandling(weights[!is.na(data[, row])], remove.missing = FALSE)
             }
             else
             {
                 indicator <- !is.na(data[, row] * data[, col])
-                sample.size <- Sum(weights[indicator], remove.missing = FALSE)
+                # Sample size would be zero if
+                # length of summand is zero
+                sample.size <- SumEmptyHandling(weights[indicator], remove.missing = FALSE)
                 sample.size.matrix[row, col] <- sample.size
                 sample.size.matrix[col, row] <- sample.size
             }
