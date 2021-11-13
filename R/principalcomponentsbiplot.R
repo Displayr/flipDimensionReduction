@@ -68,7 +68,7 @@ PrincipalComponentsBiplot <- function(x,
     res$row.color <- row.color
     res$col.color <- col.color
     res$output <- output
-    class(res) <- "PCAbiplot"
+    class(res) <- c("PCAbiplot", "visualization-selector")
 
     evals <- res$d ^ 2
     pvar <- evals/Sum(evals, remove.missing = FALSE) * 100

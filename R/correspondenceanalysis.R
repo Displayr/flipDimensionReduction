@@ -766,6 +766,7 @@ CAQuality <- function(x)
     colnames(q) <- paste0(colnames(q), "\n", e)
     rownames(q) <- paste(FormatAsPercent((q[, 1] + q[, 2])/100, decimals = 0, pad = TRUE, remove.leading.0 = TRUE), rownames(q))
     attr(q, "statistic") <- "Quality %"
+    class(q) <- c(class(q), "visualization-selector")
     q
 }
 

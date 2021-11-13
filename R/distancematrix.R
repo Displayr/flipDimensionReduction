@@ -159,7 +159,7 @@ DistanceMatrix <- function(input.data,
     output <- list(distance = distance.matrix, show.cell.values = show.cell.values,
                    show.row.labels = show.row.labels, show.column.labels = show.column.labels,
                    measure = measure)
-    class(output) <- "DistanceMatrix"
+    class(output) <- c("DistanceMatrix", "visualization-selector")
     output
 }
 

@@ -434,6 +434,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
                       xaxis = list(title = "Component Number"))
     my.plot$sizingPolicy$browser$padding <- if (trim.padding) 0 else 40
     my.plot <- plotly::config(p = my.plot, displayModeBar = FALSE)
+    class(my.plot) <- c(class(my.plot), "visualization-selector")
     return(my.plot)
 }
 
@@ -491,7 +492,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
                   length = length(groups))
     # Append a transparent point to force the origin to be shown
     # Note that axis bounds cannot be set with fixed.aspect
-    LabeledScatter(X = c(0, coords[, 1]),
+    res <- LabeledScatter(X = c(0, coords[, 1]),
                    Y = c(0, coords[, 2]),
                    label = c(" ", labels),
                    group = c("Origin", groups),
@@ -506,7 +507,8 @@ ComponentPlot <- function(x, show.labels = TRUE)
                    y.title.font.size = 16,
                    x.title.font.size = 16,
                    legend.show = FALSE)
-
+    class(res) <- c(class(res), "visualization-selector")
+    res
 }
 
 #' @importFrom verbs Sum SumColumns
