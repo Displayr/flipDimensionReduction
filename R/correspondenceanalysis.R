@@ -749,7 +749,7 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' @param x The object to compute quality for.
 #' @importFrom methods is
 #' @importFrom flipFormat FormatAsPercent
-#' @importFrom verbs SumColumns
+#' @importFrom verbs SumEachColumn
 #' @export
 CAQuality <- function(x)
 {
@@ -759,7 +759,7 @@ CAQuality <- function(x)
     n <- CANormalization(or, "Principal")
     row.masses <- x$original$rowmass
     row.masses[is.na(row.masses)] <- 0
-    e <- SumColumns(sweep(n$row.coordinates^2, 1, row.masses, "*"), remove.missing = FALSE)
+    e <- SumEachColumn(sweep(n$row.coordinates^2, 1, row.masses, "*"), remove.missing = FALSE)
     e <- FormatAsPercent(prop.table(e), decimals = 1, remove.leading.0 = TRUE)
     q <- rbind(n$row.coordinates, n$column.coordinates)
     q <- prop.table(q ^ 2, 1) * 100
@@ -769,4 +769,3 @@ CAQuality <- function(x)
     class(q) <- c(class(q), "visualization-selector")
     q
 }
-

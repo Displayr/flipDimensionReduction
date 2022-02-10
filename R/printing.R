@@ -22,7 +22,7 @@ sortLoadings <- function(x) {
 
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
-#' @importFrom verbs Sum SumRows SumColumns
+#' @importFrom verbs Sum SumRows SumEachColumn
 #' @export
 #' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
@@ -137,18 +137,18 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
 
         ss.loadings <- if (oblique.rotation)
-            SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
+            SumEachColumn(x$structure.matrix ^ 2, remove.missing = FALSE)
         else
-            SumColumns(x$loadings ^ 2, remove.missing = FALSE)
+            SumEachColumn(x$loadings ^ 2, remove.missing = FALSE)
 
         if (!oblique.rotation)
         {
-            ss.loadings <- SumColumns(x$loadings ^ 2, remove.missing = FALSE)
+            ss.loadings <- SumEachColumn(x$loadings ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue"
         }
         else
         {
-            ss.loadings <- SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
+            ss.loadings <- SumEachColumn(x$structure.matrix ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue*"
         }
 

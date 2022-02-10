@@ -447,7 +447,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
 #' @importFrom rhtmlLabeledScatter LabeledScatter
-#' @importFrom verbs SumColumns
+#' @importFrom verbs SumEachColumn
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
@@ -479,7 +479,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
 
     if (add.ve)
     {
-        ss.loadings <- SumColumns(x$loadings^2, remove.missing = FALSE)
+        ss.loadings <- SumEachColumn(x$loadings^2, remove.missing = FALSE)
         variance.explained <- ss.loadings/nrow(x$loadings)
         x.label <- sprintf("%s (%.1f%% variance explained)", x.label, variance.explained[1]*100)
         y.label <- sprintf("%s (%.1f%% variance explained)", y.label, variance.explained[2]*100)
@@ -511,7 +511,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
     res
 }
 
-#' @importFrom verbs Sum SumColumns
+#' @importFrom verbs Sum SumEachColumn
 #' @export
 ExtractChartData.flipFactorAnalysis <- function(x)
 {
@@ -563,7 +563,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
             return(res)
         }
 
-        ss.loadings <- SumColumns(x$loadings ^ 2, remove.missing = FALSE)
+        ss.loadings <- SumEachColumn(x$loadings ^ 2, remove.missing = FALSE)
         nvar <- ncol(x$original.data)
         ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
         ve.table <- rbind(`Sum of Square Loadings` = ss.loadings)
@@ -594,7 +594,7 @@ ExtractChartData.flipFactorAnalysis <- function(x)
     component.data <- x$loadings[,1:2]
     if (!(x$rotation %in% c("promax", "oblimin")))
     {
-        var.exp <- SumColumns(x$loadings^2, remove.missing = FALSE)/nrow(x$loadings)
+        var.exp <- SumEachColumn(x$loadings^2, remove.missing = FALSE)/nrow(x$loadings)
         colnames(component.data) <- sprintf("Component %d (%.1f%% variance explained)",
                                             1:2, var.exp[1:2] * 100)
     }

@@ -229,7 +229,7 @@ print.mcaObj <- function(x, digits = 3, ...)
 #' @param ... Not used.
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
-#' @importFrom verbs SumRows SumColumns
+#' @importFrom verbs SumRows SumEachColumn
 #' @export
 
 fitted.mcaObj <- function(object, ...)
@@ -249,7 +249,7 @@ fitted.mcaObj <- function(object, ...)
     ndim <- ncol(object$colcoord)
     ndata <- nrow(tab.newdata)
     nq <- ncol(newdata)
-    csum <- SumColumns(tab.newdata, remove.missing = FALSE)
+    csum <- SumEachColumn(tab.newdata, remove.missing = FALSE)
     denom <- sqrt(csum * nq)
     zx <- sweep(tab.newdata, 2, denom, "/")
     x.svd <- svd(zx)
