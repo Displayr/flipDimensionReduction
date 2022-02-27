@@ -30,6 +30,7 @@ r_packages:
   - devtools
   - roxygen2
   - covr
+  - htmlwidgets
 
 r_github_packages:
   - Displayr/flipDevTools
