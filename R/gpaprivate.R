@@ -2,14 +2,14 @@
 # GPArotation is licensed under GPLv3
 
 # GPArotation:::NormalizingWeight
-#' @importFrom verbs SumRows
+#' @importFrom verbs SumEachRow
 gpa.normalizing.weight <- function (A, normalize = FALSE)
 {
     if ("function" == mode(normalize))
         normalize <- normalize(A)
     if (is.logical(normalize)) {
         if (normalize)
-            normalize <- sqrt(SumRows(A^2, remove.missing = FALSE))
+            normalize <- sqrt(SumEachRow(A^2, remove.missing = FALSE))
         else return(array(1, dim(A)))
     }
     if (is.vector(normalize)) {
