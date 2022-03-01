@@ -229,7 +229,7 @@ print.mcaObj <- function(x, digits = 3, ...)
 #' @param ... Not used.
 #' @importFrom flipTransformations FactorToIndicators
 #' @importFrom flipFormat Labels
-#' @importFrom verbs SumRows SumColumns
+#' @importFrom verbs SumEachRow SumEachColumn
 #' @export
 
 fitted.mcaObj <- function(object, ...)
@@ -241,7 +241,7 @@ fitted.mcaObj <- function(object, ...)
     colnames(tab.newdata) <- sprintf("%s:%s", rep(make.names(colnames(newdata)), unlist(lapply(newdata, nlevels))),
                                      unlist(lapply(newdata, levels)))
     extra.levels <- setdiff(colnames(tab.newdata), object$levelnames.ord)
-    if (length(extra.levels) > 0 && SumRows(tab.newdata[,extra.levels], remove.missing = FALSE) > 0)
+    if (length(extra.levels) > 0 && SumEachRow(tab.newdata[,extra.levels], remove.missing = FALSE) > 0)
         warning("Factor levels of new data contains levels not in estimation data: ",
              paste(extra.levels, collapse=", "), "\n")
     tab.newdata <- tab.newdata[,object$levelnames.ord]
@@ -249,7 +249,7 @@ fitted.mcaObj <- function(object, ...)
     ndim <- ncol(object$colcoord)
     ndata <- nrow(tab.newdata)
     nq <- ncol(newdata)
-    csum <- SumColumns(tab.newdata, remove.missing = FALSE)
+    csum <- SumEachColumn(tab.newdata, remove.missing = FALSE)
     denom <- sqrt(csum * nq)
     zx <- sweep(tab.newdata, 2, denom, "/")
     x.svd <- svd(zx)

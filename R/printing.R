@@ -22,7 +22,7 @@ sortLoadings <- function(x) {
 
 #' @importFrom stats lm.fit setNames
 #' @importFrom flipFormat PCALoadingsTable VarianceExplainedTable FormatAsReal FormatAsPercent ExtractCommonPrefix Labels
-#' @importFrom verbs Sum SumRows SumColumns
+#' @importFrom verbs Sum SumEachRow SumEachColumn
 #' @export
 #' @method print flipFactorAnalysis
 print.flipFactorAnalysis <- function(x, digits = 3,...)
@@ -73,7 +73,7 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 
     if (x$missing == "Use partial data (pairwise correlations)" || x$missing == "pairwise")
     {
-        min.sample <- length(which(!is.na(SumRows(x$data.used$subset.data, remove.missing = FALSE))))
+        min.sample <- length(which(!is.na(SumEachRow(x$data.used$subset.data, remove.missing = FALSE))))
         max.sample <- nrow(x$data.used$subset.data)
         caption.info$sample <- paste0("Sample size: ", min.sample, " to ", max.sample)
 
@@ -137,18 +137,18 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
             warning(paste0("The structure matrix is the same as the loadings matrix for the rotation option: ", x$rotation))
 
         ss.loadings <- if (oblique.rotation)
-            SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
+            SumEachColumn(x$structure.matrix ^ 2, remove.missing = FALSE)
         else
-            SumColumns(x$loadings ^ 2, remove.missing = FALSE)
+            SumEachColumn(x$loadings ^ 2, remove.missing = FALSE)
 
         if (!oblique.rotation)
         {
-            ss.loadings <- SumColumns(x$loadings ^ 2, remove.missing = FALSE)
+            ss.loadings <- SumEachColumn(x$loadings ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue"
         }
         else
         {
-            ss.loadings <- SumColumns(x$structure.matrix ^ 2, remove.missing = FALSE)
+            ss.loadings <- SumEachColumn(x$structure.matrix ^ 2, remove.missing = FALSE)
             eigenvalue.label <- "Eigenvalue*"
         }
 
