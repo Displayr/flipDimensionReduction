@@ -438,6 +438,46 @@ CorrespondenceAnalysis = function(x,
     }
     attr(result, "ChartData") <- cdat
     attr(result, "ChartType") <- if (output == "Bubble Chart") "Bubble" else "X Y Scatter"
+    
+    chart.labels <- list(PrimaryAxisTitle = colnames(cdat)[1],
+                         ValueAxisTitle = colnames(cdat)[2],
+                         ChartTitle = chart.title)
+    
+    chart.settings = list()
+    grid.format = list(Style = "Solid", Color = "#E1E1E1", Width = 1)
+    label.font.settings = list(color = "#2C2C2C", family = "Arial")
+    chart.settings$TemplateSeries <- list(list(ShowDataLabels = TRUE, 
+                                               DataLabelsFont = list(color = row.color, 
+                                                                     size = labels.font.size,
+                                                                     family = "Arial"),
+                                               OutlineColor = row.color,
+                                               Marker = list(BackgroundColor = paste0(row.color, "FF"),
+                                                             OutlineStyle = "None")), 
+                                          list(ShowDataLabels = TRUE, 
+                                               DataLabelsFont = list(color = col.color, 
+                                                                     size = labels.font.size,
+                                                                     family = "Arial"),
+                                               OutlineColor = col.color,
+                                               Marker = list(BackgroundColor = paste0(col.color, "FF"),
+                                                             OutlineStyle = "None")))
+    chart.settings$ValueAxis <- list(ShowTitle = TRUE, 
+                                     Crosses = "Minimum",
+                                     LabelsFont = c(label.font.settings, size = axis.font.size),
+                                     TitleFont = c(label.font.settings, size = y.title.font.size))
+    chart.settings$PrimaryAxis <- list(ShowTitle = TRUE, 
+                                       LabelPosition = "Low",
+                                       LabelsFont = c(label.font.settings, size = axis.font.size),
+                                       TitleFont = c(label.font.settings, size = x.title.font.size))
+    if (show.gridlines) {
+        chart.settings$ValueAxis$MajorGridLine = grid.format
+        chart.settings$PrimaryAxis$MajorGridLine = grid.format
+    }
+    chart.settings$ShowChartTitle = TRUE
+    chart.settings$ChartTitleFont = c(label.font.settings, size = title.font.size)
+    chart.settings$Legend = list(Font = list(label.font.settings, size = legend.font.size))
+
+    attr(result, "ChartLabels") <- chart.labels
+    attr(result, "ChartSettings") <- chart.settings 
     result
 }
 
