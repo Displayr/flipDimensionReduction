@@ -444,7 +444,7 @@ CorrespondenceAnalysis = function(x,
                          ChartTitle = chart.title)
     
     chart.settings = list()
-    grid.format = if (show.gridlines) list(Style = "Solid", Color = "#E1E1E1", Width = 1) else NULL
+    grid.format = list(Style = "Solid", Color = "#E1E1E1", Width = 1)
     label.font.settings = list(color = "#2C2C2C", family = "Arial")
     chart.settings$TemplateSeries <- list(list(ShowDataLabels = TRUE, 
                                                DataLabelsFont = list(color = row.color, 
@@ -455,15 +455,17 @@ CorrespondenceAnalysis = function(x,
                                                                      size = labels.font.size,
                                                                      family = "Arial")))
     chart.settings$ValueAxis <- list(ShowTitle = TRUE, 
-                                     Crosses = "Minimum", 
-                                     MajorGridLine = grid.format,
+                                     Crosses = "Minimum",
                                      LabelsFont = c(label.font.settings, size = axis.font.size),
                                      TitleFont = c(label.font.settings, size = y.title.font.size))
     chart.settings$PrimaryAxis <- list(ShowTitle = TRUE, 
-                                       LabelPosition = "Low",  
-                                       MajorGridLine = grid.format,
+                                       LabelPosition = "Low",
                                        LabelsFont = c(label.font.settings, size = axis.font.size),
                                        TitleFont = c(label.font.settings, size = x.title.font.size))
+    if (show.gridlines) {
+        chart.settings$ValueAxis$MajorGridLine = grid.format
+        chart.settings$PrimaryAxis$MajorGridLine = grid.format
+    }
     chart.settings$ShowChartTitle = TRUE
     chart.settings$ChartTitleFont = c(label.font.settings, size = title.font.size)
     chart.settings$Legend = list(Font = list(label.font.settings, size = legend.font.size))
