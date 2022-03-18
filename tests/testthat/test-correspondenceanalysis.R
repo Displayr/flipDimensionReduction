@@ -118,6 +118,12 @@ for (output in c("Scatterplot", "Moonplot", "Text"))
         expect_equivalent(attr(res, "ChartType"), "X Y Scatter")
         chartDataEquivalent(attr(res, "ChartData"), expected.chart.data)
 
+        if (output == "Text") {
+            expect_true(is.null(attr(res, "ChartSettings")))
+        } else {
+          expect_true(!is.null(attr(res, "ChartSettings")))
+        }
+
         expect_error(CorrespondenceAnalysis(x, output=output), NA)
         # 3D array with no names
         z <- array(NA, c(8,11,2))
