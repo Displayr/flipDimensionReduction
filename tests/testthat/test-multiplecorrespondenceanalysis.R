@@ -4,11 +4,9 @@ data("cola", package="flipExampleData")
 output = "Scatterplot"
 wg <- as.numeric(cola$LastResp)/4
 
-default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, output = "Scatterplot")
-weighted.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, weights=wg)
-label.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, show.labels=T)
-
 test_that("Attributes for charting", {
+    expect_error(default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16,
+        data=cola, output = "Scatterplot"), NA)
     expect_equal(attr(default.res, "ChartType"), "X Y Scatter")
     expect_equal(dimnames(attr(default.res, "ChartData")),
                  list(c("Q12:Every or nearly every day", "Q12:4 to 5 days a week",
@@ -25,6 +23,8 @@ test_that("Attributes for charting", {
 })
 
 test_that("MCA canonical correlation with no weighting", {
+          expect_error(default.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16,
+                       data=cola, output = "Scatterplot"), NA)
           expect_equal(round(default.res$sv[1:6], 3),
                        c(0.11,0.06,0.04,0.027,0.018,0.011))
           expect_equal(round(default.res$inertia.e[1:6], 3),
@@ -35,18 +35,18 @@ test_that("MCA canonical correlation with no weighting", {
 })
 
 test_that("MCA canonical correlation with weighting", {
+          expect_error(weighted.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16,
+                       data=cola, weights=wg), NA)
           expect_equal(round(weighted.res$sv[1:6], 3),
                        c(0.11,0.063,0.048,0.038,0.023,0.012))
           expect_equal(round(weighted.res$inertia.e[1:6], 3),
                        c(0.356,0.118,0.067,0.044,0.016,0.004))
-})
-
-test_that("No label names", {
           expect_equal(rownames(weighted.res$colpcoord)[1],
                        "Q12:Every or nearly every day")
 })
 
 test_that("Show names", {
+          expect_error(label.res <- MultipleCorrespondenceAnalysis(~Q12+Q13+Q14+Q15+Q16, data=cola, show.labels=T), NA)
           expect_equal(rownames(label.res$colpcoord)[1],
                        "Q12. How  often do you drink cola with alcohol:Every or nearly every day")
 })

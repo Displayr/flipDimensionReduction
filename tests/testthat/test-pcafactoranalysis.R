@@ -35,9 +35,9 @@ test_that("Smoothing of correlation matrix warnings", {
 test_that("PCA: binary", {
     zd <- cola[, match("Q24_1", names(cola)):match("Q24_10", names(cola))]
     z1 <- suppressWarnings(flipTransformations::AsNumeric(zd, binary = FALSE, remove.first = TRUE))
-    z <- PrincipalComponentsAnalysis(data = z1)
+    expect_error(z <- PrincipalComponentsAnalysis(data = z1), NA)
     z2 <- flipTransformations::AsNumeric(zd, binary = TRUE, remove.first = TRUE)
-    z <- PrincipalComponentsAnalysis(data = z2)
+    expect_error(z <- PrincipalComponentsAnalysis(data = z2), NA)
 })
 
 
@@ -505,11 +505,11 @@ test_that("Compare other measures with SPSS", {
 test_that("Imputation", {
 
 
-    test.pca <- suppressWarnings(PrincipalComponentsAnalysis(data = test.data.1,
+    expect_error(test.pca <- PrincipalComponentsAnalysis(data = test.data.1,
                                               missing = "Imputation (replace missing values with estimates)",
                                               print.type = "loadings",
                                               n.factors = 5,
-                                              suppress.small.coefficients = TRUE))
+                                              suppress.small.coefficients = TRUE), NA)
     #expect_equal(round(test.pca$loadings[4,3],3), 0.133)
 
 })

@@ -422,13 +422,13 @@ test_that(paste0("CorrespondenceAnalysis: font sizes"),
           {
               print(CorrespondenceAnalysis(x.with.labels))
               for (f in c(5, 10, 15))
-                  print(CorrespondenceAnalysis(x.with.labels),
+                  expect_error(print(CorrespondenceAnalysis(x.with.labels),
                         title.font.size = f,
                            x.title.font.size = f,
                         y.title.font.size = f,
                         labels.font.size = f,
                         axis.font.size = f,
-                        legend.font.size = f)
+                        legend.font.size = f), NA)
           }
 )
 

@@ -49,7 +49,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
     subset <- eval(substitute(subset), data, parent.frame())
     if (!is.null(subset))
     {
-        if (is.null(subset.description) | (class(subset.description) == "try-error") | !is.null(attr(subset, "name")))
+        if (is.null(subset.description) || inherits(subset.description, "try-error") || !is.null(attr(subset, "name")))
             subset.description <- Labels(subset)
         if (is.null(attr(subset, "name")))
             attr(subset, "name") <- subset.description
@@ -59,7 +59,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
 
     # Turn binary variables into proper factors
     data <- as.data.frame(lapply(data, function(x){
-        if (class(x) == "integer")
+        if (inherits(x, "integer"))
         {
             x.lev <- sort(unique(as.character(x)))
             if (all(x.lev == c("0", "1")))
