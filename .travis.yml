@@ -4,6 +4,7 @@ r:
 dist: bionic
 cache: packages
 warnings_are_errors: false
+latex: false
 
 # install debian libraries to match R-servers
 # update pre-installed packages to latest versions
@@ -13,9 +14,12 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev libnlopt-dev
   - sudo add-apt-repository -y ppa:cran/libgit2
-  - sudo apt-get install -y r-cran-rcpp r-cran-rcppeigen
   - sudo apt-get -qq update
   - sudo apt-get install libgit2-dev
+  - mkdir -p ~/.R/
+  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -g0 -flto -w" >> ~/.R/Makevars
+  - echo "CXX14FLAGS = -w -O3" >> ~/.R/Makevars
+  - sudo apt-get install -y r-cran-rcppeigen
   - rcode="options('testthat.progress.max_fails' = Inf); "
   - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="line.fail <- max(grep('FAIL', out)); "
@@ -30,7 +34,6 @@ r_packages:
   - devtools
   - roxygen2
   - covr
-  - htmlwidgets
 
 r_github_packages:
   - Displayr/flipDevTools
