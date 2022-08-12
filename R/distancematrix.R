@@ -72,12 +72,7 @@ DistanceMatrix <- function(input.data,
         dat <- dat[subset, , drop = FALSE]
 
         # Weight
-        wgt <- if (is.null(weights)) {
-            rep(1, nrow(dat))
-        } else {
-            weights
-        }
-        wgt <- wgt[subset]
+        wgt <- if (is.null(weights)) rep(1, nrow(dat)) else weights[subset]
     }
 
     # Filtering out missing values.
@@ -215,4 +210,3 @@ print.DistanceMatrix <- function(x, ...)
                           color_range = colour.range)
     print(dm)
 }
-

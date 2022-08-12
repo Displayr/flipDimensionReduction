@@ -45,10 +45,12 @@ test_that(paste0("DistanceMatrix outputs"), {
 
 test_that(paste0("DistanceMatrix others"), {
     expect_error(print(DistanceMatrix(z, weights = test.weight)), NA)
-    expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 0)), "Minkowski power must be positive *")
+    expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 0)),
+                 "Minkowski power must be positive *")
     expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 0.5)), NA)
     expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 1)), NA)
-    expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 1000)), "Minkowski power must be positive *")
+    expect_error(print(DistanceMatrix(z, distance.measure = "Minkowski", minkowski = 1000)),
+                 "Minkowski power must be positive and less than 100")
     expect_error(print(DistanceMatrix(z, compare = "Cases")), "There are more than 100 cases *")
     expect_error(print(DistanceMatrix(z[1:50, ], compare = "Cases")), NA)
     expect_error(print(DistanceMatrix(z, measure.transformation = "None")), NA)
@@ -57,4 +59,18 @@ test_that(paste0("DistanceMatrix others"), {
     expect_error(print(DistanceMatrix(z, measure.transformation = "Range [0,1]")), NA)
 })
 
-
+test_that("DS-3881: Distance matrix correctly applies filter", {
+    set.seed(12321)
+    n <- nrow(z)
+    subset <- sample(c(TRUE, FALSE), size = n, replace = TRUE)
+    unit.weights <- rep(1L, n)
+    d <- DistanceMatrix(z, subset = subset)
+    d.explicit.weights <- DistanceMatrix(z, subset = subset, weights = unit.weights)
+    expect_equal(d, d.explicit.weights)
+    output <- d[["distance"]]
+    expect_true(identical(dim(output), c(25L, 25L)))
+    expect_true(!anyNA(output))
+    expected.labels <- vapply(z, attr, character(1L), "label", USE.NAMES = FALSE)
+    expected.labels <- sub("q23: ", "", expected.labels, fixed = TRUE)
+    expect_equal(dimnames(output), replicate(2L, expected.labels, simplify = FALSE))
+})
