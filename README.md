@@ -4,7 +4,9 @@
 
 Algorithms for dimension reduction
 
-To install from GitHub
+## Installation
+
+To install from GitHub:
 ```
 require(devtools)
 install_github("Displayr/flipDimensionReduction", dependencies = NA)
@@ -21,5 +23,9 @@ version of R in order to build packages from source. Rtools can be downloaded fr
 
 Specifying `dependencies = NA` in `install_github` will not install packages listed
 in `Suggests` in the `DESCRIPTION` file (some of which may be proprietary and unavailable for download).
+
+## Submitting a bug report
+
+If you encounter a problem using the package, please open an [issue](https://github.com/Displayr/flipDimensionReduction/issues). To achieve a resolution as quickly as possible, please include a minimal, reproducible example of the bug, along with the exact error message or output you receive and the behavior you expect. Including the output of `sessionInfo()` in R can be helpful to reproduce the issue. Please see this [FAQ](https://community.rstudio.com/t/faq-whats-a-reproducible-example-reprex-and-how-do-i-create-one/5219), which has a number of useful tips on creating great reproducible examples. 
 
 [![Displayr logo](https://mwmclean.github.io/img/logo-header.png)](https://www.displayr.com)
