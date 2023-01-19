@@ -26,9 +26,9 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     \code{\link{vector}} to be used as a grouping variable, or
 #'     takes a distance \code{\link{matrix}}.
 #' @param algorithm Valid options are \code{"t-SNE"},
-#'     \code{"MDS - Metric"}, \code{"MDS - Non-metric"}, \code{"PCA"}
-#'     or \code{"UMAP"}, where the final two do not accept a distance
-#'     matrix as input.
+#'     \code{"MDS - Metric"}, \code{"MDS - Non-metric"}, or
+#'     \code{"PCA"}. Note that \code{'PCA'} does not accept a
+#'     distance matrix as input.
 #' @param data A \code{\link{data.frame}} with cases by row and
 #'     variables by column.
 #' @param data.groups A \code{\link{vector}} to be used as a grouping
@@ -42,7 +42,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     \code{data} to be analyzed.  Not used for \code{table} input.
 #' @param perplexity The perplexity coefficient which defines the
 #'     extent of the locality of the dimension reduction. Used only
-#'     when \code{algorithm} is \code{t-SNE} or \code{UMAP}.
+#'     when \code{algorithm} is \code{t-SNE}.
 #' @param binary If \code{TRUE}, unordered factors are converted to
 #'     dummy variables. Otherwise, their value attributes/levels are
 #'     used to coerce each factor to a single numeric variable. See
@@ -51,7 +51,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #'     standardize the data so each variable has a mean of 0 and
 #'     standard deviation of 1.
 #' @param seed Random seed. Used only when \code{algorithm} is
-#'     \code{"t-SNE"} or \code{"UMAP"}.
+#'     \code{"t-SNE"}.
 #' @param print.type Specifies output produced if algorithm is PCA.
 #' @param ... Other parameters passed to
 #'     \link{PrincipalComponentsAnalysis}.
@@ -193,7 +193,7 @@ DimensionReduction <- function(algorithm,
             rownames(expanded.embedding) <- rownames(data)
         result$embedding <- expanded.embedding
 
-        if (algorithm == "t-SNE" || algorithm == "UMAP") {
+        if (algorithm == "t-SNE") {
             # expand output to be same length as original data (not distance matrix).
             expanded.input <- matrix(nrow = length(subset), ncol = ncol(processed.data))
             expanded.input[used.subset] <- as.matrix(processed.data)

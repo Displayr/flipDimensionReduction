@@ -21,9 +21,9 @@ DimensionReduction(
 }
 \arguments{
 \item{algorithm}{Valid options are \code{"t-SNE"},
-\code{"MDS - Metric"}, \code{"MDS - Non-metric"}, \code{"PCA"}
-or \code{"UMAP"}, where the final two do not accept a distance
-matrix as input.}
+\code{"MDS - Metric"}, \code{"MDS - Non-metric"}, or
+\code{"PCA"}. Note that \code{'PCA'} does not accept a
+distance matrix as input.}
 
 \item{data}{A \code{\link{data.frame}} with cases by row and
 variables by column.}
@@ -43,7 +43,7 @@ called on \code{table} to create a numeric matrix from text.}
 
 \item{perplexity}{The perplexity coefficient which defines the
 extent of the locality of the dimension reduction. Used only
-when \code{algorithm} is \code{t-SNE} or \code{UMAP}.}
+when \code{algorithm} is \code{t-SNE}.}
 
 \item{binary}{If \code{TRUE}, unordered factors are converted to
 dummy variables. Otherwise, their value attributes/levels are
@@ -55,7 +55,7 @@ standardize the data so each variable has a mean of 0 and
 standard deviation of 1.}
 
 \item{seed}{Random seed. Used only when \code{algorithm} is
-\code{"t-SNE"} or \code{"UMAP"}.}
+\code{"t-SNE"}.}
 
 \item{print.type}{Specifies output produced if algorithm is PCA.}
 
