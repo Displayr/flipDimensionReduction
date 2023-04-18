@@ -1,0 +1,67 @@
+## tic Circle CI template: linux-deploy
+## revision date: 2022-08-28
+version: 2.1
+jobs:
+  r-release:
+    machine:
+        image: ubuntu-2204:current
+    resource_class: large
+
+    steps:
+      - checkout
+
+      # create a unique env var for the cache. Unfortunately normal env vars
+      # are not picked up by the cache, therefore this workaround is needed.
+      # See https://discuss.circleci.com/t/cannot-use-circle-yml-environment-variables-in-cache-keys/10994/7
+      - run: echo "$(Rscript -e 'cat(format(getRversion()))')" > /tmp/R_version
+      - run: echo "v1" > /tmp/cache_vers  # Increment this to invalidate cache
+      - restore_cache:
+          key: R-package-library-{{ checksum "/tmp/cache_vers" }}-{{ checksum "/tmp/R_version" }}
+
+      # install deps and check pkg ---------------------------------------------
+      - run:
+          name: "[r-release] Install dependencies"
+          command: |
+            sudo apt update -qq
+            sudo apt install -y software-properties-common dirmngr
+            sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+            wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+            sudo add-apt-repository -y "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+            sudo add-apt-repository -y ppa:c2d4u.team/c2d4u4.0+
+            sudo apt update && sudo apt install -y ccache pandoc libgit2-dev libharfbuzz-dev \
+            libfribidi-dev libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev \
+            libnlopt-dev libgdal-dev libproj-dev r-base r-cran-devtools
+            R -q -e 'if (!dir.exists("~/R/library")) dir.create("~/R/library", recursive = TRUE)'
+            echo -e 'options(Ncpus = 4, repos = structure(c(CRAN = "https://cloud.r-project.org/")))' > $HOME/.Rprofile
+            export R_HOME=`R RHOME`
+            echo -e ".libPaths(c('$HOME/R/library', '/usr/lib/R/site-library', '/usr/lib/R/library'))" | \
+            sudo tee -a $R_HOME/etc/Rprofile.site
+            R -q -e 'remotes::install_github("Displayr/flipDevTools")'
+            R -q -e 'options(warn = 2); devtools::install_deps(dependencies = TRUE)'
+
+      - save_cache:
+          key: R-package-library-{{ checksum "/tmp/cache_vers" }}-{{ checksum "/tmp/R_version" }}
+          paths:
+            - ../R/library
+
+      - run:
+          name: "Check package"
+          command: R -q -e 'rcmdcheck::rcmdcheck(args = c("--no-manual", "--ignore-vignettes", "--no-tests"), build_args = c("--no-build-vignettes"))'
+
+      - run:
+          name: "Run unit tests"
+          no_output_timeout: 80m
+          command: R -e 'q(status = flipDevTools::RunTestsOnCircleCI(), save = "no")'
+
+      - store_test_results:
+          path: testthat.xml
+
+      - store_artifacts:
+          path: testthat.xml
+
+workflows:
+  build-and-check-R-package:
+    jobs:
+      - r-release:
+          context:
+            - r_packages
