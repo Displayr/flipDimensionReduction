@@ -46,7 +46,11 @@ jobs:
 
       - run:
           name: "Check package"
-          command: R -q -e 'rcmdcheck::rcmdcheck(args = c("--no-manual", "--ignore-vignettes", "--no-tests"), build_args = c("--no-build-vignettes"))'
+          command: >-
+            R -q -e 'rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--ignore-vignettes", "--no-tests"),
+            build_args = c("--no-build-vignettes", "--no-manual"),
+            error_on = "warning")'
 
       - run:
           name: "Run unit tests"
