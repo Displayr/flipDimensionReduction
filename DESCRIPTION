@@ -40,11 +40,12 @@ Imports:
     verbs
 Remotes:
     Displayr/flipChartBasics,
-    Displayr/flipTransformations,
+    Displayr/flipData,
+    Displayr/flipExampleData,
     Displayr/flipImputation,
     Displayr/flipFormat,
     Displayr/flipTables,
-    Displayr/flipData,
+    Displayr/flipTransformations,
     Displayr/flipStatistics,
     Displayr/flipStandardCharts,
     Displayr/flipU,
