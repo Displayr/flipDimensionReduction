@@ -658,3 +658,14 @@ test_that("BANNER table", {
                                       columns.to.remove = "NET"),
                NA)
 })
+
+test_that("DS-4099: Informative message for single-colum inputs", {
+    test.cases <- list(1:10,
+                       as.matrix(1:10),
+                       as.data.frame(1:10))
+    expect.msg <- "Correspondence Analysis requires a table with both rows and columns."
+    expect_error(CorrespondenceAnalysis(test.cases, multiple.tables = TRUE), expect.msg)
+    for (case in test.cases) {
+        expect_error(CorrespondenceAnalysis(case), expect.msg)
+    }
+})

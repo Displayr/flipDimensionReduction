@@ -130,8 +130,9 @@ CorrespondenceAnalysis = function(x,
     # Multiple tables
     # note that a dataframe is actually a list
     x.stat <- attr(x, "statistic")
-    if (!is.null(dim(x[[1]])) && length(x) > 1 && !is.data.frame(x))
+    if (is.list(x) && length(x) > 1 && !is.data.frame(x))
     {
+        lapply(x, requireTwoDimensionsForCorrespondenceAnalysis)
         if (!output %in% c("Scatterplot", "Input Table"))
             stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
         row.color <- '#5B9BD5'
@@ -178,6 +179,7 @@ CorrespondenceAnalysis = function(x,
 
             x[[i]] <- x[[i]][r.names,c.names]
         }
+
         lapply(x, checkEmptyRowsOrColumns, transpose = transpose)
         x <- do.call(rbind, x)
         row.column.names <- r.names
@@ -204,6 +206,7 @@ CorrespondenceAnalysis = function(x,
 
         if (square)
         {
+            requireTwoDimensionsForCorrespondenceAnalysis(x, "Correspondence Analysis of a Square Table")
             if (output == "Moonplot")
                 stop("Output 'Moonplot' is not valid with square matrixes.")
             if (nrow(x) != ncol(x))
@@ -230,6 +233,7 @@ CorrespondenceAnalysis = function(x,
                              paste(r.names[which(is.na(c.ind))], collapse="', '")))
             x <- x[,c.ind]
         }
+        requireTwoDimensionsForCorrespondenceAnalysis(x)
         checkEmptyRowsOrColumns(x, transpose)
 
         if (output == "Bubble Chart")
@@ -442,57 +446,57 @@ CorrespondenceAnalysis = function(x,
         chart.labels <- list(PrimaryAxisTitle = colnames(cdat)[1],
                              ValueAxisTitle = colnames(cdat)[2],
                              ChartTitle = chart.title)
-        
+
 
         chart.settings = list()
-        
+
         if (output == "Moonplot") {
             chart.settings$TemplateSeries <- list(list(ShowDataLabels = TRUE), list(ShowDataLabels = TRUE))
-            chart.settings$ValueAxis <- list(ShowTitle = TRUE, 
+            chart.settings$ValueAxis <- list(ShowTitle = TRUE,
                                              Crosses = "Minimum")
-            chart.settings$PrimaryAxis <- list(ShowTitle = TRUE, 
+            chart.settings$PrimaryAxis <- list(ShowTitle = TRUE,
                                                LabelPosition = "Low")
-            
+
         } else {
             grid.format = list(Style = "Solid", Color = "#E1E1E1", Width = 1)
             label.font.settings = list(color = "#2C2C2C", family = "Arial")
-            chart.settings$TemplateSeries <- list(list(ShowDataLabels = TRUE, 
-                                                       DataLabelsFont = list(color = row.color, 
+            chart.settings$TemplateSeries <- list(list(ShowDataLabels = TRUE,
+                                                       DataLabelsFont = list(color = row.color,
                                                                              size = labels.font.size,
                                                                              family = "Arial"),
                                                        OutlineColor = row.color,
                                                        Marker = list(BackgroundColor = paste0(row.color, "FF"),
-                                                                     OutlineStyle = "None")), 
-                                                  list(ShowDataLabels = TRUE, 
-                                                       DataLabelsFont = list(color = col.color, 
+                                                                     OutlineStyle = "None")),
+                                                  list(ShowDataLabels = TRUE,
+                                                       DataLabelsFont = list(color = col.color,
                                                                              size = labels.font.size,
                                                                              family = "Arial"),
                                                        OutlineColor = col.color,
                                                        Marker = list(BackgroundColor = paste0(col.color, "FF"),
                                                                      OutlineStyle = "None")))
-            chart.settings$ValueAxis <- list(ShowTitle = TRUE, 
+            chart.settings$ValueAxis <- list(ShowTitle = TRUE,
                                              Crosses = "Minimum",
                                              LabelsFont = c(label.font.settings, size = axis.font.size),
                                              TitleFont = c(label.font.settings, size = y.title.font.size))
-            chart.settings$PrimaryAxis <- list(ShowTitle = TRUE, 
+            chart.settings$PrimaryAxis <- list(ShowTitle = TRUE,
                                                LabelPosition = "Low",
                                                LabelsFont = c(label.font.settings, size = axis.font.size),
                                                TitleFont = c(label.font.settings, size = x.title.font.size))
             if (show.gridlines) {
                 chart.settings$ValueAxis$MajorGridLine = grid.format
                 chart.settings$PrimaryAxis$MajorGridLine = grid.format
-            }    
+            }
             chart.settings$ChartTitleFont = c(label.font.settings, size = title.font.size)
             chart.settings$Legend = list(Font = list(label.font.settings, size = legend.font.size))
             chart.settings$ShowChartTitle = TRUE
-        } 
-        
+        }
+
         attr(result, "ChartLabels") <- chart.labels
-        attr(result, "ChartSettings") <- chart.settings 
-        
+        attr(result, "ChartSettings") <- chart.settings
+
     }
     result
-    
+
 }
 
 checkEmptyRowsOrColumns <- function(x, transpose)
@@ -822,4 +826,11 @@ CAQuality <- function(x)
     attr(q, "statistic") <- "Quality %"
     class(q) <- c(class(q), "visualization-selector")
     q
+}
+
+requireTwoDimensionsForCorrespondenceAnalysis <- function(x, feature.name = "Correspondence Analysis") {
+    # Only one statistic will be kept at this stage.
+    stop.msg <- paste0(feature.name, " requires a table with both rows and columns.")
+    if (is.null(dim(x)) || length(dim(x)) != 2 || any(dim(x) < 2))
+        stop(stop.msg)
 }
