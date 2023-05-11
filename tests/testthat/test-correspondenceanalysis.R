@@ -671,10 +671,13 @@ test_that("DS-4099: Informative message for single-colum inputs", {
 
     #Ensure multi-stat tables are not affected
     single.stat = x.with.labels
+    attr(single.stat, "name") <- "A"
     multi.stat = array(dim = c(dim(single.stat), 2))
     multi.stat[,,1] = single.stat
     multi.stat[,,2] = single.stat
+    class(multi.stat) <- c(class(multi.stat), "qTable", "QTable")
+    attr(multi.stat, "name") <- "B"
     dimnames(multi.stat) = c(dimnames(single.stat), list("Stat" = c("Stat 1", "Stat 2")))
-    CorrespondenceAnalysis(multi.stat)
-    CorrespondenceAnalysis(list("A" = single.stat, "B" = multi.stat))
+    expect_warning(CorrespondenceAnalysis(multi.stat), "Multiple statistics detected")
+    expect_warning(CorrespondenceAnalysis(list("A" = single.stat, "B" = multi.stat)), "Multiple statistics detected")
 })

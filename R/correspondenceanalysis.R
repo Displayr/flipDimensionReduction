@@ -831,6 +831,6 @@ CAQuality <- function(x)
 requireTwoDimensionsForCorrespondenceAnalysis <- function(x, feature.name = "Correspondence Analysis") {
     # Only one statistic will be kept at this stage.
     stop.msg <- paste0(feature.name, " requires a table with both rows and columns.")
-    if (is.null(dim(x)) || length(dim(x)) < 2 || any(dim(x)[1:2] < 2))
+    if (NROW(x) == 1L || NCOL(x)== 1L)
         stop(stop.msg)
 }
