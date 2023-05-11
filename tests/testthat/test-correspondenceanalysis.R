@@ -668,4 +668,13 @@ test_that("DS-4099: Informative message for single-colum inputs", {
     for (case in test.cases) {
         expect_error(CorrespondenceAnalysis(case), expect.msg)
     }
+
+    #Ensure multi-stat tables are not affected
+    single.stat = x.with.labels
+    multi.stat = array(dim = c(dim(single.stat), 2))
+    multi.stat[,,1] = single.stat
+    multi.stat[,,2] = single.stat
+    dimnames(multi.stat) = c(dimnames(single.stat), list("Stat" = c("Stat 1", "Stat 2")))
+    CorrespondenceAnalysis(multi.stat)
+    CorrespondenceAnalysis(list("A" = single.stat, "B" = multi.stat))
 })
