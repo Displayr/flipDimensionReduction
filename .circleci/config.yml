@@ -14,16 +14,23 @@ parameters:
   triggered-packages:
     type: string
     default: ""
+  executor:
+    type: enum
+    enum: [nightly, rocker, machine]
+    default: rocker
+
 workflows:
   build-and-check-R-package:
     jobs:
       - r-packages/build-and-check-package:
+          executor: << pipeline.parameters.executor >>
           name: BuildAndCheckPackage
           context:
             - r_packages
           remote-deps: << pipeline.parameters.remote-deps >>
           separate-test-job: false
       - r-packages/deploy-package:
+          executor: << pipeline.parameters.executor >>
           requires:
             - BuildAndCheckPackage
           context:
@@ -33,6 +40,7 @@ workflows:
               only:
                 - master
       - r-packages/trigger-revdeps:
+          executor: << pipeline.parameters.executor >>
           requires:
             - BuildAndCheckPackage
           context:
