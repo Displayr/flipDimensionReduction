@@ -16,20 +16,20 @@ parameters:
     default: ""
   executor:
     type: enum
-    enum: [nightly, rocker, machine]
-    default: rocker
+    enum: [nightly, rocker, machine, rocker_geo]
+    default: nightly
 
 workflows:
   build-and-check-R-package:
     jobs:
-      - r-packages/build-and-check-package:
+      - r-packages/build_and_check_package:
           executor: << pipeline.parameters.executor >>
           name: BuildAndCheckPackage
           context:
             - r_packages
-          remote-deps: << pipeline.parameters.remote-deps >>
-          separate-test-job: false
-      - r-packages/deploy-package:
+          remote_deps: << pipeline.parameters.remote-deps >>
+          separate_test_job: false
+      - r-packages/deploy_package:
           executor: << pipeline.parameters.executor >>
           requires:
             - BuildAndCheckPackage
@@ -39,14 +39,13 @@ workflows:
             branches:
               only:
                 - master
-      - r-packages/trigger-revdeps:
+      - r-packages/trigger_revdeps:
           executor: << pipeline.parameters.executor >>
           requires:
             - BuildAndCheckPackage
           context:
             - r_packages
-          remote-deps: << pipeline.parameters.remote-deps >>
-          plugins-branch: << pipeline.parameters.plugins-branch >>
-          trigger-message: << pipeline.parameters.trigger-message >>
-          triggered-packages: << pipeline.parameters.triggered-packages >>
-
+          remote_deps: << pipeline.parameters.remote-deps >>
+          plugins_branch: << pipeline.parameters.plugins-branch >>
+          trigger_message: << pipeline.parameters.trigger-message >>
+          triggered_packages: << pipeline.parameters.triggered-packages >>
