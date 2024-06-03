@@ -196,6 +196,7 @@ CorrespondenceAnalysis = function(x,
 
         row.column.names.attribute <- attr(x, "row.column.names")
         row.column.names <- names(dimnames(x))[1:2]
+        cat("line 199: row.column.names.attribute:", row.column.names.attribute, "\n")
 
         x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove, transpose = transpose)
@@ -203,6 +204,7 @@ CorrespondenceAnalysis = function(x,
             row.column.names <- attr(x, "row.column.names")
         else if (is.null(row.column.names))
             row.column.names <- c("Rows", "Columns")
+        cat("line 207: row.column.names:", row.column.names, "\n")
 
         if (square)
         {
