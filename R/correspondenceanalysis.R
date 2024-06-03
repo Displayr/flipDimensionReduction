@@ -414,10 +414,12 @@ CorrespondenceAnalysis = function(x,
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
+        cat("n1:", n1, "\n")
         # column.coordinates can be NULL for CA of square table
         n2 <- SumEmptyHandling(nrow(column.coordinates),
                                return.zero.if.null = TRUE,
                                return.zero.if.all.NA = TRUE)
+        cat("n2:", n2, "\n")
         groups <- rep(row.column.names, c(n1, n2))
     } else
     {
@@ -436,6 +438,7 @@ CorrespondenceAnalysis = function(x,
         attr(cdat, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = 3, colors =4)
     } else
     {
+        print(groups)
         cdat <-  data.frame(tmp.data, Group = groups,
             check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
         attr(cdat, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
