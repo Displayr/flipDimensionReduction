@@ -196,15 +196,13 @@ CorrespondenceAnalysis = function(x,
 
         row.column.names.attribute <- attr(x, "row.column.names")
         row.column.names <- names(dimnames(x))[1:2]
-        cat("line 199: row.column.names.attribute:", row.column.names.attribute, "\n")
 
         x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove, transpose = transpose)
         if (!is.null(row.column.names.attribute))
-            row.column.names <- attr(x, "row.column.names")
+            row.column.names <- row.column.names.attribute
         else if (is.null(row.column.names))
             row.column.names <- c("Rows", "Columns")
-        cat("line 207: row.column.names:", row.column.names, "\n")
 
         if (square)
         {
@@ -416,12 +414,10 @@ CorrespondenceAnalysis = function(x,
     if (num.tables == 1)
     {
         n1 <- nrow(row.coordinates)
-        cat("n1:", n1, "\n")
         # column.coordinates can be NULL for CA of square table
         n2 <- SumEmptyHandling(nrow(column.coordinates),
                                return.zero.if.null = TRUE,
                                return.zero.if.all.NA = TRUE)
-        cat("n2:", n2, "\n")
         groups <- rep(row.column.names, c(n1, n2))
     } else
     {
@@ -440,7 +436,6 @@ CorrespondenceAnalysis = function(x,
         attr(cdat, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = 3, colors =4)
     } else
     {
-        print(groups)
         cdat <-  data.frame(tmp.data, Group = groups,
             check.names = FALSE, check.rows = FALSE, stringsAsFactors = FALSE)
         attr(cdat, "scatter.variable.indices") <- c(x = 1, y = 2, sizes = NA, colors = 3)
