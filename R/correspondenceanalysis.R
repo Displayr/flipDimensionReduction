@@ -200,7 +200,7 @@ CorrespondenceAnalysis = function(x,
         x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
                         col.names.to.remove = column.names.to.remove, transpose = transpose)
         if (!is.null(row.column.names.attribute))
-            row.column.names <- attr(x, "row.column.names")
+            row.column.names <- row.column.names.attribute
         else if (is.null(row.column.names))
             row.column.names <- c("Rows", "Columns")
 
