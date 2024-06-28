@@ -221,7 +221,8 @@ print.mcaObj <- function(x, digits = 3, ...)
                               title.font.size = 20,
                               y.title.font.size = 16,
                               x.title.font.size = 16,
-                              plot.border.show = TRUE))
+                              plot.border.show = TRUE,
+                              origin = TRUE))
     }
 
 }

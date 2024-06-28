@@ -114,7 +114,8 @@ print.PCAbiplot <- function(x, ...)
                title.font.size = 20,
                y.title.font.size = 16,
                x.title.font.size = 16,
-               plot.border.show = TRUE))
+               plot.border.show = TRUE,
+               origin = TRUE))
     } else if (x$output == "Moonplot")
     {
         print(moonplot(x$rowcoords, x$colcoords))

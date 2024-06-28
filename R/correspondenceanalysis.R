@@ -701,6 +701,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
                               footer = wrapText(x$footer, x$footer.wrap.length),
                               footer.font.size = x$axis.font.size,
                               plot.border.show = TRUE,
+                              origin = TRUE,
                               debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
     } else if (x$square)
