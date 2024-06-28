@@ -507,7 +507,8 @@ ComponentPlot <- function(x, show.labels = TRUE)
                            title.font.size = 20,
                            y.title.font.size = 16,
                            x.title.font.size = 16,
-                           legend.show = FALSE)
+                           legend.show = FALSE,
+                           plot.border.show = TRUE)
     class(res) <- c(class(res), "visualization-selector")
     res
 }
