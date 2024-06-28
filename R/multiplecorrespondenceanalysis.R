@@ -174,6 +174,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #' @param digits Integer indicating number of decimal places to be used.
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom flipChartBasics ChartColors
 #' @export
 #' @method print mcaObj
@@ -205,21 +206,21 @@ print.mcaObj <- function(x, digits = 3, ...)
         lab <- x$variablenames
         if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
             lab[-(1:x$max.labels.plot)] <- ""
-        print(LabeledScatter(X = coords[,1],
-                       Y = coords[,2],
-                       label = lab,
-                       label.alt = x$variablenames,
-                       group = coords[,3],
-                       colors = gcolors,
-                       fixed.aspect = TRUE,
-                       title = x$chart.title,
-                       x.title = colnames(coords)[1],
-                       y.title = colnames(coords)[2],
-                       axis.font.size = 10,
-                       labels.font.size = 12,
-                       title.font.size = 20,
-                       y.title.font.size = 16,
-                       x.title.font.size = 16))
+        print(CombinedScatter(X = coords[,1],
+                              Y = coords[,2],
+                              label = lab,
+                              label.alt = x$variablenames,
+                              group = coords[,3],
+                              colors = gcolors,
+                              fixed.aspect = TRUE,
+                              title = x$chart.title,
+                              x.title = colnames(coords)[1],
+                              y.title = colnames(coords)[2],
+                              axis.font.size = 10,
+                              labels.font.size = 12,
+                              title.font.size = 20,
+                              y.title.font.size = 16,
+                              x.title.font.size = 16))
     }
 
 }

@@ -447,6 +447,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom verbs SumEachColumn
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
@@ -492,21 +493,21 @@ ComponentPlot <- function(x, show.labels = TRUE)
                   length = length(groups))
     # Append a transparent point to force the origin to be shown
     # Note that axis bounds cannot be set with fixed.aspect
-    res <- LabeledScatter(X = c(0, coords[, 1]),
-                   Y = c(0, coords[, 2]),
-                   label = c(" ", labels),
-                   group = c("Origin", groups),
-                   colors = c("transparent", colors),
-                   fixed.aspect = TRUE,
-                   title = "Component Plot",
-                   x.title = x.label,
-                   y.title = y.label,
-                   axis.font.size = 10,
-                   labels.font.size = 12,
-                   title.font.size = 20,
-                   y.title.font.size = 16,
-                   x.title.font.size = 16,
-                   legend.show = FALSE)
+    res <- CombinedScatter(X = c(0, coords[, 1]),
+                           Y = c(0, coords[, 2]),
+                           label = c(" ", labels),
+                           group = c("Origin", groups),
+                           colors = c("transparent", colors),
+                           fixed.aspect = TRUE,
+                           title = "Component Plot",
+                           x.title = x.label,
+                           y.title = y.label,
+                           axis.font.size = 10,
+                           labels.font.size = 12,
+                           title.font.size = 20,
+                           y.title.font.size = 16,
+                           x.title.font.size = 16,
+                           legend.show = FALSE)
     class(res) <- c(class(res), "visualization-selector")
     res
 }

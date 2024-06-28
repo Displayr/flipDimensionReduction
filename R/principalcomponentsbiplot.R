@@ -90,6 +90,7 @@ PrincipalComponentsBiplot <- function(x,
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom verbs Sum
 #' @export
@@ -99,7 +100,7 @@ print.PCAbiplot <- function(x, ...)
     if (x$output == "Scatterplot")
     {
        coords <- attr(x, "ChartData")
-       print(LabeledScatter(X = coords[,1],
+       print(CombinedScatter(X = coords[,1],
                Y = coords[,2],
                label = rownames(coords),
                group = coords[,3],
