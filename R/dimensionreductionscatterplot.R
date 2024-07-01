@@ -278,6 +278,7 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
+#' @importFrom flipStandardCharts CombinedScatter
 #' @importFrom verbs Sum
 #' @export
 #' @method print 2Dreduction
@@ -289,7 +290,7 @@ print.2Dreduction <- function(x, ...) {
                                  title = x$title,
                                  x.title = "Dimension 1",
                                  y.title = "Dimension 2",
-                                 data.label.font.size = 14,
+                                 labels.font.size = 14,
                                  x.title.font.size = 14,
                                  y.title.font.size = 14)
     }
