@@ -335,7 +335,6 @@ print.2Dreduction <- function(x, ...) {
         }
 
         chart <- flipStandardCharts::CombinedScatter(x = embedding,
-                                                     type = "Scatterplot",
                                                      title = title,
                                                      colors = colors,
                                                      y.title = "Dimension 2",

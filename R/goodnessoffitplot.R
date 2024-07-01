@@ -52,7 +52,6 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
         x.title <- paste0(x.title, " (normalized)")
     title <- paste0(object$title, " - Shepard Diagram - Rank correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
     res <- flipStandardCharts::CombinedScatter(x = y,
-                                               type = "Scatterplot",
                                                title = title,
                                                x.title = x.title,
                                                y.title = "Output distance")
