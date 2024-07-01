@@ -446,7 +446,6 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #'
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
-#' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom verbs SumEachColumn
 #' @export

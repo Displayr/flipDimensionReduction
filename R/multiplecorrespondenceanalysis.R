@@ -173,7 +173,6 @@ MultipleCorrespondenceAnalysis <- function(formula,
 #' @param x The multiple correspondance analysis object to be analysed.
 #' @param digits Integer indicating number of decimal places to be used.
 #' @param ... Not used
-#' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom flipChartBasics ChartColors
 #' @export

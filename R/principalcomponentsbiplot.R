@@ -89,7 +89,6 @@ PrincipalComponentsBiplot <- function(x,
 #' @description Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
 #' @param ... Not used
-#' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom verbs Sum

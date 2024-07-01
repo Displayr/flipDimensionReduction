@@ -32,7 +32,6 @@ Imports:
     reticulate,
     rhtmlCombinedScatter,
     rhtmlHeatmap,
-    rhtmlLabeledScatter,
     rhtmlMoonPlot,
     Rtsne,
     stats,
@@ -48,12 +47,10 @@ Remotes:
     Displayr/flipTables,
     Displayr/flipTransformations,
     Displayr/flipStatistics,
-    Displayr/flipStandardCharts,
     Displayr/flipU,
     Displayr/rhtmlCombinedScatter,
     Displayr/rhtmlHeatmap,
     Displayr/rhtmlMoonPlot,
-    Displayr/rhtmlLabeledScatter,
     Displayr/verbs
 RoxygenNote: 7.2.3
 Encoding: UTF-8
