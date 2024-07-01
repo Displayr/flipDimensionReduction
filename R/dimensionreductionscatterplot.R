@@ -299,7 +299,7 @@ print.2Dreduction <- function(x, ...) {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""
-        colors <- "Default colors"
+        colors <- c('#5B9BD5', '#ED7D31', '#A5A5A5', '#1EC000', '#4472C4', '#70AD47','#255E91','#9E480E','#636363','#997300','#264478','#43682B','#FF2323')
         title <- x$title
         set.seed(1066)
 
@@ -334,7 +334,8 @@ print.2Dreduction <- function(x, ...) {
                                                      colors = colors,
                                                      y.title = "Dimension 2",
                                                      x.title = "Dimension 1",
-                                                     scatter.labels.as.hovertext = TRUE)
+                                                     scatter.labels.as.hovertext = TRUE,
+                                                     footer = NULL)
     }
 
     print(chart)
