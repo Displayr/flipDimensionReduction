@@ -334,13 +334,13 @@ print.2Dreduction <- function(x, ...) {
             }
         }
 
-        chart <- CombinedScatter(x = embedding,
-                                 type = "Scatterplot",
-                                 title = title,
-                                 colors = colors,
-                                 y.title = "Dimension 2",
-                                 x.title = "Dimension 1",
-                                 scatter.labels.as.hovertext = TRUE)
+        chart <- flipStandardCharts::CombinedScatter(x = embedding,
+                                                     type = "Scatterplot",
+                                                     title = title,
+                                                     colors = colors,
+                                                     y.title = "Dimension 2",
+                                                     x.title = "Dimension 1",
+                                                     scatter.labels.as.hovertext = TRUE)
     }
 
     print(chart)
