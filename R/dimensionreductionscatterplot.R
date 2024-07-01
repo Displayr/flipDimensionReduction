@@ -306,30 +306,30 @@ print.2Dreduction <- function(x, ...) {
         embedding <- x$embedding[x$used.subset, ]
         groups <- x$data.groups[x$used.subset]
 
-        scatter.groups <- NULL
+        scatter.colors <- NULL
         if (!is.null(groups)) {
             if (is.factor(groups)) {
-                scatter.groups <- groups
+                scatter.colors <- groups
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == factor(groups, ordered = FALSE), remove.missing = FALSE) / length(groups)
                 title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
-                scatter.groups <- factor(groups)
+                scatter.colors <- factor(groups)
                 colors <- "Reds, light to dark"
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else {       # numeric: create 20 buckets and treat as factors
-                scatter.groups <- cut(groups, 20)
-                levels(scatter.groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(scatter.groups))
+                scatter.colors <- cut(groups, 20)
+                levels(scatter.colors) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(scatter.colors))
                 colors <- "Reds, light to dark"
             }
         }
 
         chart <- flipStandardCharts::CombinedScatter(x = embedding,
-                                                     scatter.groups = scatter.groups,
+                                                     scatter.colors = scatter.colors,
                                                      title = title,
                                                      colors = colors,
                                                      y.title = "Dimension 2",
