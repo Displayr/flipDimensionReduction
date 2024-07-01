@@ -306,35 +306,30 @@ print.2Dreduction <- function(x, ...) {
         embedding <- x$embedding[x$used.subset, ]
         groups <- x$data.groups[x$used.subset]
 
+        scatter.groups <- NULL
         if (!is.null(groups)) {
-
             if (is.factor(groups)) {
-                scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
-                scatter.group.labels <- paste(levels(groups), collapse = ", ")
+                scatter.groups <- groups
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == factor(groups, ordered = FALSE), remove.missing = FALSE) / length(groups)
                 title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
-                unique.labels <- sort(unique(groups))
-                indices <- match(groups, unique.labels)
-                scatter.group.labels <- paste(unique.labels, collapse = ", ")
-                scatter.group.indices <- paste(indices, collapse = ", ")
+                scatter.groups <- factor(groups)
                 colors <- "Reds, light to dark"
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else {       # numeric: create 20 buckets and treat as factors
-                groups <- cut(groups, 20)
-                scatter.group.indices <- paste(as.numeric(groups), collapse = ", ")
-                levels(groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(groups))
-                scatter.group.labels <- paste(levels(groups), collapse = ", ")
+                scatter.groups <- cut(groups, 20)
+                levels(scatter.groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(scatter.groups))
                 colors <- "Reds, light to dark"
             }
         }
 
         chart <- flipStandardCharts::CombinedScatter(x = embedding,
+                                                     scatter.groups = scatter.groups,
                                                      title = title,
                                                      colors = colors,
                                                      y.title = "Dimension 2",
