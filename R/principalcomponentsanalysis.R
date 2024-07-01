@@ -490,13 +490,11 @@ ComponentPlot <- function(x, show.labels = TRUE)
     groups <- 1:nrow(coords)
     colors <- rep(c('#5B9BD5', '#ED7D31', '#A5A5A5', '#1EC000', '#4472C4', '#70AD47','#255E91','#9E480E','#636363','#997300','#264478','#43682B','#FF2323'),
                   length = length(groups))
-    # Append a transparent point to force the origin to be shown
-    # Note that axis bounds cannot be set with fixed.aspect
-    res <- CombinedScatter(X = c(0, coords[, 1]),
-                           Y = c(0, coords[, 2]),
-                           label = c(" ", labels),
-                           group = c("Origin", groups),
-                           colors = c("transparent", colors),
+    res <- CombinedScatter(X = coords[, 1],
+                           Y = coords[, 2],
+                           label = labels,
+                           group = groups,
+                           colors = colors,
                            fixed.aspect = TRUE,
                            title = "Component Plot",
                            x.title = x.label,
