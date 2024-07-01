@@ -330,9 +330,8 @@ print.2Dreduction <- function(x, ...) {
 
         chart <- flipStandardCharts::CombinedScatter(x = embedding,
                                                      scatter.colors = scatter.colors,
-                                                     scatter.colors.name = NULL,
+                                                     scatter.colors.name = "",
                                                      title = title,
-                                                     colors = colors,
                                                      y.title = "Dimension 2",
                                                      x.title = "Dimension 1",
                                                      scatter.labels.as.hovertext = TRUE)
