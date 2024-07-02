@@ -302,7 +302,7 @@ print.2Dreduction <- function(x, ...) {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""
-        colors <- "Office colors"
+        colors <- ChartColors(12)
         title <- x$title
         set.seed(1066)
 
@@ -334,6 +334,7 @@ print.2Dreduction <- function(x, ...) {
         chart <- flipStandardCharts::CombinedScatter(x = embedding,
                                                      scatter.colors = scatter.colors,
                                                      scatter.colors.name = "",
+                                                     colors = colors,
                                                      title = title,
                                                      y.title = "Dimension 2",
                                                      x.title = "Dimension 1",
