@@ -319,7 +319,7 @@ print.2Dreduction <- function(x, ...) {
             }
             else if (all(groups == floor(groups))) {
                 scatter.colors <- factor(groups)
-                colors <- "Reds, light to dark"
+                colors <- ChartColors(length(unique(scatter.colors)), "Reds, light to dark")
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
@@ -327,7 +327,7 @@ print.2Dreduction <- function(x, ...) {
             else {       # numeric: create 20 buckets and treat as factors
                 scatter.colors <- cut(groups, 20)
                 levels(scatter.colors) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(scatter.colors))
-                colors <- "Reds, light to dark"
+                colors <- ChartColors(20, "Reds, light to dark")
             }
         }
 
