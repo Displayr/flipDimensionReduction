@@ -278,7 +278,6 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
-#' @importFrom flipStandardCharts CombinedScatter
 #' @importFrom verbs Sum
 #' @export
 #' @method print 2Dreduction
@@ -310,36 +309,34 @@ print.2Dreduction <- function(x, ...) {
         embedding <- x$embedding[x$used.subset, ]
         groups <- x$data.groups[x$used.subset]
 
-        scatter.colors <- NULL
         if (!is.null(groups)) {
             if (is.factor(groups)) {
-                scatter.colors <- groups
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == factor(groups, ordered = FALSE), remove.missing = FALSE) / length(groups)
                 title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else if (all(groups == floor(groups))) {
-                scatter.colors <- factor(groups)
-                colors <- ChartColors(length(unique(scatter.colors)), "Reds, light to dark")
+                groups <- factor(groups)
+                colors <- ChartColors(length(unique(groups)), "Reds, light to dark")
                 nearest <- knn.cv(train = embedding, cl = groups, k = 1)
                 same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
                 title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
             }
             else {       # numeric: create 20 buckets and treat as factors
-                scatter.colors <- cut(groups, 20)
-                levels(scatter.colors) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(scatter.colors))
+                groups <- cut(groups, 20)
+                levels(groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(groups))
                 colors <- ChartColors(20, "Reds, light to dark")
             }
         }
 
-        chart <- flipStandardCharts::CombinedScatter(x = embedding,
-                                                     scatter.colors = scatter.colors,
-                                                     scatter.colors.name = "",
-                                                     colors = colors,
-                                                     title = title,
-                                                     y.title = "Dimension 2",
-                                                     x.title = "Dimension 1",
-                                                     scatter.labels.as.hovertext = TRUE)
+        chart <- CombinedScatter(embedding[, 1],
+                                 embedding[, 2],
+                                 group = groups,
+                                 colors = colors,
+                                 title = title,
+                                 y.title = "Dimension 2",
+                                 x.title = "Dimension 1",
+                                 labels.show = FALSE)
     }
 
     print(chart)

@@ -17,7 +17,6 @@ GoodnessOfFitPlot.flipFactorAnalysis = function(object, max.points = 1000, ...) 
 #' @param object An object for which a summary is desired.
 #' @param max.points The maximum numner of points to plot.
 #' @param ... Additional arguments affecting the goodness-of-fit displayed.
-#' @importFrom flipStandardCharts CombinedScatter
 #' @importFrom stats cor complete.cases
 #' @importFrom utils combn
 #' @export
@@ -51,10 +50,11 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     if (object$normalized)
         x.title <- paste0(x.title, " (normalized)")
     title <- paste0(object$title, " - Shepard Diagram - Rank correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
-    res <- flipStandardCharts::CombinedScatter(x = y,
-                                               title = title,
-                                               x.title = x.title,
-                                               y.title = "Output distance")
+    res <- CombinedScatter(y[, 1],
+                           y[, 2],
+                           title = title,
+                           x.title = x.title,
+                           y.title = "Output distance")
     class(res) <- c(class(res), "visualization-selector")
     res
 }
