@@ -294,6 +294,7 @@ print.2Dreduction <- function(x, ...) {
                                  x.title.font.size = 14,
                                  y.title.font.size = 14,
                                  point.radius = 4,
+                                 fixed.aspect = TRUE,
                                  plot.border.show = TRUE,
                                  origin = TRUE)
     }
