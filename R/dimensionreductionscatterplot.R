@@ -292,7 +292,10 @@ print.2Dreduction <- function(x, ...) {
                                  y.title = "Dimension 2",
                                  labels.font.size = 14,
                                  x.title.font.size = 14,
-                                 y.title.font.size = 14)
+                                 y.title.font.size = 14,
+                                 point.radius = 4,
+                                 plot.border.show = TRUE,
+                                 origin = TRUE)
     }
 
     else {
