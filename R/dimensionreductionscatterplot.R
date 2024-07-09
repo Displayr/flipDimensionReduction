@@ -336,8 +336,7 @@ print.2Dreduction <- function(x, ...) {
                                  title = title,
                                  y.title = "Dimension 2",
                                  x.title = "Dimension 1",
-                                 labels.show = FALSE,
-                                 point.radius = 3)
+                                 labels.show = FALSE)
     }
 
     print(chart)
