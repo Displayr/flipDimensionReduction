@@ -54,7 +54,8 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
                            y[, 2],
                            title = title,
                            x.title = x.title,
-                           y.title = "Output distance")
+                           y.title = "Output distance",
+                           point.radius = 3)
     class(res) <- c(class(res), "visualization-selector")
     res
 }
