@@ -89,7 +89,7 @@ PrincipalComponentsBiplot <- function(x,
 #' @description Plots biplot of PCA analysis, showing both the component loadings and scores simultaneously.
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
 #' @param ... Not used
-#' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom verbs Sum
 #' @export
@@ -99,7 +99,7 @@ print.PCAbiplot <- function(x, ...)
     if (x$output == "Scatterplot")
     {
        coords <- attr(x, "ChartData")
-       print(LabeledScatter(X = coords[,1],
+       print(CombinedScatter(X = coords[,1],
                Y = coords[,2],
                label = rownames(coords),
                group = coords[,3],
@@ -112,7 +112,9 @@ print.PCAbiplot <- function(x, ...)
                labels.font.size = 12,
                title.font.size = 20,
                y.title.font.size = 16,
-               x.title.font.size = 16))
+               x.title.font.size = 16,
+               plot.border.show = TRUE,
+               origin = TRUE))
     } else if (x$output == "Moonplot")
     {
         print(moonplot(x$rowcoords, x$colcoords))
