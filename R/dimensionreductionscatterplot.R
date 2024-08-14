@@ -302,7 +302,8 @@ print.2Dreduction <- function(x, ...) {
                                      point.radius = 4,
                                      fixed.aspect = TRUE,
                                      plot.border.show = TRUE,
-                                     origin = TRUE)
+                                     origin = TRUE,
+                                     legend.show = FALSE)
         } else {
             chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
                                     label = x$label,
@@ -347,15 +348,21 @@ print.2Dreduction <- function(x, ...) {
             }
         }
 
-        chart <- CombinedScatter(embedding[, 1],
-                                  embedding[, 2],
-                                  group = groups,
-                                  colors = colors,
-                                  title = title,
-                                  y.title = "Dimension 2",
-                                  x.title = "Dimension 1",
-                                  labels.show = FALSE,
-                                  point.radius = 3)
+        # Reorder data so that legend is ordered according to factor levels
+        ind <- order(as.numeric(groups))
+
+        chart <- CombinedScatter(embedding[ind, 1],
+                                 embedding[ind, 2],
+                                 group = groups[ind],
+                                 colors = colors,
+                                 title = title,
+                                 y.title = "Dimension 2",
+                                 x.title = "Dimension 1",
+                                 labels.show = FALSE,
+                                 point.radius = 3,
+                                 x.axis.line.width = 0,
+                                 y.axis.line.width = 0,
+                                 legend.show = !is.null(groups))
     } else {
         # Scatterplot with groups
         scatter.group.indices <- ""
