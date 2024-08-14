@@ -60,6 +60,8 @@ standard deviation of 1.}
 
 \item{print.type}{Specifies output produced if algorithm is PCA.}
 
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
+
 \item{...}{Other parameters passed to
 \link{PrincipalComponentsAnalysis}.}
 }

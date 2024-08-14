@@ -11,12 +11,13 @@ DimensionReductionScatterplot <- function(algorithm,
                                           binary = TRUE,
                                           normalization = FALSE,
                                           seed = 1066,
+                                          use.combined.scatter = FALSE,
                                           ...)
 {
 
     DimensionReduction(algorithm, data = data, data.groups = data.groups, table = table, raw.table = raw.table,
                        subset = subset, perplexity = perplexity, binary = binary, normalization = normalization,
-                       seed = seed, ...)
+                       seed = seed, use.combined.scatter = use.combined.scatter, ...)
 }
 
 
