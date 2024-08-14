@@ -7,7 +7,7 @@
 ##' @param min.dist Controls how tightly the embedding is allowed compress points together.
 ##' @param seed Random seed.
 ##'
-##' importFrom reticulate import
+##' @importFrom reticulate import
 
 #UMAP <- function(data, n.neighbours = 10, min.dist = 0.1, seed = 1066) {
 
