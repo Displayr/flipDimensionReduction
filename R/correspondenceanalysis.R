@@ -45,6 +45,7 @@
 #' @param axis.font.size Font size of the labels on the x- and y-axis.
 #' @param legend.font.size Font size of the legend.
 #' @param footer.wrap.length Maximum number of characters in the footer. If longer, the text will be wrapped.
+#' @param use.combined.scatter Draw scatterplots using rhtmlCombinedScatter.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
 #' @importFrom flipU InterceptExceptions
@@ -86,6 +87,7 @@ CorrespondenceAnalysis = function(x,
                                   axis.font.size = 10,
                                   legend.font.size = 15,
                                   footer.wrap.length = 80,
+                                  use.combined.scatter = FALSE,
                                   ...)
 {
     # Backwards compatibility
@@ -396,7 +398,8 @@ CorrespondenceAnalysis = function(x,
                    y.title.font.size = y.title.font.size,
                    labels.font.size = labels.font.size,
                    axis.font.size = axis.font.size,
-                   legend.font.size = legend.font.size
+                   legend.font.size = legend.font.size,
+                   use.combined.scatter = use.combined.scatter
     )
     class(result) <- c("CorrespondenceAnalysis", "visualization-selector")
     nc <- min(ncol(row.coordinates), ncol(column.coordinates))
@@ -545,6 +548,7 @@ ExtractChartData.CorrespondenceAnalysis <- function(x)
 #' @import ca
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom flipTransformations TextAsVector
 #' @importFrom flipChartBasics ChartColors
 #' @importFrom verbs Sum
@@ -673,34 +677,66 @@ print.CorrespondenceAnalysis <- function(x, ...)
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
         g.ind <- 3 + (NCOL(coords) > 3)
-        print(LabeledScatter(X = coords[,1],
-                             Y = coords[,2],
-                             Z = if (NCOL(coords) > 3) coords[,3] else NULL,
-                             label = lab,
-                             label.alt = rownames(coords),
-                             group = if (x$num.tables == 1 && length(x$row.color) > 1) 1:NROW(coords) else coords[, g.ind],
-                             colors = colors,
-                             labels.logo.scale = logo.size,
-                             trend.lines.show = x$trend.lines,
-                             trend.lines.line.thickness = 1,
-                             trend.lines.point.size = 2,
-                             fixed.aspect = TRUE,
-                             title = x$chart.title,
-                             x.title = colnames(coords)[1],
-                             y.title = colnames(coords)[2],
-                             z.title = x$bubble.title,
-                             grid = x$show.gridlines,
-                             axis.font.size = x$axis.font.size,
-                             labels.font.size = x$labels.font.size,
-                             title.font.size = x$title.font.size,
-                             legend.show = x$num.tables==1 && !x$square && any(nchar(coords[,g.ind]) > 0) && length(x$row.color)== 1,
-                             legend.font.size = x$legend.font.size,
-                             y.title.font.size = x$y.title.font.size,
-                             x.title.font.size = x$x.title.font.size,
-                             footer = wrapText(x$footer, x$footer.wrap.length),
-                             footer.font.size = x$axis.font.size,
-                             debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
+        if (x$use.combined.scatter) {
+            print(CombinedScatter(X = coords[,1],
+                                  Y = coords[,2],
+                                  Z = if (NCOL(coords) > 3) coords[,3] else NULL,
+                                  label = lab,
+                                  label.alt = rownames(coords),
+                                  group = if (x$num.tables == 1 && length(x$row.color) > 1) 1:NROW(coords) else coords[, g.ind],
+                                  colors = colors,
+                                  labels.logo.scale = logo.size,
+                                  trend.lines.show = x$trend.lines,
+                                  trend.lines.line.thickness = 1,
+                                  trend.lines.point.size = 2,
+                                  fixed.aspect = TRUE,
+                                  title = x$chart.title,
+                                  x.title = colnames(coords)[1],
+                                  y.title = colnames(coords)[2],
+                                  z.title = x$bubble.title,
+                                  grid = x$show.gridlines,
+                                  axis.font.size = x$axis.font.size,
+                                  labels.font.size = x$labels.font.size,
+                                  title.font.size = x$title.font.size,
+                                  legend.show = x$num.tables==1 && !x$square && any(nchar(coords[,g.ind]) > 0) && length(x$row.color)== 1,
+                                  legend.font.size = x$legend.font.size,
+                                  y.title.font.size = x$y.title.font.size,
+                                  x.title.font.size = x$x.title.font.size,
+                                  footer = wrapText(x$footer, x$footer.wrap.length),
+                                  footer.font.size = x$axis.font.size,
+                                  plot.border.show = TRUE,
+                                  origin = TRUE,
+                                  debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
+        } else {
+            print(LabeledScatter(X = coords[,1],
+                                 Y = coords[,2],
+                                 Z = if (NCOL(coords) > 3) coords[,3] else NULL,
+                                 label = lab,
+                                 label.alt = rownames(coords),
+                                 group = if (x$num.tables == 1 && length(x$row.color) > 1) 1:NROW(coords) else coords[, g.ind],
+                                 colors = colors,
+                                 labels.logo.scale = logo.size,
+                                 trend.lines.show = x$trend.lines,
+                                 trend.lines.line.thickness = 1,
+                                 trend.lines.point.size = 2,
+                                 fixed.aspect = TRUE,
+                                 title = x$chart.title,
+                                 x.title = colnames(coords)[1],
+                                 y.title = colnames(coords)[2],
+                                 z.title = x$bubble.title,
+                                 grid = x$show.gridlines,
+                                 axis.font.size = x$axis.font.size,
+                                 labels.font.size = x$labels.font.size,
+                                 title.font.size = x$title.font.size,
+                                 legend.show = x$num.tables==1 && !x$square && any(nchar(coords[,g.ind]) > 0) && length(x$row.color)== 1,
+                                 legend.font.size = x$legend.font.size,
+                                 y.title.font.size = x$y.title.font.size,
+                                 x.title.font.size = x$x.title.font.size,
+                                 footer = wrapText(x$footer, x$footer.wrap.length),
+                                 footer.font.size = x$axis.font.size,
+                                 debug.mode = grepl("DEBUG_MODE_ON", x$chart.title)))
 
+        }
     } else if (x$square)
     {
         # Text output

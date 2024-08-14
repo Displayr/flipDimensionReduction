@@ -16,7 +16,8 @@ MultipleCorrespondenceAnalysis(
   auxiliary.data = NULL,
   chart.title = "Multiple correspondence analysis",
   max.labels.plot = 200,
-  show.labels = FALSE
+  show.labels = FALSE,
+  use.combined.scatter = FALSE
 )
 
 \method{fitted}{mcaObj}(object, ...)
@@ -47,6 +48,8 @@ as they will both slow down the data and are unlikely to be useful}
 \item{max.labels.plot}{A number specifying the maximum of labels of show in bubble or scatterplots. The remaining points will be shown without labels.}
 
 \item{show.labels}{A logical indicating whether \code{"Label"} attribute should be used for reporting results}
+
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
 
 \item{object}{Object of class \code{"mcaObj"} created using \code{MultipleComponentsAnalysis}.}
 

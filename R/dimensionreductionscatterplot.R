@@ -53,6 +53,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #' @param seed Random seed. Used only when \code{algorithm} is
 #'     \code{"t-SNE"}.
 #' @param print.type Specifies output produced if algorithm is PCA.
+#' @param use.combined.scatter Draw scatterplots using rhtmlCombinedScatter.
 #' @param ... Other parameters passed to
 #'     \link{PrincipalComponentsAnalysis}.
 #' @details For \code{data} input, all algorithms apart from
@@ -65,17 +66,18 @@ DimensionReductionScatterplot <- function(algorithm,
 #' @importFrom stats dist
 #' @export
 DimensionReduction <- function(algorithm,
-                                        data = NULL,
-                                        data.groups = NULL,
-                                        table = NULL,
-                                        raw.table = FALSE,
-                                        subset = NULL,
-                                        perplexity = 10,
-                                        binary = TRUE,
-                                        normalization = FALSE,
-                                        seed = 1066,
-                                        print.type = "2d",
-                                        ...)
+                               data = NULL,
+                               data.groups = NULL,
+                               table = NULL,
+                               raw.table = FALSE,
+                               subset = NULL,
+                               perplexity = 10,
+                               binary = TRUE,
+                               normalization = FALSE,
+                               seed = 1066,
+                               print.type = "2d",
+                               use.combined.scatter = FALSE,
+                               ...)
 {
     data.from.dropbox <- !is.null(data) && !is.data.frame(data) && is.list(data)
     if (data.from.dropbox)
@@ -203,6 +205,7 @@ DimensionReduction <- function(algorithm,
 
     result$data.groups <- data.groups
     result$normalized <- normalization
+    result$use.combined.scatter <- use.combined.scatter
     class(result) <- c("2Dreduction", "visualization-selector", class(result))
     attr(result, "ChartData") <- ExtractChartData(result)
     attr(result, "ChartType") <- "X Y Scatter"
@@ -264,7 +267,8 @@ convertFactorAnalysisTo2D <- function(x) {
                    used.subset = used.subset,
                    normalized = x$use.correlation,
                    input.is.distance = FALSE,
-                   title = "PCA")
+                   title = "PCA",
+                   use.combined.scatter = x$use.combined.scatter)
     class(output) <- c("2Dreduction", "flipFactorAnalysis")
     return(output)
 }
@@ -276,6 +280,7 @@ convertFactorAnalysisTo2D <- function(x) {
 #' @param x Object of class \code{"2Dreduction"}.
 #' @param ... Not used.
 #' @importFrom flipStandardCharts Chart
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom grDevices rgb
 #' @importFrom class knn.cv
 #' @importFrom flipU IsCount
@@ -285,19 +290,73 @@ convertFactorAnalysisTo2D <- function(x) {
 print.2Dreduction <- function(x, ...) {
 
     if (x$input.is.distance) {
-        chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
-                       label = x$label,
-                       fixed.aspect = TRUE,
-                       title = x$title,
-                       x.title = "Dimension 1",
-                       y.title = "Dimension 2",
-                       point.radius = 4,
-                       labels.font.size = 14,
-                       x.title.font.size = 14,
-                       y.title.font.size = 14)
+        if (x$use.combined.scatter) {
+            chart <- CombinedScatter(x$embedding[, 1], x$embedding[, 2],
+                                     label = x$label,
+                                     title = x$title,
+                                     x.title = "Dimension 1",
+                                     y.title = "Dimension 2",
+                                     labels.font.size = 14,
+                                     x.title.font.size = 14,
+                                     y.title.font.size = 14,
+                                     point.radius = 4,
+                                     fixed.aspect = TRUE,
+                                     plot.border.show = TRUE,
+                                     origin = TRUE)
+        } else {
+            chart <- LabeledScatter(x$embedding[, 1], x$embedding[, 2],
+                                    label = x$label,
+                                    fixed.aspect = TRUE,
+                                    title = x$title,
+                                    x.title = "Dimension 1",
+                                    y.title = "Dimension 2",
+                                    point.radius = 4,
+                                    labels.font.size = 14,
+                                    x.title.font.size = 14,
+                                    y.title.font.size = 14)
+        }
     }
+    else if (x$use.combined.scatter) {
+        # Scatterplot with groups
+        scatter.group.indices <- ""
+        scatter.group.labels <- ""
+        colors <- ChartColors(12)
+        title <- x$title
+        set.seed(1066)
 
-    else {
+        embedding <- x$embedding[x$used.subset, ]
+        groups <- x$data.groups[x$used.subset]
+
+        if (!is.null(groups)) {
+            if (is.factor(groups)) {
+                nearest <- knn.cv(train = embedding, cl = groups, k = 1)
+                same.category <- Sum(nearest == factor(groups, ordered = FALSE), remove.missing = FALSE) / length(groups)
+                title <- paste0(title, " - Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
+            }
+            else if (all(groups == floor(groups))) {
+                groups <- factor(groups)
+                colors <- ChartColors(length(unique(groups)), "Reds, light to dark")
+                nearest <- knn.cv(train = embedding, cl = groups, k = 1)
+                same.category <- Sum(nearest == groups, remove.missing = FALSE) / length(groups)
+                title <- paste0(title, ". Nearest neighbor accuracy: ", sprintf("%1.2f%%", 100 * same.category))
+            }
+            else {       # numeric: create 20 buckets and treat as factors
+                groups <- cut(groups, 20)
+                levels(groups) <- sub("[^,]*,([^]]*)\\]", "\\1", levels(groups))
+                colors <- ChartColors(20, "Reds, light to dark")
+            }
+        }
+
+        chart <- CombinedScatter(embedding[, 1],
+                                  embedding[, 2],
+                                  group = groups,
+                                  colors = colors,
+                                  title = title,
+                                  y.title = "Dimension 2",
+                                  x.title = "Dimension 1",
+                                  labels.show = FALSE,
+                                  point.radius = 3)
+    } else {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""

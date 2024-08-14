@@ -11,6 +11,7 @@
 #' @param column.names.to.remove A vector of the column labels to remove.
 #' @param row.color Color to display row-attributes in scatterplot.
 #' @param col.color Color to display column-attributes in scatterplot.
+#' @param use.combined.scatter Draw scatterplots using rhtmlCombinedScatter.
 #' @details Where a matrix or array is passed in containing names for the dimensions, these are used to represent the rows
 #' and columns in the legend. If there are no names, then the names are assumed to be the contents of \code{attr(x, "row.column.names")}.
 #' If there are still no names, they are assumed to be \code{Rows} and \code{Columns}, respectively.
@@ -31,7 +32,8 @@ PrincipalComponentsBiplot <- function(x,
                       row.names.to.remove = c("NET", "Total", "SUM"),
                       column.names.to.remove = c("NET", "Total", "SUM"),
                       row.color = '#5B9BD5',
-                      col.color = '#ED7D31')
+                      col.color = '#ED7D31',
+                      use.combined.scatter = FALSE)
 {
     row.column.names.attribute <- attr(x, "row.column.names")
     x <- TidyTabularData(x, row.names.to.remove = row.names.to.remove,
@@ -68,6 +70,7 @@ PrincipalComponentsBiplot <- function(x,
     res$row.color <- row.color
     res$col.color <- col.color
     res$output <- output
+    res$use.combined.scatter <- use.combined.scatter
     class(res) <- c("PCAbiplot", "visualization-selector")
 
     evals <- res$d ^ 2
@@ -90,6 +93,7 @@ PrincipalComponentsBiplot <- function(x,
 #' @param x An object created using \code{PrincipalComponentsBiplot}.
 #' @param ... Not used
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom rhtmlMoonPlot moonplot
 #' @importFrom verbs Sum
 #' @export
@@ -99,20 +103,39 @@ print.PCAbiplot <- function(x, ...)
     if (x$output == "Scatterplot")
     {
        coords <- attr(x, "ChartData")
-       print(LabeledScatter(X = coords[,1],
-               Y = coords[,2],
-               label = rownames(coords),
-               group = coords[,3],
-               colors = c(x$row.color, x$col.color),
-               fixed.aspect = TRUE,
-               title = "Principal Components Analysis Biplot",
-               x.title = colnames(coords)[1],
-               y.title = colnames(coords)[2],
-               axis.font.size = 10,
-               labels.font.size = 12,
-               title.font.size = 20,
-               y.title.font.size = 16,
-               x.title.font.size = 16))
+       if (x$use.combined.scatter) {
+           print(CombinedScatter(X = coords[,1],
+                                 Y = coords[,2],
+                                 label = rownames(coords),
+                                 group = coords[,3],
+                                 colors = c(x$row.color, x$col.color),
+                                 fixed.aspect = TRUE,
+                                 title = "Principal Components Analysis Biplot",
+                                 x.title = colnames(coords)[1],
+                                 y.title = colnames(coords)[2],
+                                 axis.font.size = 10,
+                                 labels.font.size = 12,
+                                 title.font.size = 20,
+                                 y.title.font.size = 16,
+                                 x.title.font.size = 16,
+                                 plot.border.show = TRUE,
+                                 origin = TRUE))
+       } else {
+           print(LabeledScatter(X = coords[,1],
+                                Y = coords[,2],
+                                label = rownames(coords),
+                                group = coords[,3],
+                                colors = c(x$row.color, x$col.color),
+                                fixed.aspect = TRUE,
+                                title = "Principal Components Analysis Biplot",
+                                x.title = colnames(coords)[1],
+                                y.title = colnames(coords)[2],
+                                axis.font.size = 10,
+                                labels.font.size = 12,
+                                title.font.size = 20,
+                                y.title.font.size = 16,
+                                x.title.font.size = 16))
+       }
     } else if (x$output == "Moonplot")
     {
         print(moonplot(x$rowcoords, x$colcoords))
