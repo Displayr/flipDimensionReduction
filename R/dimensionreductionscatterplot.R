@@ -338,7 +338,10 @@ print.2Dreduction <- function(x, ...) {
                                  y.title = "Dimension 2",
                                  x.title = "Dimension 1",
                                  labels.show = FALSE,
-                                 point.radius = 3)
+                                 point.radius = 3,
+                                 x.axis.line.width = 0,
+                                 y.axis.line.width = 0,
+                                 legend.show = !is.null(groups))
     }
 
     print(chart)
