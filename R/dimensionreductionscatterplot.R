@@ -295,7 +295,8 @@ print.2Dreduction <- function(x, ...) {
                                  point.radius = 4,
                                  fixed.aspect = TRUE,
                                  plot.border.show = TRUE,
-                                 origin = TRUE)
+                                 origin = TRUE,
+                                 legend.show = FALSE)
     }
 
     else {
