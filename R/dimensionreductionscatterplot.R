@@ -330,9 +330,12 @@ print.2Dreduction <- function(x, ...) {
             }
         }
 
-        chart <- CombinedScatter(embedding[, 1],
-                                 embedding[, 2],
-                                 group = groups,
+        # Reorder data so that legend is ordered according to factor levels
+        ind <- order(as.numeric(groups))
+
+        chart <- CombinedScatter(embedding[ind, 1],
+                                 embedding[ind, 2],
+                                 group = groups[ind],
                                  colors = colors,
                                  title = title,
                                  y.title = "Dimension 2",
