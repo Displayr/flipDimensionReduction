@@ -29,7 +29,6 @@ Imports:
     nloptr,
     plotly,
     psych,
-    reticulate,
     rhtmlCombinedScatter,
     rhtmlHeatmap,
     rhtmlLabeledScatter,

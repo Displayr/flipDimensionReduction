@@ -16,6 +16,7 @@ DimensionReduction(
   normalization = FALSE,
   seed = 1066,
   print.type = "2d",
+  use.combined.scatter = FALSE,
   ...
 )
 }
