@@ -52,7 +52,7 @@ GoodnessOfFitPlot.2Dreduction = function(object, max.points = 1000, ...) {
     if (object$normalized)
         x.title <- paste0(x.title, " (normalized)")
     title <- paste0(object$title, " - Shepard Diagram - Rank correlation: ", sprintf("%1.2f%%", 100 * correlation[2, 1]))
-    if (object$use.combined.scatter) {
+    if (!is.null(object$use.combined.scatter) && object$use.combined.scatter) {
         res <- CombinedScatter(y[, 1],
                                y[, 2],
                                title = title,

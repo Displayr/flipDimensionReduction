@@ -103,7 +103,7 @@ print.PCAbiplot <- function(x, ...)
     if (x$output == "Scatterplot")
     {
        coords <- attr(x, "ChartData")
-       if (x$use.combined.scatter) {
+       if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
            print(CombinedScatter(X = coords[,1],
                                  Y = coords[,2],
                                  label = rownames(coords),

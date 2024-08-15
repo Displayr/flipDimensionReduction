@@ -110,6 +110,7 @@ DimensionReduction <- function(algorithm,
                                            use.correlation = normalization,
                                            data.groups = data.groups,
                                            print.type = print.type,
+                                           use.combined.scatter = use.combined.scatter,
                                            ...)
         return(pca)
     }
@@ -291,7 +292,7 @@ convertFactorAnalysisTo2D <- function(x) {
 print.2Dreduction <- function(x, ...) {
 
     if (x$input.is.distance) {
-        if (x$use.combined.scatter) {
+        if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
             chart <- CombinedScatter(x$embedding[, 1], x$embedding[, 2],
                                      label = x$label,
                                      title = x$title,
@@ -318,7 +319,7 @@ print.2Dreduction <- function(x, ...) {
                                     y.title.font.size = 14)
         }
     }
-    else if (x$use.combined.scatter) {
+    else if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""
