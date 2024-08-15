@@ -24,7 +24,8 @@ PrincipalComponentsAnalysis(
   show.labels = TRUE,
   plot.labels = TRUE,
   data.groups = NULL,
-  tol = 1e-13
+  tol = 1e-13,
+  use.combined.scatter = FALSE
 )
 
 \method{fitted}{flipFactorAnalysis}(object, ...)
@@ -97,6 +98,8 @@ the analysis will stop. Note that the function \code{principal} from package \co
 own internal cuttoff as well.}
 
 \item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
+
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
 
 \item{...}{Not used.}
 }

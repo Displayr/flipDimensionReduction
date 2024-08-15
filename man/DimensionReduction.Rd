@@ -16,6 +16,7 @@ DimensionReduction(
   normalization = FALSE,
   seed = 1066,
   print.type = "2d",
+  use.combined.scatter = FALSE,
   ...
 )
 }
@@ -58,6 +59,8 @@ standard deviation of 1.}
 \code{"t-SNE"}.}
 
 \item{print.type}{Specifies output produced if algorithm is PCA.}
+
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
 
 \item{...}{Other parameters passed to
 \link{PrincipalComponentsAnalysis}.}

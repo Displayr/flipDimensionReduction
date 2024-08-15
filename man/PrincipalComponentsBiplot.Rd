@@ -12,7 +12,8 @@ PrincipalComponentsBiplot(
   row.names.to.remove = c("NET", "Total", "SUM"),
   column.names.to.remove = c("NET", "Total", "SUM"),
   row.color = "#5B9BD5",
-  col.color = "#ED7D31"
+  col.color = "#ED7D31",
+  use.combined.scatter = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ principal coordinates.}
 \item{row.color}{Color to display row-attributes in scatterplot.}
 
 \item{col.color}{Color to display column-attributes in scatterplot.}
+
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
 }
 \description{
 Performs PCA on a table and outputs biplot

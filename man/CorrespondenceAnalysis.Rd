@@ -39,6 +39,7 @@ CorrespondenceAnalysis(
   axis.font.size = 10,
   legend.font.size = 15,
   footer.wrap.length = 80,
+  use.combined.scatter = FALSE,
   ...
 )
 }
@@ -121,6 +122,8 @@ in the calculation of the coordinate space but to be plotted.}
 \item{legend.font.size}{Font size of the legend.}
 
 \item{footer.wrap.length}{Maximum number of characters in the footer. If longer, the text will be wrapped.}
+
+\item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
 
 \item{...}{Optional arguments for \code{\link[ca]{ca}}.}
 }

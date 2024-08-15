@@ -47,6 +47,7 @@
 #' @param tol When the correlation martrix (or covariance) matrix has any singular values below this number
 #'   the analysis will stop. Note that the function \code{principal} from package \code{psych} has its
 #'   own internal cuttoff as well.
+#' @param use.combined.scatter Draw scatterplots using rhtmlCombinedScatter.
 #'
 #' @details This uses \code{\link[psych]{principal}} from package \code{psych} to compute the unrotated
 #' PCA, and uses package \code{GPArotation} to find a rotated solution if required, to match SPSS' PCA. The
@@ -76,7 +77,8 @@ PrincipalComponentsAnalysis <- function(data,
                                show.labels = TRUE,
                                plot.labels = TRUE,
                                data.groups = NULL,
-                               tol = 1e-13)
+                               tol = 1e-13,
+                               use.combined.scatter = FALSE)
 {
     if (is.null(rownames(data)))
         rownames(data) <- 1:nrow(data)
@@ -344,7 +346,7 @@ PrincipalComponentsAnalysis <- function(data,
     results$missing <- missing
     results$component.correlations <- component.correlations
     results$data.groups <- data.groups
-
+    results$use.combined.scatter <- use.combined.scatter
 
     results$initial.communalities <- initial.communalities
     results$extracted.communalities <- extracted.communalities
@@ -447,6 +449,7 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @param x An object of class \code{flipFactorAnalysis}.
 #' @param show.labels Label the points with the row names.
 #' @importFrom rhtmlLabeledScatter LabeledScatter
+#' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom verbs SumEachColumn
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
@@ -490,23 +493,43 @@ ComponentPlot <- function(x, show.labels = TRUE)
     groups <- 1:nrow(coords)
     colors <- rep(c('#5B9BD5', '#ED7D31', '#A5A5A5', '#1EC000', '#4472C4', '#70AD47','#255E91','#9E480E','#636363','#997300','#264478','#43682B','#FF2323'),
                   length = length(groups))
-    # Append a transparent point to force the origin to be shown
-    # Note that axis bounds cannot be set with fixed.aspect
-    res <- LabeledScatter(X = c(0, coords[, 1]),
-                   Y = c(0, coords[, 2]),
-                   label = c(" ", labels),
-                   group = c("Origin", groups),
-                   colors = c("transparent", colors),
-                   fixed.aspect = TRUE,
-                   title = "Component Plot",
-                   x.title = x.label,
-                   y.title = y.label,
-                   axis.font.size = 10,
-                   labels.font.size = 12,
-                   title.font.size = 20,
-                   y.title.font.size = 16,
-                   x.title.font.size = 16,
-                   legend.show = FALSE)
+    if (isTRUE(x$use.combined.scatter)) {
+        res <- CombinedScatter(X = coords[, 1],
+                               Y = coords[, 2],
+                               label = labels,
+                               group = groups,
+                               colors = colors,
+                               fixed.aspect = TRUE,
+                               title = "Component Plot",
+                               x.title = x.label,
+                               y.title = y.label,
+                               axis.font.size = 10,
+                               labels.font.size = 12,
+                               title.font.size = 20,
+                               y.title.font.size = 16,
+                               x.title.font.size = 16,
+                               legend.show = FALSE,
+                               plot.border.show = TRUE,
+                               origin = TRUE)
+    } else {
+        # Append a transparent point to force the origin to be shown
+        # Note that axis bounds cannot be set with fixed.aspect
+        res <- LabeledScatter(X = c(0, coords[, 1]),
+                              Y = c(0, coords[, 2]),
+                              label = c(" ", labels),
+                              group = c("Origin", groups),
+                              colors = c("transparent", colors),
+                              fixed.aspect = TRUE,
+                              title = "Component Plot",
+                              x.title = x.label,
+                              y.title = y.label,
+                              axis.font.size = 10,
+                              labels.font.size = 12,
+                              title.font.size = 20,
+                              y.title.font.size = 16,
+                              x.title.font.size = 16,
+                              legend.show = FALSE)
+    }
     class(res) <- c(class(res), "visualization-selector")
     res
 }
