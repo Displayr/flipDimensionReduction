@@ -493,7 +493,7 @@ ComponentPlot <- function(x, show.labels = TRUE)
     groups <- 1:nrow(coords)
     colors <- rep(c('#5B9BD5', '#ED7D31', '#A5A5A5', '#1EC000', '#4472C4', '#70AD47','#255E91','#9E480E','#636363','#997300','#264478','#43682B','#FF2323'),
                   length = length(groups))
-    if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
+    if (isTRUE(x$use.combined.scatter)) {
         res <- CombinedScatter(X = coords[, 1],
                                Y = coords[, 2],
                                label = labels,

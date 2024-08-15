@@ -292,7 +292,7 @@ convertFactorAnalysisTo2D <- function(x) {
 print.2Dreduction <- function(x, ...) {
 
     if (x$input.is.distance) {
-        if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
+        if (isTRUE(x$use.combined.scatter)) {
             chart <- CombinedScatter(x$embedding[, 1], x$embedding[, 2],
                                      label = x$label,
                                      title = x$title,
@@ -319,7 +319,7 @@ print.2Dreduction <- function(x, ...) {
                                     y.title.font.size = 14)
         }
     }
-    else if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
+    else if (isTRUE(x$use.combined.scatter)) {
         # Scatterplot with groups
         scatter.group.indices <- ""
         scatter.group.labels <- ""

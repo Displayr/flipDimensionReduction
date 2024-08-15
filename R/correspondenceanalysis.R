@@ -677,7 +677,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
             lab[((x$max.col.labels.plot+1):n2)+n1.tot] <- ""
         }
         g.ind <- 3 + (NCOL(coords) > 3)
-        if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
+        if (isTRUE(x$use.combined.scatter)) {
             print(CombinedScatter(X = coords[,1],
                                   Y = coords[,2],
                                   Z = if (NCOL(coords) > 3) coords[,3] else NULL,

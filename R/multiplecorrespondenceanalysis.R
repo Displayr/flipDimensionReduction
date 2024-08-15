@@ -209,7 +209,7 @@ print.mcaObj <- function(x, digits = 3, ...)
         lab <- x$variablenames
         if (x$max.labels.plot > 0 && length(lab) > x$max.labels.plot)
             lab[-(1:x$max.labels.plot)] <- ""
-        if (!is.null(x$use.combined.scatter) && x$use.combined.scatter) {
+        if (isTRUE(x$use.combined.scatter)) {
             print(CombinedScatter(X = coords[,1],
                                   Y = coords[,2],
                                   label = lab,
