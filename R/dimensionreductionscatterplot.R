@@ -351,7 +351,7 @@ print.2Dreduction <- function(x, ...) {
         }
 
         # Reorder data so that legend is ordered according to factor levels
-        ind <- order(as.numeric(groups))
+        ind <- if (!is.null(groups)) order(as.numeric(groups)) else seq_len(nrow(embedding))
 
         chart <- CombinedScatter(embedding[ind, 1],
                                  embedding[ind, 2],
