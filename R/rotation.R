@@ -71,7 +71,7 @@ RotateLoadings <- function(loadings, rotation = "varimax", delta = 0, kappa = 4,
         iterations <- NULL
     } else
     {
-        stop("Rotation method of ", rotation, " is not supported.")
+        StopForUserError("Rotation method of ", rotation, " is not supported.")
     }
 
     # Kaiser un-normalization step
@@ -279,5 +279,3 @@ setFocus <- function(original, focus.i) {
                 colcoord = rotated.standard$column.coordinates,
                 sv = rotated.eigenvalues))
 }
-
-

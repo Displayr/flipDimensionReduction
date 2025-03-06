@@ -22,8 +22,8 @@
 #' @importFrom flipStatistics WeightedTable
 #' @importFrom ca mjca
 #' @importFrom verbs Sum
+#' @importFrom flipU StopForUserError
 #' @export
-
 MultipleCorrespondenceAnalysis <- function(formula,
                                            data = NULL,
                                            output = c("Text", "Scatterplot")[1],
@@ -74,9 +74,9 @@ MultipleCorrespondenceAnalysis <- function(formula,
     }), check.names=F)
 
     if (!is.null(weights) && length(weights) != nrow(data))
-        stop("length of weights does not match the number of observations in data\n")
+        StopForUserError("length of weights does not match the number of observations in data\n")
     if (!is.null(subset) && length(subset) > 1 && length(subset) != nrow(data))
-        stop("length of subset does not match the number of observations in data\n")
+        StopForUserError("length of subset does not match the number of observations in data\n")
 
     # MCA does not do prediction so no need to retain filtered data
     processed.data <- EstimationData(formula, data, subset, weights, missing)
@@ -91,7 +91,7 @@ MultipleCorrespondenceAnalysis <- function(formula,
         datfreq <- WeightedTable(data.used, weights=weights.used)
         dd <- dim(datfreq)
         if (length(dd) <= 2 && min(dd) <= 2)
-            stop("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
+            StopForUserError("Input data does not contain enough variables. Try using Correspondence Analysis instead.\n")
         obj <- try(mjca(datfreq, nd=NA), silent = TRUE)
     }
     else
@@ -112,12 +112,12 @@ MultipleCorrespondenceAnalysis <- function(formula,
         if (!inherits(tmp.obj, "try-error"))
         {
             if (Sum(tmp.obj$inertia.e > 1/tmp.obj$nd.max, remove.missing = FALSE) <= 1)
-                stop (err.msg, "Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
+                StopForUserError(err.msg, "Input data reduces to 1 standard coordinate. Try including additional variables in the analysis.")
             else
-                stop(err.msg, "Could not compute adjusted inertia.")
+                StopForUserError(err.msg, "Could not compute adjusted inertia.")
         }
         # Error for some other reason
-        stop(err.msg)
+        StopForUserError(err.msg)
     }
 
     # Label data output

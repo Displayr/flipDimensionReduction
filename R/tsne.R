@@ -12,11 +12,11 @@
 #' @importFrom flipTransformations AsNumeric
 #' @importFrom stats complete.cases
 #' @importFrom flipFormat Labels
-
+#' @importFrom flipU StopForUserError
 tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
 
     if (!is.distance && !all(sapply(data, is.numeric)))
-        stop("A numeric data.frame must be supplied.")
+        StopForUserError("A numeric data.frame must be supplied.")
 
     set.seed(seed)
 
@@ -42,4 +42,3 @@ tSNE <- function(data, is.distance = FALSE, perplexity = 10, seed = 1066) {
     class(output) <- "tSNE"
     return(output)
 }
-

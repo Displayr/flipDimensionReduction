@@ -97,9 +97,9 @@ when \code{"print.type"} is \code{"2d"}.}
 the analysis will stop. Note that the function \code{principal} from package \code{psych} has its
 own internal cuttoff as well.}
 
-\item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
-
 \item{use.combined.scatter}{Draw scatterplots using rhtmlCombinedScatter.}
+
+\item{object}{Object of class \code{"flipFactorAnalysis"} created using \code{PrincipalComponentsAnalysis}.}
 
 \item{...}{Not used.}
 }
