@@ -60,7 +60,7 @@ DimensionReductionScatterplot <- function(algorithm,
 #' @details For \code{data} input, all algorithms apart from
 #'     \code{PCA} remove duplicated data and any case with \code{NA}
 #'     is ignored by all algorithms.
-#' @importFrom flipU CopyAttributes
+#' @importFrom flipU CopyAttributes StopForUserError
 #' @importFrom flipData SplitFormQuestions
 #' @importFrom flipTransformations ParseUserEnteredTable AsNumeric
 #'     StandardizeData
@@ -95,16 +95,16 @@ DimensionReduction <- function(algorithm,
     }
 
     if (!xor(is.null(data), is.null(table)))
-        stop("One and only one of data and table must be supplied.")
+        StopForUserError("One and only one of data and table must be supplied.")
     if (!is.null(data.groups) && length(data.groups) != nrow(data))
-        stop("Lengths of data and data.groups must the the same.")
+        StopForUserError("Lengths of data and data.groups must the the same.")
     if (!is.null(data) && !(data.from.dropbox && !binary))
         data <- AsNumeric(ProcessQVariables(data), binary = binary, remove.first = TRUE)
 
     if (algorithm == "PCA")
     {
         if (is.null(data))
-            stop("PCA requires variables as input but a distance matrix was supplied.")
+            StopForUserError("PCA requires variables as input but a distance matrix was supplied.")
         pca <- PrincipalComponentsAnalysis(data = data,
                                            subset = subset,
                                            use.correlation = normalization,
@@ -122,7 +122,7 @@ DimensionReduction <- function(algorithm,
         if (is.null(subset) || (length(subset) == 1 && subset == TRUE))
             subset <- rep(TRUE, nrow(data))
         else if (length(subset) != nrow(data))
-            stop("Input data and subset must be same length.")
+            StopForUserError("Input data and subset must be same length.")
 
         if (normalization)
             data <- data.frame(StandardizeData(data, method = "Range [0,1]"))
@@ -158,13 +158,13 @@ DimensionReduction <- function(algorithm,
             distance.matrix <- distance.matrix$distance
         if (!("dist" %in% cls) && !("DistanceMatrix" %in% cls)) {
             if (!("matrix" %in% cls) || !is.numeric(distance.matrix) || !isSymmetric(distance.matrix))
-                stop("Distance matrix must be symmetrical and numeric.")
+                StopForUserError("Distance matrix must be symmetrical and numeric.")
             diag(distance.matrix)[is.na(diag(distance.matrix))] <- 0
             if (any(diag(distance.matrix) != 0))
                 warning("Non-zero values along diagonal of distance matrix will be ignored.")
             diag(distance.matrix) <- 0
             if (any(distance.matrix < 0))
-                stop("Distance matrix must not contain negative values.")
+                StopForUserError("Distance matrix must not contain negative values.")
         }
     }
 
@@ -184,7 +184,7 @@ DimensionReduction <- function(algorithm,
         result <- MultiDimesnsionalScaling(distance.matrix = distance.matrix, metric = FALSE)
     }
     else
-        stop("Algorithm not recognized.")
+        StopForUserError("Algorithm not recognized.")
 
     if (!input.distance) {
         result$input.is.distance <- FALSE     # overwrite for MDS from data - determines output chart type
@@ -247,11 +247,11 @@ fitted.2Dreduction <- function(object, ...)
 convertFactorAnalysisTo2D <- function(x) {
 
     if (inherits(x, "TextPCA"))
-        stop("2D plot representations are not supported for Text PCA outputs.")
+        StopForUserError("2D plot representations are not supported for Text PCA outputs.")
     if (ncol(x$loadings) < 2)
-        stop("There must be at least 2 components to produce 2-D output.")
+        StopForUserError("There must be at least 2 components to produce 2-D output.")
     if (!is.null(x$data.groups) && length(x$data.groups) != nrow(x$scores))
-        stop("Lengths of data and data.groups must the the same.")
+        StopForUserError("Lengths of data and data.groups must the the same.")
 
     used.subset <- !is.na(x$scores[, 1])
     input.data <- x$original.data
@@ -534,5 +534,3 @@ print.2Dreduction <- function(x, ...) {
 
     print(chart)
 }
-
-

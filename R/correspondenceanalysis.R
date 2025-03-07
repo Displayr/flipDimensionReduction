@@ -48,7 +48,7 @@
 #' @param use.combined.scatter Draw scatterplots using rhtmlCombinedScatter.
 #' @param ... Optional arguments for \code{\link[ca]{ca}}.
 #' @importFrom flipTables TidyTabularData RemoveRowsAndOrColumns
-#' @importFrom flipU InterceptExceptions
+#' @importFrom flipU InterceptExceptions StopForUserError
 #' @importFrom flipChartBasics MatchTable
 #' @importFrom ca ca
 #' @importFrom verbs Sum SumEmptyHandling
@@ -124,10 +124,10 @@ CorrespondenceAnalysis = function(x,
     if (is.null(logos))
         logo.size <- 0
     if (!is.numeric(logo.size))
-        stop("Logo size must be a numeric")
+        StopForUserError("Logo size must be a numeric")
 
     if (is.null(x))
-        stop("No table has been entered.")
+        StopForUserError("No table has been entered.")
 
     # Multiple tables
     # note that a dataframe is actually a list
@@ -136,7 +136,7 @@ CorrespondenceAnalysis = function(x,
     {
         lapply(x, requireTwoDimensionsForCorrespondenceAnalysis)
         if (!output %in% c("Scatterplot", "Input Table"))
-            stop(sprintf("Output '%s' is not valid with multiple input tables.", output))
+            StopForUserError(sprintf("Output '%s' is not valid with multiple input tables.", output))
         row.color <- '#5B9BD5'
         col.color <- '#ED7D31'
         square <- FALSE
@@ -173,11 +173,11 @@ CorrespondenceAnalysis = function(x,
             c.tmp <- match(c.names, colnames(x[[i]]))
 
             if (any(is.na(r.tmp)))
-                stop(sprintf("Tables do not match. Table '%s' missing row '%s'.",
-                             x.names[i], r.names[which(is.na(r.tmp))[1]]))
+                StopForUserError(sprintf("Tables do not match. Table '%s' missing row '%s'.",
+                                         x.names[i], r.names[which(is.na(r.tmp))[1]]))
             if (any(is.na(c.tmp)))
-                stop(sprintf("Tables do not match. Table '%s' missing column '%s'.",
-                             x.names[i], c.names[which(is.na(c.tmp))[1]]))
+                StopForUserError(sprintf("Tables do not match. Table '%s' missing column '%s'.",
+                                         x.names[i], c.names[which(is.na(c.tmp))[1]]))
 
             x[[i]] <- x[[i]][r.names,c.names]
         }
@@ -190,7 +190,7 @@ CorrespondenceAnalysis = function(x,
     } else
     {
         if (!is.null(dim(x[[1]])))
-            stop("Input data 'x' contains only one table. Unselect checkbox for 'multiple tables'\n")
+            StopForUserError("Input data 'x' contains only one table. Unselect checkbox for 'multiple tables'\n")
 
         num.tables <- 1
         color.palette <- "Default colors"
@@ -210,9 +210,9 @@ CorrespondenceAnalysis = function(x,
         {
             requireTwoDimensionsForCorrespondenceAnalysis(x, "Correspondence Analysis of a Square Table")
             if (output == "Moonplot")
-                stop("Output 'Moonplot' is not valid with square matrixes.")
+                StopForUserError("Output 'Moonplot' is not valid with square matrixes.")
             if (nrow(x) != ncol(x))
-                stop("Input Table is not a square matrix.")
+                StopForUserError("Input Table is not a square matrix.")
 
             valid.stat <- c("n", "Total %", "Population", "Correlation", "Index")
             if (!is.null(x.stat) && !(x.stat %in% valid.stat))
@@ -225,14 +225,14 @@ CorrespondenceAnalysis = function(x,
             dimnames(x) <- list(r.names, c.names)
 
             if (any(duplicated(r.names)))
-                stop("Row labels are not unique.")
+                StopForUserError("Row labels are not unique.")
             if (any(duplicated(c.names)))
-                stop("Column labels are not unique.")
+                StopForUserError("Column labels are not unique.")
 
             c.ind <- match(r.names, c.names)
             if (any(is.na(c.ind)))
-                stop(sprintf("Row and column labels in square matrix do not match. Missing '%s' in column labels",
-                             paste(r.names[which(is.na(c.ind))], collapse="', '")))
+                StopForUserError(sprintf("Row and column labels in square matrix do not match. Missing '%s' in column labels",
+                                         paste(r.names[which(is.na(c.ind))], collapse="', '")))
             x <- x[,c.ind]
         }
         requireTwoDimensionsForCorrespondenceAnalysis(x)
@@ -242,10 +242,10 @@ CorrespondenceAnalysis = function(x,
         {
             table.maindim <- ifelse(transpose, "columns", "rows")
             if (is.null(bubble.size))
-                stop("Bubble Charts require bubble sizes.")
+                StopForUserError("Bubble Charts require bubble sizes.")
             bubble.size <- as.matrix(bubble.size)
             if (is.null(rownames(bubble.size)))
-                stop("The table of bubble sizes need to be named to match the row labels used in the analysis.")
+                StopForUserError("The table of bubble sizes need to be named to match the row labels used in the analysis.")
             if (NCOL(bubble.size) > 1)
             {
                 warning("The table of bubble sizes contains more than one column. Only the first column of bubble sizes was used.")
@@ -260,7 +260,7 @@ CorrespondenceAnalysis = function(x,
             bubble.size <- InterceptExceptions(MatchTable(bubble.size, ref.names = rownames(x)),
                 error.handler = function(e){
                     if (grepl("missing", e$message))
-                        stop("To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. ", e$message)
+                        StopForUserError("To use a bubble chart, the table of bubble sizes needs to include all the row labels used in the analysis. ", e$message)
                     else
                         stop(e$message)
                 },
@@ -284,7 +284,7 @@ CorrespondenceAnalysis = function(x,
             x <- cbind(rbind(x, t(x)), rbind(t(x), x))
     }
     if (any(x < 0, na.rm = TRUE))
-        stop("Input tables cannot contain negative values.")
+        StopForUserError("Input tables cannot contain negative values.")
 
     footer <- paste0("Normalization: ", normalization)
 
@@ -295,7 +295,7 @@ CorrespondenceAnalysis = function(x,
         reduced.x <- RemoveRowsAndOrColumns(x, row.names.to.remove = supplementary,
                                             column.names.to.remove = supplementary)
         if (length(rownames(reduced.x)) < 2 || length(colnames(reduced.x)) < 2)
-            stop("At least 2 rows and 2 columns must remain after removing supplementary points.")
+            StopForUserError("At least 2 rows and 2 columns must remain after removing supplementary points.")
         suprow <- seq(nrow(x))[is.na(match(rownames(x), rownames(reduced.x)))]
         supcol <- seq(ncol(x))[is.na(match(colnames(x), colnames(reduced.x)))]
         removed.labels <- c((rownames(x)[suprow]), (colnames(x)[supcol]))
@@ -307,14 +307,14 @@ CorrespondenceAnalysis = function(x,
         supp.labels <- unlist(strsplit(supplementary, split = ","))
         unmatched.labels <- setdiff(tolower(trimws(supp.labels)), tolower(trimws(removed.labels)))
         if (!identical(unmatched.labels, character(0)))
-            stop(paste0("Supplementary rows or columns '", paste(unmatched.labels, collapse = ", "),
-                        "' do not match any rows or columns in the data."))
+            StopForUserError(paste0("Supplementary rows or columns '", paste(unmatched.labels, collapse = ", "),
+                                    "' do not match any rows or columns in the data."))
         if (!identical(removed.labels, character(0)))
             footer <- paste0(footer, ". Supplementary points: ", paste(removed.labels, collapse = ", "))
 
     }
     if (any(!is.finite(x)))
-        stop("Input table cannot contain missing or infinite values.")
+        StopForUserError("Input table cannot contain missing or infinite values.")
 
     original <- ca(x, suprow = suprow, supcol = supcol, ...)
 
@@ -332,7 +332,7 @@ CorrespondenceAnalysis = function(x,
         focus <- tolower(trimws(focus))
         row.col.names <- tolower(trimws(c(original$rownames, original$colnames)))
         if (!focus %in% row.col.names)
-            stop(paste0("Focus label '", focus, "' is not a label in the input table."))
+            StopForUserError(paste0("Focus label '", focus, "' is not a label in the input table."))
         focused <- setFocus(original, match(focus, row.col.names))
     }
     else
@@ -404,9 +404,9 @@ CorrespondenceAnalysis = function(x,
     class(result) <- c("CorrespondenceAnalysis", "visualization-selector")
     nc <- min(ncol(row.coordinates), ncol(column.coordinates))
     if (dim1.plot < 0 || dim1.plot > nc)
-        stop(sprintf("Dimension 1 should be between 1 and %d.", nc))
+        StopForUserError(sprintf("Dimension 1 should be between 1 and %d.", nc))
     if (dim2.plot < 0 || dim2.plot > nc)
-        stop(sprintf("Dimension 2 should be between 1 and %d.", nc))
+        StopForUserError(sprintf("Dimension 2 should be between 1 and %d.", nc))
 
     # Store chart data - to use in print.CorrespondenceAnalysis
     plot.dims <- c(dim1.plot, dim2.plot)
@@ -502,6 +502,7 @@ CorrespondenceAnalysis = function(x,
 
 }
 
+#' @importFrom flipU StopForUserError
 checkEmptyRowsOrColumns <- function(x, transpose)
 {
     rSum <- rowSums(abs(x), na.rm = TRUE)
@@ -521,7 +522,7 @@ checkEmptyRowsOrColumns <- function(x, transpose)
                 empty.dim <- "Column"
             empty.name <- paste(colnames(x)[which(cSum == 0)], collapse = "', '")
         }
-        stop(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
+        StopForUserError(sprintf("%s '%s' contains only zeros or NAs.", empty.dim, empty.name))
     }
     return(NULL)
 }
@@ -559,7 +560,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     if (x$output == "Diagnostics")
     {
         if (!is.null(x$focused))
-            stop("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
+            StopForUserError("Output should not be set to 'Diagnostics' when 'Focus' has been set.")
         return(summary(x$original))
     } else if (x$output == "Input Table")
     {
@@ -573,7 +574,7 @@ print.CorrespondenceAnalysis <- function(x, ...)
     } else if (x$output == "Moonplot")
     {
         if (x$square)
-            stop("Moonplots cannot be shown for Correspondence Analysis of a Square Table.")
+            StopForUserError("Moonplots cannot be shown for Correspondence Analysis of a Square Table.")
         if (x$normalization != "Row principal" && x$normalization != "Row principal (scaled)")
             warning("It is good practice to set 'Normalization' to 'Row principal' when 'Output' is set to 'Moonplot'.")
         return(print(moonplot(x$row.coordinates[,1:2], x$column.coordinates[,1:2])))
@@ -596,11 +597,11 @@ print.CorrespondenceAnalysis <- function(x, ...)
         if (x$output == "Scatterplot")
         {
             if (x$dim1.plot == x$dim2.plot)
-                stop("Dimensions are not distinct.")
+                StopForUserError("Dimensions are not distinct.")
             if (x$dim1.plot < 1 || x$dim1.plot > n.sv)
-                stop("Dimension 1 should be between 1 and ", n.sv, ".")
+                StopForUserError("Dimension 1 should be between 1 and ", n.sv, ".")
             if (x$dim2.plot < 1 || x$dim2.plot > n.sv)
-                stop("Dimension 2 should be between 1 and ", n.sv, ".")
+                StopForUserError("Dimension 2 should be between 1 and ", n.sv, ".")
 
             num.asym <- Sum(c(x$dim1.plot, x$dim2.plot) %in% ind.asym, remove.missing = FALSE)
             if (num.asym > 0  && tmp.sv[x$dim1.plot] != tmp.sv[x$dim2.plot])
@@ -808,13 +809,14 @@ print.CorrespondenceAnalysis <- function(x, ...)
 #'   and calculates standard coordinates.
 #'   \code{"None"} returns the standard coordinates.
 #' @export
+#' @importFrom flipU StopForUserError
 CANormalization <- function(ca.object, normalization = "Principal")
 {
     .normalize = function(coords, power)
     {
         if (!is.numeric(power))
-            stop("Normalization option '", power, "' is not recognized. ",
-                 "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
+            StopForUserError("Normalization option '", power, "' is not recognized. ",
+                             "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
         m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
             coords[,1, drop = FALSE] * ca.object$sv[1]^power
@@ -844,11 +846,12 @@ CANormalization <- function(ca.object, normalization = "Principal")
 #' @importFrom methods is
 #' @importFrom flipFormat FormatAsPercent
 #' @importFrom verbs SumEachColumn
+#' @importFrom flipU StopForUserError
 #' @export
 CAQuality <- function(x)
 {
     if (!is(x, "CorrespondenceAnalysis"))
-        stop("Object must be of class 'CorrespondenceAnalysis' to calculate quality.")
+        StopForUserError("Object must be of class 'CorrespondenceAnalysis' to calculate quality.")
     or <- if (is.null(x$focused)) x$original else x$focused
     n <- CANormalization(or, "Principal")
     row.masses <- x$original$rowmass
@@ -864,9 +867,10 @@ CAQuality <- function(x)
     q
 }
 
+#' @importFrom flipU StopForUserError
 requireTwoDimensionsForCorrespondenceAnalysis <- function(x, feature.name = "Correspondence Analysis") {
     # Only one statistic will be kept at this stage.
     stop.msg <- paste0(feature.name, " requires a table with both rows and columns.")
     if (NROW(x) == 1L || NCOL(x)== 1L)
-        stop(stop.msg)
+        StopForUserError(stop.msg)
 }

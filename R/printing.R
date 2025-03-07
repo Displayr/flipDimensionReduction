@@ -268,10 +268,11 @@ print.flipFactorAnalysis <- function(x, digits = 3,...)
 }
 
 
+#' @importFrom flipU StopForUserError
 wrapText <- function(x, n = 80)
 {
     if (n <= 0)
-        stop("Wrap line length cannot be smaller than 1")
+        StopForUserError("Wrap line length cannot be smaller than 1")
 
     w.list <- strsplit(x, " ")[[1]]
     final <- w.list[1]

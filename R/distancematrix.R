@@ -29,6 +29,7 @@
 #' @importFrom flipTransformations AsNumeric ProcessQVariables
 #' @importFrom flipStatistics CosineSimilarities
 #' @importFrom weights wtd.cors
+#' @importFrom flipU StopForUserError
 #' @export
 DistanceMatrix <- function(input.data,
                            compare = "Variables",
@@ -56,14 +57,14 @@ DistanceMatrix <- function(input.data,
     if (compare == "Cases") {
         dat <- dat[subset, , drop = FALSE]
         if (nrow(dat) > 100)
-            stop("There are more than 100 cases to compare. Apply a filter to reduce the number of cases.")
+            StopForUserError("There are more than 100 cases to compare. Apply a filter to reduce the number of cases.")
         if (!is.null(weights))
             warning("Weights applied to this item have been ignored as they are not applicable when cases are compared.")
         if (length(case.labels) > 1)
             rownames(dat) <- case.labels[subset]
     } else {
         if (ncol(dat) < 2)
-            stop("There needs to be two or more variables to compare, with the currently selected options.")
+            StopForUserError("There needs to be two or more variables to compare, with the currently selected options.")
 
         # Changing names to labels.
         if (!variable.names)
@@ -109,7 +110,7 @@ DistanceMatrix <- function(input.data,
 
         p <- if (distance.measure == "Minkowski") minkowski else 2
         if (p <= 0 || p > 100)
-            stop(paste0("Minkowski power must be positive and less than 100 but is ", p, "."))
+            StopForUserError(paste0("Minkowski power must be positive and less than 100 but is ", p, "."))
 
         method <- if (distance.measure == "Squared Euclidean") "euclidean" else tolower(distance.measure)
 
@@ -130,7 +131,7 @@ DistanceMatrix <- function(input.data,
         else
             CosineSimilarities(dat.matrix, weight = wgt)
     } else
-        stop(paste("Unhandled similarity measure:", similarity.measure))
+        StopForUserError(paste("Unhandled similarity measure:", similarity.measure))
 
     # Measure transformations
     if (measure.transformation == "Absolute values") {
@@ -148,7 +149,7 @@ DistanceMatrix <- function(input.data,
             distance.matrix <- (distance.matrix - min.val) / (max.val - min.val)
             diag(distance.matrix) <- diagonal
         } else
-            stop("The measures are constant and cannot be transformed to the range [0,1].")
+            StopForUserError("The measures are constant and cannot be transformed to the range [0,1].")
     }
 
     output <- list(distance = distance.matrix, show.cell.values = show.cell.values,

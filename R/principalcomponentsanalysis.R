@@ -270,7 +270,7 @@ PrincipalComponentsAnalysis <- function(data,
                                })
     score.weights <- try(solve(cor, S), silent = TRUE)
     if (inherits(score.weights, "try-error"))
-        stop("Component scores could not be computed as the correlation or correlation matrix is singular.")
+        StopForUserError("Component scores could not be computed as the correlation or correlation matrix is singular.")
 
     # Original data is scaled before generating scores
     if (!is.null(weights))
@@ -416,8 +416,8 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
     }
     else
     {
-        stop(paste0("Can't make a Scree Plot for object of class ", paste(class(x), collapse = ", ")),
-             ". Select a Principal Components Analysis output.")
+        StopForUserError(paste0("Can't make a Scree Plot for object of class ", paste(class(x), collapse = ", ")),
+                         ". Select a Principal Components Analysis output.")
     }
 
     input.values <- sort(input.values, decreasing = TRUE)
@@ -451,17 +451,18 @@ ScreePlot <- function(x, weights = NULL, subset = NULL, missing = "Exclude cases
 #' @importFrom rhtmlLabeledScatter LabeledScatter
 #' @importFrom rhtmlCombinedScatter CombinedScatter
 #' @importFrom verbs SumEachColumn
+#' @importFrom flipU StopForUserError
 #' @export
 ComponentPlot <- function(x, show.labels = TRUE)
 {
     if (is.null(x$loadings))
     {
-        stop("Input should be created by Data Reduction - Principal Components Analysis")
+        StopForUserError("Input should be created by Data Reduction - Principal Components Analysis")
     }
 
     if (ncol(x$loadings) < 2)
     {
-        stop("There aren't enough components to plot.")
+        StopForUserError("There aren't enough components to plot.")
     }
 
     labels <- as.character(1:nrow(x$loadings))
@@ -665,7 +666,7 @@ prepareDataForFactorAnalysis <- function(data, weights, subset, missing)
     } else if (missing == "Use partial data (pairwise correlations)") {
         subset.data <- ExcludeCasesWithCompletelyMissingData(subset.data)
     } else {
-        stop(paste0("Don't recognize the missing data option", missing))
+        StopForUserError(paste0("Don't recognize the missing data option", missing))
     }
 
     # Figure out which of the total set of weight values correspond to the
