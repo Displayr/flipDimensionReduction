@@ -1,0 +1,18 @@
+name: Build flipDimensionReduction
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    name: Build flipDimensionReduction
+    permissions:
+      checks: write
+      contents: read
+    uses: Displayr/nixr-public/.github/workflows/build-flake-installable.yaml@master
+    with:
+      installable-path: pkgs.x86_64-linux.rPackages.flipDimensionReduction
+      build-args: --override-input flipDimensionReduction .
+      installable-name: flipDimensionReduction
+    secrets: inherit
