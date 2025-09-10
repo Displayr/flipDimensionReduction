@@ -812,30 +812,52 @@ print.CorrespondenceAnalysis <- function(x, ...)
 #' @importFrom flipU StopForUserError
 CANormalization <- function(ca.object, normalization = "Principal")
 {
-    .normalize = function(coords, power)
+    .normalize <- function(coords, power)
     {
-        if (!is.numeric(power))
-            StopForUserError("Normalization option '", power, "' is not recognized. ",
-                             "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', 'Column princiapsl (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'")
+        if (!is.numeric(power)) {
+            StopForUserError(
+                "Normalization option '", power, "' is not recognized. ",
+                "Please use one of 'Principal', 'Row principal', 'Row principal (scaled)', 'Column principal', ",
+                "'Column principals (scaled)', 'Symmetrical (\u00BD)', 'None', 'Inverse'"
+            )
+        }
         m <- dim(coords)[2]
         if (dim(coords)[2] == 1)
-            coords[,1, drop = FALSE] * ca.object$sv[1]^power
+            coords[, 1, drop = FALSE] * ca.object$sv[1]^power
         else
-            sweep(coords[,1:m], 2, ca.object$sv[1:m]^power, "*")
+            sweep(coords[, 1:m], 2, ca.object$sv[1:m]^power, "*")
     }
-    rows <- .normalize(ca.object$rowcoord, switch(normalization,
-                                                  "Principal" = 1, "Row principal" = 1, "Row principal (scaled)" = 1,
-                                                  "Column principal" = 0, "Column principal (scaled)" = 0,
-                                                  "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
-    columns <- .normalize(ca.object$colcoord, switch(normalization,
-                                                     "Principal" = 1, "Row principal" = 0, "Row principal (scaled)" = 0,
-                                                     "Column principal" = 1, "Column principal (scaled)" = 1,
-                                                     "Symmetrical (\u00BD)" = 0.5, "None" = 0, "Inverse" = -1, normalization))
+    row.normalization.as.power <- switch(
+        normalization,
+        `Inverse` = -1L,
+        `None` = ,
+        `Column principal` = ,
+        `Column principal (scaled)` = 0L,
+        `Principal` = ,
+        `Row principal` = ,
+        `Row principal (scaled)` = 1L,
+        "Symmetrical (\u00BD)" = 0.5,
+        normalization
+    )
+    rows <- .normalize(ca.object$rowcoord, row.normalization.as.power)
+    column.normalization.as.power <- switch(
+        normalization,
+        `Inverse` = -1L,
+        `None` = ,
+        `Row principal` = ,
+        `Row principal (scaled)` = 0L,
+        `Principal` = ,
+        `Column principal` = ,
+        `Column principal (scaled)` = 1L,
+        "Symmetrical (\u00BD)" = 0.5,
+        normalization
+    )
+    columns <- .normalize(ca.object$colcoord, column.normalization.as.power)
 
     if (normalization == "Row principal (scaled)")
-        columns = columns * ca.object$sv[1]
+        columns <- columns * ca.object$sv[1]
     if (normalization == "Column principal (scaled)")
-        rows = rows * ca.object$sv[1]
+        rows <- rows * ca.object$sv[1]
 
     list(row.coordinates = rows, column.coordinates = columns)
 }
