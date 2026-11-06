@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 .*~
 ^\.circleci/config\.yml$
+^AGENTS\.md$
+^CLAUDE\.md$
