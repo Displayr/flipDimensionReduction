@@ -1,21 +1,28 @@
 # Agent rules
 
-This repository is public. Everything in it is visible to anyone,
-including pull request descriptions, review comments, commit
-messages, code comments and test data.
+This repository is public. Anyone can read everything in it: the code,
+commit messages, pull request descriptions, review comments, and the
+edit history of each.
 
-## Pull requests, commits and comments
+## Pull requests
 
-- Refer to work by its Jira key (for example RS-12345) and describe
-  the technical change.
-- Refer to a customer as "a customer". Keep customer names, their
-  data and their documents in the Jira ticket.
-- Link only to pages anyone can open. Keep links to internal systems
-  (Displayr documents, test servers, bug reports, chat and internal
-  docs) in the Jira ticket.
+- Title: the Jira key and a short technical title, for example
+  "RS-12345: Keep column order when merging tables".
+- Description: a short technical summary of what changed, and a link
+  to the PR's Notion page. The full description, links to Jira and
+  other internal pages, and test evidence go on that Notion page,
+  which needs a Displayr login.
+- Read everything through before each push or post.
 
-## Test data
+## Code, comments and tests
 
-- Build test data, fixtures and examples from generated or public
-  values. To reproduce a customer's bug, keep the shape of their
-  data and replace the names and values.
+- Write them so they read well to someone outside Displayr: describe
+  the technical change, with nothing that needs internal context or
+  access.
+- Use made-up test data. To reproduce a customer's bug, copy the shape
+  of their data with made-up names and values.
+
+## Customers
+
+- Say "a customer". Leave out names, company names, email addresses,
+  account or document IDs, and anything copied from their data.
